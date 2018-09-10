@@ -2,7 +2,7 @@
 L = 50; % catheter length (mm)
 L_res = 0.1; % catheter node points resolution (mm)
 
-len_mark = 20; % length of catheter with marker (mm)
+pct_mark = 20; % length of catheter with marker (mm)
 amp_mark = 1; % amplitude of the helix (mm)
 fre_mark = 0.5; % spatial frequency of the helix (count)
 
