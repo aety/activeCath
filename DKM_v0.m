@@ -10,6 +10,7 @@ fre_mark = 0.5; % spatial frequency of the helix (count)
 X = 0:L_res:L; % catheter X
 Y = zeros(length(X),1); % catheter Y
 
+len_mark = 0.01*pct_mark*L;
 x_mark = 0:L_res:len_mark; 
 y_mark = amp_mark*sin(2*pi*fre_mark*x_mark); % helix Y);
 x_mark = x_mark + (L - len_mark); % helix X
