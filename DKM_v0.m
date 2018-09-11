@@ -3,10 +3,10 @@ L = 50; % catheter length (mm)
 L_res = 0.1; % catheter node points resolution (mm)
 
 pct_mark = 20; % length of catheter with marker (mm)
-amp_mark = 1; % amplitude of the helix (mm)
-per_mark = 2; % spatial period of the helix (mm)
+amp_mark = 0.5; % amplitude of the helix (mm)
+per_mark = 3; % spatial period of the helix (mm)
 
-%% calculate geometry
+%% calculate geometr
 X = 0:L_res:L; % catheter X
 Y = zeros(length(X),1); % catheter Y
 
