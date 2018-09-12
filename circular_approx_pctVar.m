@@ -2,19 +2,19 @@ L = 100; % length of catheter (mm)
 
 res = 0.5; % catheter spatial resolution (interval between nodes) (mm)
 
-pct_bent = 70; % percent length bent (%)
+Rk = 100; % radius of curvature (to define bent shape)
 
 %%
-fname = 'curVar';
-var_name = 'r_K, radius of curvature (mm)';
-con_name = ['L_{bend} = ' num2str(pct_bent) ' (%)'];
+fname = 'pctVar';
+var_name = 'L_{bend}, bending length (%)';
+con_name = ['r_K = ' num2str(Rk) ' (mm)'];
 
-variable_arr = 50:50:500;
+variable_arr = 50:5:100;
 color_arr = colormap(parula(length(variable_arr)));
 
 for rr = 1:length(variable_arr)
     
-    Rk = variable_arr(rr); % radius of curvature (to define bent shape)
+    pct_bent = variable_arr(rr); % percent length bent (%)
     
     %% configure catheter
     
@@ -41,7 +41,7 @@ for rr = 1:length(variable_arr)
     Y = [y1,y2];
     
     hold on
-    h(rr) = plot(X,Y,'-','color',color_arr(rr,:),'linewidth',2);
+    h(rr) = plot(X,Y,'.-','color',color_arr(rr,:));
 %     plot(X(end-1:end),Y(end-1:end),'-','linewidth',2,'color',color_arr(rr,:));
     text(X(end),Y(end),[num2str(th_end,3) '\circ'],'color',color_arr(rr,:),'fontsize',6);
     
