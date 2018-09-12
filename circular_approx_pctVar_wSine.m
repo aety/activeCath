@@ -9,14 +9,14 @@ n_helix = 4; % number of sinusoids of the helix
 %% define catheter
 L = 100; % length of catheter (mm)
 res = 0.5; % catheter spatial resolution (interval between nodes) (mm)
-pct_bent = 70; % percent length bent (%)
+Rk = 100; % radius of curvature (to define bent shape)
 
 %% define varying parameter and associated file name and descriptions
-variable_arr = 50:50:500; % array of values for the varying parameter
+variable_arr = 50:5:100; % array of values for the varying parameter
 
-fname = 'curVar';
-var_name = 'r_K, radius of curvature (mm)';
-con_name = ['L_{bend} = ' num2str(pct_bent) ' (%)'];
+fname = 'pctVar';
+var_name = 'L_{bend}, bending length (%)';
+con_name = ['r_K = ' num2str(Rk) ' (mm)'];
 
 %%
 color_arr = colormap(parula(length(variable_arr)));
@@ -24,7 +24,7 @@ TH_END_arr = nan(1,length(variable_arr));
 
 for rr = 1:length(variable_arr)
     
-    Rk = variable_arr(rr); % radius of curvature (to define bent shape)
+    pct_bent = variable_arr(rr); % percent length bent (%)
     
     %% configure catheter
     
