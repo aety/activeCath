@@ -90,7 +90,7 @@ end
 
 %% format figure
 axis equal;
-xlim([0,1.2*L]);
+xlim([0,L]);
 
 % labels
 xlabel('x (mm)');
@@ -112,7 +112,7 @@ set(hc,'box','off');
 % sizing and saving 
 set(gca,'fontsize',8);
 set(gcf,'paperposition',[0,0,4,3],'unit','inches');
-print('-dtiff','-r150',['circular_approx_' fname '_wSine']);
+print('-dtiff','-r300',['circular_approx_' fname '_wSine']);
 close;
 
 %% plot end effector angle as a function of radius of curvature 
@@ -126,5 +126,5 @@ box off;
 % sizing and saving 
 set(gca,'fontsize',8);
 set(gcf,'paperposition',[0,0,2.5,3],'unit','inches');
-print('-dtiff','-r150',['circular_approx_' fname '_wSine_2']);
+print('-dtiff','-r300',['circular_approx_' fname '_wSine_2']);
 close;

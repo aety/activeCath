@@ -9,14 +9,14 @@ n_helix = 4; % number of sinusoids of the helix
 %% define catheter
 L = 100; % length of catheter (mm)
 res = 0.5; % catheter spatial resolution (interval between nodes) (mm)
-Rk = 100; % radius of curvature (to define bent shape)
+pct_bent = 70; % percent length bent (%)
 
 %% define varying parameter and associated file name and descriptions
-variable_arr = 50:5:100; % array of values for the varying parameter
+variable_arr = 50:50:500; % array of values for the varying parameter
 
-fname = 'pctVar';
-var_name = 'L_{bend}, bending length (%)';
-con_name = ['r_K = ' num2str(Rk) ' (mm)'];
+fname = 'curVar';
+var_name = 'r_K, radius of curvature (mm)';
+con_name = ['L_{bend} = ' num2str(pct_bent) ' (%)'];
 
 %%
 color_arr = colormap(parula(length(variable_arr)));
@@ -24,7 +24,7 @@ TH_END_arr = nan(1,length(variable_arr));
 
 for rr = 1:length(variable_arr)
     
-    pct_bent = variable_arr(rr); % percent length bent (%)
+    Rk = variable_arr(rr); % radius of curvature (to define bent shape)
     
     %% configure catheter
     
@@ -73,13 +73,14 @@ for rr = 1:length(variable_arr)
     % compile helix
     xh = xc + (Rk + a_helix*sin(n_effect_helix*th_helix)).*cos(th_helix); % x location of helix
     yh = yc + (Rk + a_helix*sin(n_effect_helix*th_helix)).*sin(th_helix); % y location of helix
-    
+    zh = a_helix*cos(n_effect_helix*th_helix);
+
     %% plot
     hold on
     h(rr) = plot(X,Y,'-','color',color_arr(rr,:)); % plot catheter
     %     plot(X(end-1:end),Y(end-1:end),'-','linewidth',2,'color',color_arr(rr,:)); % plot end effector angle
 %     text(X(end),Y(end),[num2str(th_end,3) '\circ'],'color',color_arr(rr,:),'fontsize',8); % label end effector angle
-    plot(xh,yh,'color',color_arr(rr,:)); % plot helix
+    plot3(xh,yh,zh,'color',color_arr(rr,:)); % plot helix
     
     %% visual aids
     % x_cir = xc + Rk*cosd(0:10:360);
@@ -90,7 +91,8 @@ end
 
 %% format figure
 axis equal;
-xlim([0,L]);
+xlim([0,1.2*L]);
+view([-37.5+90,30]);
 
 % labels
 xlabel('x (mm)');
@@ -112,19 +114,5 @@ set(hc,'box','off');
 % sizing and saving 
 set(gca,'fontsize',8);
 set(gcf,'paperposition',[0,0,4,3],'unit','inches');
-print('-dtiff','-r300',['circular_approx_' fname '_wSine']);
-close;
-
-%% plot end effector angle as a function of radius of curvature 
-figure;
-scatter(variable_arr,TH_END_arr,20,color_arr,'*','linewidth',2);
-xlabel('r_K (mm)');
-ylabel('\circ');
-title('\theta_{end} (tip angle)','fontweight','normal');
-box off;
-
-% sizing and saving 
-set(gca,'fontsize',8);
-set(gcf,'paperposition',[0,0,2.5,3],'unit','inches');
-print('-dtiff','-r300',['circular_approx_' fname '_wSine_2']);
+print('-dtiff','-r300',['circular_approx_' fname '_wSine_3D']);
 close;
