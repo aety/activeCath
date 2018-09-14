@@ -133,10 +133,10 @@ for aa = 1:length(rot_arr)% aa = 1;
         
     end
     
-    % %     % add information about the helix
-    % %     subplot(2,2,1);
-    % %     text(0,0,L/2,{[con_name ', L_{helix} = ' num2str(p1_helix) '~' num2str(p2_helix) ' %'];...
-    % %         [num2str(n_helix) ' sines at ' num2str(a_helix) ' mm']},'fontweight','normal');
+    % add information about the helix
+    subplot(2,2,1);
+    text(0,0,L/2,{[con_name ', L_{helix} = ' num2str(p1_helix) '~' num2str(p2_helix) ' %'];...
+        [num2str(n_helix) ' sines at ' num2str(a_helix) ' mm']},'fontweight','normal');
     
     % % %     % colorbar (legend)
     % % %     subplot(2,2,1);
