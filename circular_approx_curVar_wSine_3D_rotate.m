@@ -156,11 +156,7 @@ for aa = 1:length(rot_arr)% aa = 1;
     else
         pause;
     end
-    
-    for pp = 1:4
-        subplot(2,2,pp);
-        clf;
-    end
+    clf;
     
 end
 
