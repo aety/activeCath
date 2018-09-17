@@ -1,17 +1,16 @@
 %% set up video maker
-opengl('software');
-
 vidflag = 0;
 
 if vidflag
+    opengl('software');
     anim = VideoWriter(datestr(datetime('now'),'yyyy-mm-dd-HHMMss'),'Motion JPEG AVI');
-    anim.FrameRate = 3;
+    anim.FrameRate = 1;
     open(anim);
 end
 
 %% define catheter 3D rotation (about x-axis)
 % rot_arr = [0:10:50]; % array of angles to rotate the catheter by (deg)
-rot_arr = 70;
+rot_arr = 60;
 
 %% define helix
 p1_helix = 70;      % helix starting point (% length)
@@ -113,7 +112,7 @@ for aa = 1:length(rot_arr)% aa = 1;
             plot3(xh,yh,zh,'color',color_arr(rr,:),'linewidth',1); % plot helix
             text(X(end),Y(end),Z(end),num2str(th_end*180/pi,3),'color',color_arr(rr,:),'fontsize',12);
         end
-        plot(x_int_arr,y_int_arr,'ok','markersize',2);
+        plot(x_int_arr,y_int_arr,'*k','markersize',4);
     end
     
     %% format figure
@@ -140,6 +139,7 @@ for aa = 1:length(rot_arr)% aa = 1;
     
     % label catheter configuration
     subplot(1,2,1);
+    grid on
     text(L/5,0,L/3,{[con_name ', L_{helix} = ' num2str(p1_helix) '~' num2str(p2_helix) ' %'];...
         [num2str(n_helix) ' sines at ' num2str(a_helix) ' mm']},'fontweight','normal');
     
