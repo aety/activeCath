@@ -6,12 +6,12 @@ vidflag = 1;
 if vidflag
     opengl('software');
     anim = VideoWriter(datestr(datetime('now'),'yyyy-mm-dd-HHMMss'),'Motion JPEG AVI');
-    anim.FrameRate = 1;
+    anim.FrameRate = 2;
     open(anim);
 end
 
 %% define catheter 3D rotation (about x-axis)
-rot_arr = 0:15:75; % array of angles to rotate the catheter by (deg)
+rot_arr = 0:10:90; % array of angles to rotate the catheter by (deg)
 
 %% define helix
 p1_helix = 70;      % helix starting point (% length)
@@ -26,20 +26,22 @@ res = 0.5;      % catheter spatial resolution (interval between nodes) (mm)
 pct_bent = 70;  % percent length bent (%)
 
 %% define varying parameter and associated file name and descriptions
-variable_arr = 0:15:90; % array of values for the varying parameter
+variable_arr = 0:10:90; % array of values for the varying parameter
 
 fname = 'curVar';
 var_name = '\theta_{end} (\circ)';
 con_name = ['L_{bend} = ' num2str(pct_bent) '%'];
 
 %% looop for rotation
-for aa = 1:length(rot_arr)% aa = 1;
+for aa = 1:length(rot_arr)
+    
+    clf;
     
     alpha_rot = rot_arr(aa)*pi/180; % catheter's axial rotation (converting into rad)
     M_rot = getRX(alpha_rot);     % the associated rotation matrix
     
     %% loop for bending the catheter
-    color_arr = colormap(lines(length(variable_arr)));
+    color_arr = colormap(parula(length(variable_arr)));
     
     for rr = 1:length(variable_arr)
         
@@ -113,7 +115,7 @@ for aa = 1:length(rot_arr)% aa = 1;
             plot3(xh,yh,zh,'color',color_arr(rr,:),'linewidth',1); % plot helix
             text(X(end),Y(end),Z(end),num2str(th_end*180/pi,3),'color',color_arr(rr,:),'fontsize',12);
         end
-        plot(x_int_arr,y_int_arr,'*k','markersize',4);
+        plot(x_int_arr,y_int_arr,'+','color',color_arr(rr,:),'markersize',3,'linewidth',3);
     end
     
     %% format figure
@@ -125,7 +127,7 @@ for aa = 1:length(rot_arr)% aa = 1;
         subplot(1,2,ff);
         
         axis equal;
-        xlim([0,L]);
+        xlim([60,100]);
         ylim([0,L/2]);
         zlim([-a_helix,L/2]);
         view(view_arr(ff,:));
@@ -134,18 +136,19 @@ for aa = 1:length(rot_arr)% aa = 1;
         xlabel('x (mm)');
         ylabel('y (mm)');
         zlabel('z (mm)');
-        set(gca,'fontsize',12);        
+        set(gca,'fontsize',12);
     end
     title([num2str(rot_arr(aa)) '\circ rotation'],'fontweight','normal');
     
     % label catheter configuration
     subplot(1,2,1);
+    xlim([0,L]);
     grid on
     text(L/5,0,L/3,{[con_name ', L_{helix} = ' num2str(p1_helix) '~' num2str(p2_helix) ' %'];...
         [num2str(n_helix) ' sines at ' num2str(a_helix) ' mm']},'fontweight','normal');
     
     % sizing and saving
-    set(gcf,'position',[100,100,1200,400]);
+    set(gcf,'position',[100,100,1500,800]);
     
     if vidflag
         frame = getframe(figure(1));
@@ -153,10 +156,9 @@ for aa = 1:length(rot_arr)% aa = 1;
     else
         pause;
     end
-    clf;
 end
 
 if vidflag
     close(anim);
+    close;
 end
-close;
