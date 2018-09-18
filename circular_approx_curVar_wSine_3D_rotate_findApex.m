@@ -11,7 +11,7 @@ if vidflag
 end
 
 %% define catheter 3D rotation (about x-axis)
-rot_arr = [0:15:75]; % array of angles to rotate the catheter by (deg)
+rot_arr = 0:15:75; % array of angles to rotate the catheter by (deg)
 
 %% define helix
 p1_helix = 70;      % helix starting point (% length)
