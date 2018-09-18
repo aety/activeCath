@@ -1,8 +1,8 @@
 clear; clc; ca;
 
 %% set up video maker
-vidflag = 1;
-
+vidflag = 0;
+pltflag = 0;
 if vidflag
     opengl('software');
     anim = VideoWriter(datestr(datetime('now'),'yyyy-mm-dd-HHMMss'),'Motion JPEG AVI');
@@ -22,49 +22,57 @@ n_helix = 4;        % number of sinusoids of the helix
 
 %% define catheter
 L = 100;        % length of catheter (mm)
-res = 0.5;      % catheter spatial resolution (interval between nodes) (mm)
-pct_bent = 70;  % percent length bent (%)
+L_res = 0.5;      % catheter spatial resolution (interval between nodes) (mm)
+L_pct_bent = 70;  % percent length bent (%)
 
 %% define varying parameter and associated file name and descriptions
-variable_arr = 0:10:90; % array of values for the varying parameter
+variable_arr = 10:10:90; % array of values for the varying parameter
 
 fname = 'curVar';
 var_name = '\theta_{end} (\circ)';
-con_name = ['L_{bend} = ' num2str(pct_bent) '%'];
+con_name = ['L_{bend} = ' num2str(L_pct_bent) '%'];
+if pltflag
+    color_arr = colormap(parula(length(variable_arr)));
+end
+%% preallocate
+X_ARR = cell(length(rot_arr),length(variable_arr));
+Y_ARR = X_ARR;
+Z_ARR = X_ARR;
+XH_ARR = X_ARR;
+YH_ARR = X_ARR;
+ZH_ARR = X_ARR;
+X_INT_ARR= X_ARR;
+Y_INT_ARR = X_ARR;
 
-%% looop for rotation
+%% loop for rotation
 for aa = 1:length(rot_arr)
-    
-    clf;
     
     alpha_rot = rot_arr(aa)*pi/180; % catheter's axial rotation (converting into rad)
     M_rot = getRX(alpha_rot);     % the associated rotation matrix
     
     %% loop for bending the catheter
-    color_arr = colormap(parula(length(variable_arr)));
-    
     for rr = 1:length(variable_arr)
         
         th_end = variable_arr(rr)*pi/180;  % radius of curvature (to define bent shape)
         
         %% configure catheter
-        L2 = 0.01*pct_bent*L;
+        L2 = 0.01*L_pct_bent*L;
         L1 = L - L2;
         
         Rk = L2/th_end; % radius of curvature of the bent section
         
-        x1 = 0:res:L1;              % x of unbent
+        x1 = 0:L_res:L1;              % x of unbent
         y1 = zeros(1,length(x1));   % y of unbent
         
         xc = L1;    % x-location of the center of virtual circle
         yc = Rk;    % y-location of the center of virtual circle
         
         th_c = th_end;                   % total angle that the arc spans (rad)
-        th_incre = th_c/(L2/res);       % angle increment (rad)
-        th_arr = (1:(L2/res))*th_incre; % arc angle array
+        th_incre = th_c/(L2/L_res);       % angle increment (rad)
+        th_angles = (1:(L2/L_res))*th_incre; % arc angle array
         
-        x2 = L1 + Rk*sin(th_arr);   % x of bent section
-        y2 = Rk - Rk*cos(th_arr);   % y of bent sectoin
+        x2 = L1 + Rk*sin(th_angles);   % x of bent section
+        y2 = Rk - Rk*cos(th_angles);   % y of bent sectoin
         
         X = [x1,x2];            % catheter X coordinate
         Y = [y1,y2];            % catheter Y coordinate
@@ -76,9 +84,9 @@ for aa = 1:length(rot_arr)
         pct_helix = p2_helix - p1_helix; % helix global length (% of cathetler L)
         
         % define three segments along the bent length (space 1, helix, space 2) % the three variables below should sum up to 1
-        frac_space_1 = (p1_helix - (100 - pct_bent))/pct_bent;  % ratio of the bent section before helix coverage (a ratio of bent length)
-        frac_helix_bent = pct_helix/pct_bent;                   % ratio of helix coverage (a ratio of bent length)
-        frac_space_2 = (100 - p2_helix)/pct_bent;               % ratio of the bent section after helix coverage (a ratio of bent length)
+        frac_space_1 = (p1_helix - (100 - L_pct_bent))/L_pct_bent;  % ratio of the bent section before helix coverage (a ratio of bent length)
+        frac_helix_bent = pct_helix/L_pct_bent;                   % ratio of helix coverage (a ratio of bent length)
+        frac_space_2 = (100 - p2_helix)/L_pct_bent;               % ratio of the bent section after helix coverage (a ratio of bent length)
         
         % identify theta angle from the perspective of the big circle defining curvature
         th_1 = -pi/2 + frac_space_1*th_c;
@@ -105,56 +113,93 @@ for aa = 1:length(rot_arr)
         xh = M_helix(1,:); yh = M_helix(2,:); zh = M_helix(3,:);
         
         %% find apexes in X-Y projection
-        [x_int_arr,y_int_arr] = func_find_apex_rot(xh,yh,X,Y,0);
+        [x_int,y_int] = func_find_apex_rot(xh,yh,X,Y,0);
+        
+        %% save into big arrays
+        X_INT_ARR{aa,rr} = x_int;
+        Y_INT_ARR{aa,rr} = y_int;
+        X_ARR{aa,rr} = X; Y_ARR{aa,rr} = Y; Z_ARR{aa,rr} = Z;
+        XH_ARR{aa,rr} = xh; YH_ARR{aa,rr} = yh; ZH_ARR{aa,rr} = zh;
         
         %% plot
-        for ff = 1:2
-            subplot(1,2,ff);
-            hold on
-            plot3(X,Y,Z,'-','color',color_arr(rr,:),'linewidth',0.1); % plot catheter
-            plot3(xh,yh,zh,'color',color_arr(rr,:),'linewidth',1); % plot helix
-            text(X(end),Y(end),Z(end),num2str(th_end*180/pi,3),'color',color_arr(rr,:),'fontsize',12);
+        if pltflag
+            for ff = 1:2
+                subplot(1,5,ff);
+                hold on
+                plot3(X,Y,Z,'-','color',color_arr(rr,:),'linewidth',0.1); % plot catheter
+                plot3(xh,yh,zh,'color',color_arr(rr,:),'linewidth',1); % plot helix
+                text(X(end),Y(end),Z(end),num2str(th_end*180/pi,3),'color',color_arr(rr,:),'fontsize',12);
+            end
+            plot(x_int,y_int,'+','color',color_arr(rr,:),'markersize',3,'linewidth',3);
+            
+            subplot(1,5,3);
+            hold on;
+            plot(x_int,y_int,'+','color',color_arr(rr,:),'markersize',1,'linewidth',1);
+            
+            subplot(1,5,4);
+            hold on;
+            plot(rot_arr(aa),x_int,'+','color',color_arr(rr,:),'markersize',1,'linewidth',1);
+            
+            subplot(1,5,5);
+            hold on;
+            plot(rot_arr(aa),y_int,'+','color',color_arr(rr,:),'markersize',1,'linewidth',1);
         end
-        plot(x_int_arr,y_int_arr,'+','color',color_arr(rr,:),'markersize',3,'linewidth',3);
     end
     
     %% format figure
-    
-    view_arr = [-37.5+90,30; 0,90;];
-    
-    for ff = 1:2
+    if pltflag
+        view_arr = [-37.5+90,30; 0,90; 0,90];
         
-        subplot(1,2,ff);
+        for ff = 1:3
+            
+            subplot(1,5,ff);
+            
+            axis equal;
+            xlim([60,100]);
+            ylim([0,L/2]);
+            zlim([-a_helix,L/2]);
+            view(view_arr(ff,:));
+            
+            % labels
+            xlabel('x (mm)');
+            ylabel('y (mm)');
+            zlabel('z (mm)');
+            set(gca,'fontsize',12);
+        end
         
-        axis equal;
-        xlim([60,100]);
-        ylim([0,L/2]);
-        zlim([-a_helix,L/2]);
-        view(view_arr(ff,:));
+        subplot(1,5,4);
+        xlim([rot_arr(1),rot_arr(end)]); ylim([L/2,L]);
+        xlabel('\theta_{rot}');
+        ylabel('x (mm)');
         
-        % labels
-        xlabel('x (mm)');
+        subplot(1,5,5);
+        xlim([rot_arr(1),variable_arr(end)]); ylim([0,L/2]);
+        xlabel('\theta_{rot}');
         ylabel('y (mm)');
-        zlabel('z (mm)');
-        set(gca,'fontsize',12);
-    end
-    title([num2str(rot_arr(aa)) '\circ rotation'],'fontweight','normal');
-    
-    % label catheter configuration
-    subplot(1,2,1);
-    xlim([0,L]);
-    grid on
-    text(L/5,0,L/3,{[con_name ', L_{helix} = ' num2str(p1_helix) '~' num2str(p2_helix) ' %'];...
-        [num2str(n_helix) ' sines at ' num2str(a_helix) ' mm']},'fontweight','normal');
-    
-    % sizing and saving
-    set(gcf,'position',[100,100,1500,800]);
-    
-    if vidflag
-        frame = getframe(figure(1));
-        writeVideo(anim,frame);
-    else
-        pause;
+        
+        subplot(1,5,2);
+        title(['\theta_{rot} = ' num2str(rot_arr(aa)) '\circ'],'fontweight','normal');
+        
+        % label catheter configuration
+        subplot(1,5,1);
+        xlim([0,L]);
+        grid on
+        text(L/5,0,L/3,{[con_name ', L_{helix} = ' num2str(p1_helix) '~' num2str(p2_helix) ' %'];...
+            [num2str(n_helix) ' sines at ' num2str(a_helix) ' mm']},'fontweight','normal');
+        
+        % sizing and saving
+        set(gcf,'position',[100,100,1500,300]);
+        
+        if vidflag
+            frame = getframe(figure(1));
+            writeVideo(anim,frame);
+        else
+            pause;
+        end
+        for ff = 1:2
+            subplot(1,5,ff);
+            cla;
+        end
     end
 end
 
@@ -162,3 +207,5 @@ if vidflag
     close(anim);
     close;
 end
+
+save circular_approx_curVar_wSine_3D_rotate_findApex *_ARR *_arr *name p1_helix p2_helix npt_helix a_helix n_helix L L_res L_pct_bent
