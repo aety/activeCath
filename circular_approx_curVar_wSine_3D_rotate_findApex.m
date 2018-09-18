@@ -1,5 +1,7 @@
+clear; clc; ca;
+
 %% set up video maker
-vidflag = 0;
+vidflag = 1;
 
 if vidflag
     opengl('software');
@@ -9,12 +11,12 @@ if vidflag
 end
 
 %% define catheter 3D rotation (about x-axis)
-rot_arr = [0:10:50]; % array of angles to rotate the catheter by (deg)
+rot_arr = [0:15:75]; % array of angles to rotate the catheter by (deg)
 
 %% define helix
 p1_helix = 70;      % helix starting point (% length)
 p2_helix = 95;      % helix ending point (% length)
-npt_helix = 100;    % number of points of the helix
+npt_helix = 250;    % number of points of the helix
 a_helix = 1;        % amplitude of the sine wave of the helix (mm)
 n_helix = 4;        % number of sinusoids of the helix
 
@@ -24,7 +26,7 @@ res = 0.5;      % catheter spatial resolution (interval between nodes) (mm)
 pct_bent = 70;  % percent length bent (%)
 
 %% define varying parameter and associated file name and descriptions
-variable_arr = 15:15:90; % array of values for the varying parameter
+variable_arr = 0:15:90; % array of values for the varying parameter
 
 fname = 'curVar';
 var_name = '\theta_{end} (\circ)';
@@ -101,7 +103,7 @@ for aa = 1:length(rot_arr)% aa = 1;
         xh = M_helix(1,:); yh = M_helix(2,:); zh = M_helix(3,:);
         
         %% find apexes in X-Y projection
-        [x_int_arr,y_int_arr] = func_find_apex(xh,yh,X,Y,0);
+        [x_int_arr,y_int_arr] = func_find_apex_rot(xh,yh,X,Y,0);
         
         %% plot
         for ff = 1:2
