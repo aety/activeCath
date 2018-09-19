@@ -1,4 +1,4 @@
-function [x_int_arr,y_int_arr] = func_find_apex_rot(xh,yh,X,Y,plt_flg)
+function [x_pks_arr,y_pks_arr] = func_find_apex_rot(xh,yh,X,Y,plt_flg)
 % This function looks for the apexes of the sinusoidal helices wrapped
 % around around a catheter in the X-Y projection view
 % Anne Yang 2018.09.17
@@ -9,9 +9,10 @@ function [x_int_arr,y_int_arr] = func_find_apex_rot(xh,yh,X,Y,plt_flg)
 %   X: catheter x-coordinate
 %   Y: catheter y-coordinate
 %   plt_flg: toggle for plotting
-
-% load test_new
-% plt_flg = 1;
+%
+% Output variables--
+%   x_pks_arr: x-values of peaks
+%   y_pks_arr: y-values of peaks
 
 %% find intersections between two curves
 [x0,y0,~,~] = intersections(xh,yh,X,Y,0);
@@ -65,8 +66,8 @@ for ii = 1:length(x0)-1
     [pks,~,~,~] = findpeaks(tempyy,tempxx,'NPeaks',1,'SortStr','descend');   % find the maximum peak
     ind_peak(ii) = tempi(tempy==pks);                                           % find the indice of the maximum peak
 end
-x_int_arr = xh(ind_peak); % save the peak's original x location
-y_int_arr = yh(ind_peak); % save the peak's original y location
+x_pks_arr = xh(ind_peak); % save the peak's original x location
+y_pks_arr = yh(ind_peak); % save the peak's original y location
 
 %% plot
 if plt_flg

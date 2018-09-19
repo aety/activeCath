@@ -5,7 +5,7 @@ xminortick_size = diff(variable_arr(1:2))/(length(rot_arr)+1);
 
 %% set up video maker
 vidflag = 1;
-pltflag = 1;
+
 if vidflag
     opengl('software');
     anim = VideoWriter(datestr(datetime('now'),'yyyy-mm-dd-HHMMss'),'Motion JPEG AVI');
@@ -27,8 +27,8 @@ for aa = 1:length(rot_arr)
         
         X = X_ARR{aa,rr}; Y = Y_ARR{aa,rr}; Z = Z_ARR{aa,rr};
         xh = XH_ARR{aa,rr}; yh = YH_ARR{aa,rr}; zh = ZH_ARR{aa,rr};
-        x_int = X_INT_ARR{aa,rr};
-        y_int = Y_INT_ARR{aa,rr};
+        X_PKS = X_PKS_ARR{aa,rr};
+        Y_PKS = Y_PKS_ARR{aa,rr};
         
         for ff = 1:2
             subplot(1,5,ff);
@@ -37,19 +37,19 @@ for aa = 1:length(rot_arr)
             plot3(xh,yh,zh,'color',color_arr(rr,:),'linewidth',1); % plot helix
             text(X(end),Y(end),Z(end),num2str(variable_arr(rr)),'color',color_arr(rr,:),'fontsize',12);
         end
-        plot(x_int,y_int,'+','color',color_arr(rr,:),'markersize',3,'linewidth',3);
+        plot(X_PKS,Y_PKS,'+','color',color_arr(rr,:),'markersize',3,'linewidth',3);
         
         subplot(1,5,3);
         hold on;
-        plot(x_int,y_int,'-','color',color_arr(rr,:),'markersize',1,'linewidth',1);
+        plot(X_PKS,Y_PKS,'-','color',color_arr(rr,:),'markersize',1,'linewidth',1);
         
         subplot(1,5,4);
         hold on;
-        plot(variable_arr(rr) + aa*xminortick_size, x_int,'.','color',color_arr(rr,:),'markersize',8);
+        plot(variable_arr(rr) + aa*xminortick_size, X_PKS,'.','color',color_arr(rr,:),'markersize',8);
         
         subplot(1,5,5);
         hold on;
-        plot(variable_arr(rr) + aa*xminortick_size, y_int,'.','color',color_arr(rr,:),'markersize',8);
+        plot(variable_arr(rr) + aa*xminortick_size, Y_PKS,'.','color',color_arr(rr,:),'markersize',8);
         
         
     end

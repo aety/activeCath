@@ -29,8 +29,8 @@ Z_ARR = X_ARR;
 XH_ARR = X_ARR;
 YH_ARR = X_ARR;
 ZH_ARR = X_ARR;
-X_INT_ARR= X_ARR;
-Y_INT_ARR = X_ARR;
+X_PKS_ARR= X_ARR;
+Y_PKS_ARR = X_ARR;
 
 %% loop for rotation
 for aa = 1:length(rot_arr)
@@ -101,99 +101,18 @@ for aa = 1:length(rot_arr)
         xh = M_helix(1,:); yh = M_helix(2,:); zh = M_helix(3,:);
         
         %% find apexes in X-Y projection
-        [x_int,y_int] = func_find_apex_rot(xh,yh,X,Y,0);
+        [x_pks,y_pks] = func_find_apex_rot(xh,yh,X,Y,0);
         
         %% save into big arrays
-        X_INT_ARR{aa,rr} = x_int;
-        Y_INT_ARR{aa,rr} = y_int;
+        X_PKS_ARR{aa,rr} = x_pks;
+        Y_PKS_ARR{aa,rr} = y_pks;
         X_ARR{aa,rr} = X; Y_ARR{aa,rr} = Y; Z_ARR{aa,rr} = Z;
         XH_ARR{aa,rr} = xh; YH_ARR{aa,rr} = yh; ZH_ARR{aa,rr} = zh;
         
-        %% plot
-        if pltflag
-            for ff = 1:2
-                subplot(1,5,ff);
-                hold on
-                plot3(X,Y,Z,'-','color',color_arr(rr,:),'linewidth',0.1); % plot catheter
-                plot3(xh,yh,zh,'color',color_arr(rr,:),'linewidth',1); % plot helix
-                text(X(end),Y(end),Z(end),num2str(th_end*180/pi,3),'color',color_arr(rr,:),'fontsize',12);
-            end
-            plot(x_int,y_int,'+','color',color_arr(rr,:),'markersize',3,'linewidth',3);
-            
-            subplot(1,5,3);
-            hold on;
-            plot(x_int,y_int,'+','color',color_arr(rr,:),'markersize',1,'linewidth',1);
-            
-            subplot(1,5,4);
-            hold on;
-            plot(rot_arr(aa),x_int,'+','color',color_arr(rr,:),'markersize',1,'linewidth',1);
-            
-            subplot(1,5,5);
-            hold on;
-            plot(rot_arr(aa),y_int,'+','color',color_arr(rr,:),'markersize',1,'linewidth',1);
-        end
+        
     end
     
-    %% format figure
-    if pltflag
-        view_arr = [-37.5+90,30; 0,90; 0,90];
-        
-        for ff = 1:3
-            
-            subplot(1,5,ff);
-            
-            axis equal;
-            xlim([60,100]);
-            ylim([0,L/2]);
-            zlim([-a_helix,L/2]);
-            view(view_arr(ff,:));
-            
-            % labels
-            xlabel('x (mm)');
-            ylabel('y (mm)');
-            zlabel('z (mm)');
-            set(gca,'fontsize',12);
-        end
-        
-        subplot(1,5,4);
-        xlim([rot_arr(1),rot_arr(end)]); ylim([L/2,L]);
-        xlabel('\theta_{rot}');
-        ylabel('x (mm)');
-        
-        subplot(1,5,5);
-        xlim([rot_arr(1),variable_arr(end)]); ylim([0,L/2]);
-        xlabel('\theta_{rot}');
-        ylabel('y (mm)');
-        
-        subplot(1,5,2);
-        title(['\theta_{rot} = ' num2str(rot_arr(aa)) '\circ'],'fontweight','normal');
-        
-        % label catheter configuration
-        subplot(1,5,1);
-        xlim([0,L]);
-        grid on
-        text(L/5,0,L/3,{[con_name ', L_{helix} = ' num2str(p1_helix) '~' num2str(p2_helix) ' %'];...
-            [num2str(n_helix) ' sines at ' num2str(a_helix) ' mm']},'fontweight','normal');
-        
-        % sizing and saving
-        set(gcf,'position',[100,100,1500,300]);
-        
-        if vidflag
-            frame = getframe(figure(1));
-            writeVideo(anim,frame);
-        else
-            pause;
-        end
-        for ff = 1:2
-            subplot(1,5,ff);
-            cla;
-        end
-    end
-end
-
-if vidflag
-    close(anim);
-    close;
+    
 end
 
 save circular_approx_curVar_wSine_3D_rotate_findApex *_ARR *_arr *name p1_helix p2_helix npt_helix a_helix n_helix L L_res L_pct_bent
