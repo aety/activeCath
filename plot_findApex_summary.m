@@ -2,12 +2,10 @@ clear; clc; ca;
 load circular_approx_curVar_wSine_3D_rotate_findApex
 color_arr = colormap(cool(length(rot_arr)));
 
-%% loop for rotation
-
-for aa = 1:length(rot_arr)
+%%
+for aa = 1:length(rot_arr) % rotation
     
-    %% loop for bending the catheter
-    for rr = 1:length(variable_arr)
+    for rr = 1:length(variable_arr) % bending
         
         X = X_ARR{aa,rr}; Y = Y_ARR{aa,rr}; Z = Z_ARR{aa,rr};
         xh = XH_ARR{aa,rr}; yh = YH_ARR{aa,rr}; zh = ZH_ARR{aa,rr};
@@ -22,6 +20,8 @@ for aa = 1:length(rot_arr)
     end
     
 end
+
+%% format
 ttl_arr = {'x_{apex} (mm)','y_{apex} (mm)'};
 for ff = 1:2
     subplot(1,3,ff);
@@ -39,7 +39,7 @@ set(hc,'ytick',1/(length(rot_arr))*(1:length(rot_arr)),'yticklabel',rot_arr);
 hc.Box = 'off';
 ylabel(hc,'\theta_{rot} (\circ)','fontsize',12);
 
-set(gcf,'position',[60,100,1200,400]);
+set(gcf,'position',[60,100,900,300]);
 set(gcf,'paperposition',[0,0,6,2],'unit','inches');
 print('-dtiff','-r300','plot_findApex_summary');
 close;
