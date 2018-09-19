@@ -1,15 +1,5 @@
 clear; clc; ca;
 
-%% set up video maker
-vidflag = 0;
-pltflag = 0;
-if vidflag
-    opengl('software');
-    anim = VideoWriter(datestr(datetime('now'),'yyyy-mm-dd-HHMMss'),'Motion JPEG AVI');
-    anim.FrameRate = 2;
-    open(anim);
-end
-
 %% define catheter 3D rotation (about x-axis)
 rot_arr = 0:10:90; % array of angles to rotate the catheter by (deg)
 
@@ -31,9 +21,7 @@ variable_arr = 10:10:90; % array of values for the varying parameter
 fname = 'curVar';
 var_name = '\theta_{end} (\circ)';
 con_name = ['L_{bend} = ' num2str(L_pct_bent) '%'];
-if pltflag
-    color_arr = colormap(parula(length(variable_arr)));
-end
+
 %% preallocate
 X_ARR = cell(length(rot_arr),length(variable_arr));
 Y_ARR = X_ARR;
