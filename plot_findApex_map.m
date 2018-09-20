@@ -39,12 +39,11 @@ end
 % color_arr =
 colormap(plasma(length(rot_arr)));
 
-xlabel('x_{apex}');
-ylabel('y_{apex}');
-zlabel('\theta_{bend}');
+
+zlabel('\theta_{bend} (\circ)');
 view(3);
 hc = colorbar;
-ylabel(hc,'\theta_{rot}');
+ylabel(hc,'\theta_{rot} (\circ)');
 hc.Box = 'off';
 
 %% by bending-- plot surface
@@ -61,8 +60,6 @@ end
 % color_arr =
 colormap(viridis(length(rot_arr)));
 
-xlabel('x_{apex} (mm)');
-ylabel('y_{apex} (mm)');
 zlabel('\theta_{rot} (\circ)');
 view(3);
 hc = colorbar;
@@ -72,6 +69,8 @@ hc.Box = 'off';
 %% format
 for ff = 1:2
     figure(ff);
+    xlabel('x_{apex} (mm)');
+    ylabel('y_{apex} (mm)');
     grid on;
     axis tight;
     set(gca,'fontsize',8);
