@@ -1,5 +1,5 @@
 clear; clc; ca;
-load circular_approx_curVar_wSine_3D_rotate_findApex
+load circular_approx_curVar_wSine_3D_rotate_findApex_fine
 color_arr = colormap(viridis(length(variable_arr)));
 xminortick_size = diff(variable_arr(1:2))/(length(rot_arr)+1);
 

@@ -1,8 +1,6 @@
 clear; clc; ca;
-load circular_approx_curVar_wSine_3D_rotate_findApex
-color_arr = colormap(plasma);
-
-%% loop for rotation
+ver_name = '_fine';
+load(['circular_approx_curVar_wSine_3D_rotate_findApex' ver_name]);
 
 %% find the maximum node number
 temp_size = nan(length(rot_arr),length(variable_arr));
@@ -61,7 +59,7 @@ ylabel(hc,'\theta_{rot} (\circ)','fontsize',8);
 
 set(gcf,'position',[60,100,900,300]);
 set(gcf,'paperposition',[0,0,6,2],'unit','inches');
-print('-dtiff','-r300','plot_findApex_summary_surf');
+print('-dtiff','-r300',['plot_findApex_summary_surf' ver_name]);
 close;
 
 %% plot surfaces-- by bend
@@ -104,5 +102,5 @@ ylabel(hc,'\theta_{bend} (\circ)','fontsize',8);
 
 set(gcf,'position',[60,100,900,300]);
 set(gcf,'paperposition',[0,0,6,2],'unit','inches');
-print('-dtiff','-r300','plot_findApex_summary_surf_byBend');
+print('-dtiff','-r300',['plot_findApex_summary_surf_byBend' ver_name]);
 close;

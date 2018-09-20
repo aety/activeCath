@@ -1,14 +1,14 @@
 clear; clc; ca;
 
 %% define catheter 3D rotation (about x-axis)
-rot_arr = 0:10:90; % array of angles to rotate the catheter by (deg)
+rot_arr = 0:10:80; % array of angles to rotate the catheter by (deg)
 
 %% define helix
 p1_helix = 70;      % helix starting point (% length)
 p2_helix = 95;      % helix ending point (% length)
 npt_helix = 250;    % number of points of the helix
 a_helix = 1;        % amplitude of the sine wave of the helix (mm)
-n_helix = 4;        % number of sinusoids of the helix
+n_helix = 10;        % number of sinusoids of the helix
 
 %% define catheter
 L = 100;        % length of catheter (mm)
@@ -115,4 +115,4 @@ for aa = 1:length(rot_arr)
     
 end
 
-save circular_approx_curVar_wSine_3D_rotate_findApex *_ARR *_arr *name p1_helix p2_helix npt_helix a_helix n_helix L L_res L_pct_bent
+save circular_approx_curVar_wSine_3D_rotate_findApex_fine *_ARR *_arr *name p1_helix p2_helix npt_helix a_helix n_helix L L_res L_pct_bent
