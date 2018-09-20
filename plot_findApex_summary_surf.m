@@ -1,6 +1,6 @@
 clear; clc; ca;
 load circular_approx_curVar_wSine_3D_rotate_findApex
-color_arr = colormap(cool(length(rot_arr)));
+color_arr = colormap(cool);
 
 %% loop for rotation
 
@@ -16,7 +16,7 @@ clear temp_size
 
 %% reshape matrices
 XX = nan(ss,length(variable_arr),length(rot_arr));
-YY = XX; NN = XX; TT = XX; AA = XX;
+YY = XX; NN = XX; BB = XX; AA = XX;
 
 for aa = 1:length(rot_arr)
     for rr = 1:length(variable_arr)
@@ -29,7 +29,7 @@ for aa = 1:length(rot_arr)
         XX(1:length(x_pks),rr,aa) = x_pks;
         YY(1:length(y_pks),rr,aa) = y_pks;
         NN(1:length(x_pks),rr,aa) = 1:length(x_pks);
-        TT(1:length(x_pks),rr,aa) = variable_arr(rr)*ones(length(x_pks),1);
+        BB(1:length(x_pks),rr,aa) = variable_arr(rr)*ones(length(x_pks),1);
         AA(1:length(x_pks),rr,aa) = rot_arr(aa)*ones(length(x_pks),1);
     end
 end
@@ -37,9 +37,9 @@ end
 %% plot surfaces
 for aa = 1:length(rot_arr)
     subplot(1,3,1); hold on;
-    surf(NN(:,:,aa),TT(:,:,aa),XX(:,:,aa),AA(:,:,aa),'edgecolor','none');
+        surf(NN(:,:,aa),BB(:,:,aa),XX(:,:,aa),AA(:,:,aa),'edgecolor','none');
     subplot(1,3,2); hold on;
-    surf(NN(:,:,aa),TT(:,:,aa),YY(:,:,aa),AA(:,:,aa),'edgecolor','none');
+        surf(NN(:,:,aa),BB(:,:,aa),YY(:,:,aa),AA(:,:,aa),'edgecolor','none');
 end
 
 zlb_arr = {'x_{apex} (mm)','y_{apex} (mm)'};
@@ -49,12 +49,20 @@ for ff = 1:2
     xlabel('n\circ');
     ylabel('\theta_{bend} (\circ)');
     zlabel(zlb_arr{ff});
-    %     view(3);
-    view([0,0]);
+    view(3);
     axis tight;
     grid on;
     set(gca,'fontsize',8);
 end
 
+subplot(1,3,3);
+axis off;
+hc = colorbar;
+set(hc,'ytick',1/(length(rot_arr))*(1:length(rot_arr)),'yticklabel',rot_arr);
+hc.Box = 'off';
+ylabel(hc,'\theta_{rot} (\circ)','fontsize',12);
+
 set(gcf,'position',[60,100,900,300]);
 set(gcf,'paperposition',[0,0,6,2],'unit','inches');
+print('-dtiff','-r300','plot_findApex_summary_surf');
+close;
