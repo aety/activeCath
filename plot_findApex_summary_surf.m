@@ -19,10 +19,7 @@ XX = nan(ss,length(variable_arr),length(rot_arr));
 YY = XX; NN = XX; BB = XX; AA = XX;
 
 for aa = 1:length(rot_arr)
-    for rr = 1:length(variable_arr)
-        
-        %         X = X_ARR{aa,rr}; Y = Y_ARR{aa,rr}; Z = Z_ARR{aa,rr};
-        %         xh = XH_ARR{aa,rr}; yh = YH_ARR{aa,rr}; zh = ZH_ARR{aa,rr};
+    for rr = 1:length(variable_arr)        
         x_pks = X_PKS_ARR{aa,rr};
         y_pks = Y_PKS_ARR{aa,rr};
         
@@ -60,9 +57,51 @@ axis off;
 hc = colorbar;
 set(hc,'ytick',1/(length(rot_arr))*(1:length(rot_arr)),'yticklabel',rot_arr);
 hc.Box = 'off';
-ylabel(hc,'\theta_{rot} (\circ)','fontsize',12);
+ylabel(hc,'\theta_{rot} (\circ)','fontsize',8);
 
 set(gcf,'position',[60,100,900,300]);
 set(gcf,'paperposition',[0,0,6,2],'unit','inches');
 print('-dtiff','-r300','plot_findApex_summary_surf');
+close;
+
+%% plot surfaces-- by bend
+% rearrange from [node number, bending, rotation] to [node number,
+% rotation, bending]
+
+XX = permute(XX,[1,3,2]);
+YY = permute(YY,[1,3,2]);
+NN = permute(NN,[1,3,2]);
+BB = permute(BB,[1,3,2]);
+AA = permute(AA,[1,3,2]);
+
+for rr = 1:length(variable_arr)
+    subplot(1,3,1); hold on;
+        surf(NN(:,:,rr),AA(:,:,rr),XX(:,:,rr),BB(:,:,rr),'edgecolor','none');
+    subplot(1,3,2); hold on;
+        surf(NN(:,:,rr),AA(:,:,rr),YY(:,:,rr),BB(:,:,rr),'edgecolor','none');
+end
+
+zlb_arr = {'x_{apex} (mm)','y_{apex} (mm)'};
+for ff = 1:2
+    subplot(1,3,ff);
+    axis tight
+    xlabel('n\circ');
+    ylabel('\theta_{rot} (\circ)');
+    zlabel(zlb_arr{ff});
+    view(3);
+    axis tight;
+    grid on;
+    set(gca,'fontsize',8);
+end
+
+subplot(1,3,3);
+axis off;
+hc = colorbar;
+set(hc,'ytick',1/(length(variable_arr))*(1:length(variable_arr)),'yticklabel',variable_arr);
+hc.Box = 'off';
+ylabel(hc,'\theta_{bend} (\circ)','fontsize',8);
+
+set(gcf,'position',[60,100,900,300]);
+set(gcf,'paperposition',[0,0,6,2],'unit','inches');
+print('-dtiff','-r300','plot_findApex_summary_surf_byBend');
 close;
