@@ -1,6 +1,6 @@
 clear; clc; ca;
 load circular_approx_curVar_wSine_3D_rotate_findApex
-color_arr = colormap(cool);
+color_arr = colormap(plasma);
 
 %% loop for rotation
 

@@ -1,7 +1,7 @@
 clear; clc; ca;
 load circular_approx_curVar_wSine_3D_rotate_findApex
-color_arr = colormap(parula(length(variable_arr)));
-xminortick_size = diff(variable_arr(1:2))/(length(rot_arr)+1);
+color_arr = colormap(viridis(length(variable_arr)));
+% xminortick_size = diff(variable_arr(1:2))/(length(rot_arr)+1);
 
 %% set up video maker
 vidflag = 1;
@@ -17,7 +17,8 @@ end
 view_arr = [-37.5+90,30; 0,90; 0,90; 0,90; 0,90];
 xlab_arr = {'x (mm)','x (mm)','x_{apex} (mm)','\theta_{bend} (\circ)','\theta_{bend} (\circ)'};
 ylab_arr = {'y (mm)','y (mm)','y_{apex} (mm)','x_{apex} (mm)','y_{apex} (mm)'};
-xlim_arr = {[60,100],[60,100],[70,95],[variable_arr(1),variable_arr(end) + xminortick_size*length(rot_arr)],[variable_arr(1),variable_arr(end) + xminortick_size*length(rot_arr)]};
+% xlim_arr = {[60,100],[60,100],[70,95],[variable_arr(1),variable_arr(end) + xminortick_size*length(rot_arr)],[variable_arr(1),variable_arr(end) + xminortick_size*length(rot_arr)]};
+xlim_arr = {[60,100],[60,100],[70,95],[variable_arr(1),variable_arr(end)],[variable_arr(1),variable_arr(end)]};
 ylim_arr = {[0,L/2],[0,L/2],[0,40],[70,95],[0,40]};
 
 for aa = 1:length(rot_arr)
@@ -41,15 +42,18 @@ for aa = 1:length(rot_arr)
         
         subplot(1,5,3);
         hold on;
-        plot(X_PKS,Y_PKS,'-','color',color_arr(rr,:),'markersize',1,'linewidth',1);
+        plot(X_PKS,Y_PKS,'.','color',color_arr(rr,:),'markersize',8);
         
         subplot(1,5,4);
         hold on;
-        plot(variable_arr(rr) + aa*xminortick_size, X_PKS,'.','color',color_arr(rr,:),'markersize',8);
+        %         plot(variable_arr(rr) + aa*xminortick_size, X_PKS,'.','color',color_arr(rr,:),'markersize',8);
+        plot(variable_arr(rr), X_PKS,'.','color',color_arr(rr,:),'markersize',8);
+        
         
         subplot(1,5,5);
         hold on;
-        plot(variable_arr(rr) + aa*xminortick_size, Y_PKS,'.','color',color_arr(rr,:),'markersize',8);
+        %         plot(variable_arr(rr) + aa*xminortick_size, Y_PKS,'.','color',color_arr(rr,:),'markersize',8);
+        plot(variable_arr(rr), Y_PKS,'.','color',color_arr(rr,:),'markersize',8);
         
         
     end
@@ -89,10 +93,10 @@ for aa = 1:length(rot_arr)
     
     if vidflag
         frame = getframe(figure(1));
-        writeVideo(anim,frame);        
+        writeVideo(anim,frame);
     end
     
-    for ff = 1:2
+    for ff = 1:5
         subplot(1,5,ff);
         cla;
     end

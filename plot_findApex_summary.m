@@ -1,12 +1,9 @@
 clear; clc; ca;
 load circular_approx_curVar_wSine_3D_rotate_findApex
-color_arr = colormap(cool(length(rot_arr)));
+color_arr = colormap(plasma(length(rot_arr)));
 
 %%
-for aa = 1:length(rot_arr) % rotation
-    
-    %     figure(aa);
-    %     hold on;
+for aa = 1:length(rot_arr) % rotation    
     
     for rr = 1:length(variable_arr) % bending
         
@@ -15,7 +12,6 @@ for aa = 1:length(rot_arr) % rotation
         x_pks = X_PKS_ARR{aa,rr};
         y_pks = Y_PKS_ARR{aa,rr};
         
-        %         plot(x_pks,rr*ones(1,length(x_pks)),'o-');
         subplot(1,3,1); hold on;
         plot3(1:length(x_pks),variable_arr(rr)*ones(1,length(x_pks)),x_pks,'color',color_arr(aa,:),'linewidth',1);
         subplot(1,3,2); hold on;
@@ -41,7 +37,7 @@ axis off;
 hc = colorbar;
 set(hc,'ytick',1/(length(rot_arr))*(1:length(rot_arr)),'yticklabel',rot_arr);
 hc.Box = 'off';
-ylabel(hc,'\theta_{rot} (\circ)','fontsize',12);
+ylabel(hc,'\theta_{rot} (\circ)','fontsize',8);
 
 set(gcf,'position',[60,100,900,300]);
 set(gcf,'paperposition',[0,0,6,2],'unit','inches');
