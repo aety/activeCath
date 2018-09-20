@@ -1,7 +1,7 @@
 clear; clc; ca;
 load circular_approx_curVar_wSine_3D_rotate_findApex
 color_arr = colormap(viridis(length(variable_arr)));
-% xminortick_size = diff(variable_arr(1:2))/(length(rot_arr)+1);
+xminortick_size = diff(variable_arr(1:2))/(length(rot_arr)+1);
 
 %% set up video maker
 vidflag = 1;
@@ -90,6 +90,7 @@ for aa = 1:length(rot_arr)
     %             [num2str(n_helix) ' sines at ' num2str(a_helix) ' mm']},'fontweight','normal');
     
     set(gcf,'position',[100,100,1500,300]);
+    set(gcf,'color','w');
     
     if vidflag
         frame = getframe(figure(1));

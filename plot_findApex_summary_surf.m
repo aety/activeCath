@@ -67,6 +67,7 @@ close;
 %% plot surfaces-- by bend
 % rearrange from [node number, bending, rotation] to [node number,
 % rotation, bending]
+color_arr = colormap(viridis);
 
 XX = permute(XX,[1,3,2]);
 YY = permute(YY,[1,3,2]);
