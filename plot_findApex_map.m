@@ -1,7 +1,7 @@
 clear; clc; ca;
 ver_name = '_fine';
 load(['circular_approx_curVar_wSine_3D_rotate_findApex' ver_name]);
-tgl_print = 1;
+tgl_print = 0;
 
 %% find the maximum node number
 temp_size = nan(length(rot_arr),length(variable_arr));
@@ -36,7 +36,7 @@ hold on;
 for aa = 1:length(rot_arr)
     surf(XX(:,:,aa),YY(:,:,aa),BB(:,:,aa),AA(:,:,aa),...
         'edgecolor','none',...
-        'facealpha',0.5);
+        'facealpha',1);
 end
 
 colormap(plasma(length(rot_arr)));
@@ -56,7 +56,7 @@ for rr = 1:length(variable_arr)
         permute(AA(:,rr,:),[1,3,2]),...
         permute(BB(:,rr,:),[1,3,2]),...
         'edgecolor','none',...
-        'facealpha',0.5);
+        'facealpha',1);
 end
 
 colormap(viridis(length(rot_arr)));
@@ -77,7 +77,7 @@ for ff = 1:2
     if tgl_print
         set(gca,'fontsize',8);
         set(gcf,'paperposition',[0,0,4,3],'unit','inches');
-        print('-dtiff','-r300',['plot_findApex_map_' ver_name '_' num2str(ff)]);
+        print('-dtiff','-r300',['plot_findApex_map' ver_name '_' num2str(ff)]);
         close;
     else
         set(gca,'fontsize',14);
