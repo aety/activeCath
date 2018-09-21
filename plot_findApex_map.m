@@ -1,7 +1,6 @@
 clear; clc; ca;
-ver_name = '_fine';
-load(['circular_approx_curVar_wSine_3D_rotate_findApex' ver_name]);
-tgl_print = 0;
+load('circular_approx_curVar_wSine_3D_rotate_findApex');
+tgl_print = 1;
 
 %% find the maximum node number
 temp_size = nan(length(rot_arr),length(variable_arr));
@@ -77,7 +76,7 @@ for ff = 1:2
     if tgl_print
         set(gca,'fontsize',8);
         set(gcf,'paperposition',[0,0,4,3],'unit','inches');
-        print('-dtiff','-r300',['plot_findApex_map' ver_name '_' num2str(ff)]);
+        print('-dtiff','-r300',['plot_findApex_map_' num2str(ff)]);
         close;
     else
         set(gca,'fontsize',14);

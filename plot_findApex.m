@@ -1,5 +1,5 @@
 clear; clc; ca;
-load circular_approx_curVar_wSine_3D_rotate_findApex_fine
+load circular_approx_curVar_wSine_3D_rotate_findApex
 color_arr = colormap(viridis(length(variable_arr)));
 xminortick_size = diff(variable_arr(1:2))/(length(rot_arr)+1);
 
@@ -18,8 +18,8 @@ view_arr = [-37.5+90,30; 0,90; 0,90; 0,90; 0,90];
 xlab_arr = {'x (mm)','x (mm)','x_{apex} (mm)','\theta_{bend} (\circ)','\theta_{bend} (\circ)'};
 ylab_arr = {'y (mm)','y (mm)','y_{apex} (mm)','x_{apex} (mm)','y_{apex} (mm)'};
 % xlim_arr = {[60,100],[60,100],[70,95],[variable_arr(1),variable_arr(end) + xminortick_size*length(rot_arr)],[variable_arr(1),variable_arr(end) + xminortick_size*length(rot_arr)]};
-xlim_arr = {[60,100],[60,100],[70,95],[variable_arr(1),variable_arr(end)],[variable_arr(1),variable_arr(end)]};
-ylim_arr = {[0,L/2],[0,L/2],[0,40],[70,95],[0,40]};
+xlim_arr = {[0,L],[L/2,L],[L/2,L],[variable_arr(1),variable_arr(end)],[variable_arr(1),variable_arr(end)]};
+ylim_arr = {[0,L/2],[0,L/2],[0,L/2],[L/2,L],[0,L/2]};
 
 for aa = 1:length(rot_arr)
     

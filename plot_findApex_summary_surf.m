@@ -1,6 +1,5 @@
 clear; clc; ca;
-ver_name = '_fine';
-load(['circular_approx_curVar_wSine_3D_rotate_findApex' ver_name]);
+load('circular_approx_curVar_wSine_3D_rotate_findApex');
 
 %% find the maximum node number
 temp_size = nan(length(rot_arr),length(variable_arr));
@@ -30,6 +29,8 @@ for aa = 1:length(rot_arr)
 end
 
 %% plot surfaces
+colormap(plasma);
+
 for aa = 1:length(rot_arr)
     subplot(1,3,1); hold on;
         surf(NN(:,:,aa),BB(:,:,aa),XX(:,:,aa),AA(:,:,aa),'edgecolor','none');
@@ -59,14 +60,13 @@ ylabel(hc,'\theta_{rot} (\circ)','fontsize',8);
 
 set(gcf,'position',[60,100,900,300]);
 set(gcf,'paperposition',[0,0,6,2],'unit','inches');
-print('-dtiff','-r300',['plot_findApex_summary_surf' ver_name]);
+print('-dtiff','-r300','plot_findApex_summary_surf_1');
 close;
 
 %% plot surfaces-- by bend
-% rearrange from [node number, bending, rotation] to [node number,
-% rotation, bending]
-color_arr = colormap(viridis);
+colormap(viridis);
 
+% rearrange from [node number, bending, rotation] to [node number, rotation, bending]
 XX = permute(XX,[1,3,2]);
 YY = permute(YY,[1,3,2]);
 NN = permute(NN,[1,3,2]);
@@ -102,5 +102,5 @@ ylabel(hc,'\theta_{bend} (\circ)','fontsize',8);
 
 set(gcf,'position',[60,100,900,300]);
 set(gcf,'paperposition',[0,0,6,2],'unit','inches');
-print('-dtiff','-r300',['plot_findApex_summary_surf_byBend' ver_name]);
+print('-dtiff','-r300','plot_findApex_summary_surf_2');
 close;
