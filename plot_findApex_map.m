@@ -1,6 +1,6 @@
 clear; clc; ca;
 load('circular_approx_curVar_wSine_3D_rotate_findApex');
-tgl_print = 1;
+tgl_print = 0;
 
 %% find the maximum node number
 temp_size = nan(length(rot_arr),length(variable_arr));
@@ -80,7 +80,7 @@ for ff = 1:2
         close;
     else
         set(gca,'fontsize',14);
-        set(gcf,'position',[1100+700*ff,500,600,600]);
+%         set(gcf,'position',[1100+700*ff,500,600,600]);
         
     end
 end

@@ -1,7 +1,7 @@
-[A,map,transparency] = imread('Untitled.jpg');
-
-image(A);
-
-axis equal
-set(gca,'color','w');
-box off;
+for ii = 1
+    
+    [X,map,alpha,overlays] = dicomread(['DICOM\I' num2str(ii) '\IMG0']);
+    montage(X,map);
+%     pause;
+    
+end

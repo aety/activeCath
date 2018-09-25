@@ -32,11 +32,11 @@ ylabel(hc,'\theta_{bend} (\circ)','fontsize',8);
 
 axis tight;
 grid on;
-view(3);
+view(2);
 
 if tgl_print
 set(gcf,'paperposition',[0,0,4,3],'unit','inches');
-print('-dtiff','-r300','plot_findApex_map_lines_2');
+print('-dtiff','-r300','plot_findApex_map_lines_2_v2');
 close;
 else
 set(gca,'fontsize',14);
@@ -72,10 +72,10 @@ ylabel(hc,'\theta_{rot} (\circ)','fontsize',8);
 
 axis tight;
 grid on;
-view(3);
+view(2);
 if tgl_print
     set(gcf,'paperposition',[0,0,4,3],'unit','inches');
-    print('-dtiff','-r300','plot_findApex_map_lines_1');
+    print('-dtiff','-r300','plot_findApex_map_lines_1_v2');
     close;
 else
     set(gca,'fontsize',14);
