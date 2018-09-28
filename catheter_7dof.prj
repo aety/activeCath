@@ -1,17 +1,19 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration file="C:\Users\Yang\Documents\catheter\MATLAB\catheter_7dof.prj" location="C:\Users\Yang\Documents\catheter\MATLAB" name="catheter_7dof" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="2760928091" file="C:\Users\Yang\Documents\catheter\MATLAB\catheter_7dof.prj" location="C:\Users\Yang\Documents\catheter\MATLAB" name="catheter_7dof" preferred-package-location="C:\Users\Yang\Documents\catheter\MATLAB\catheter_7dof\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>catheter_7dof</param.appname>
     <param.icon />
     <param.icons />
     <param.version>1.0</param.version>
-    <param.authnamewatermark />
-    <param.email />
-    <param.company />
-    <param.summary />
-    <param.description />
+    <param.authnamewatermark>Anne YANG</param.authnamewatermark>
+    <param.email>anne.yang@isir.upmc.fr</param.email>
+    <param.company>ISIR, Sorbonne Universite</param.company>
+    <param.summary>Based on user input, this GUI displays a wire with a bendable distal portion and a helical wire wrapped around a segment.</param.summary>
+    <param.description>The display provides efficient visual intuition to guide the design of catheters (wires) and markers (helices). The display is in three windows-- full 3D view, the x-y projection of the active (bendable) portion, and the x-y projection of the peaks of the sinusoids along the helical wire. 
+
+Each time a parameter is updated, the GUI automatically updates all three plots. The parameteres defining the initial configuration can be reset by hitting the "reset" button.</param.description>
     <param.screenshot />
     <param.guid />
-    <param.installpath.string>\catheter_7dof\</param.installpath.string>
+    <param.installpath.string>\ISIR, Sorbonne Universite\catheter_7dof\</param.installpath.string>
     <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
     <param.logo />
     <param.install.notes />
@@ -41,11 +43,6 @@
       <param.icon />
       <param.icons />
       <param.version />
-      <param.authnamewatermark />
-      <param.email />
-      <param.company />
-      <param.summary />
-      <param.description />
       <param.screenshot />
       <param.guid />
       <param.installpath.string />
@@ -85,7 +82,6 @@
       <file>${PROJECT_ROOT}\_helper\getRY.m</file>
       <file>${PROJECT_ROOT}\_helper\getRZ.m</file>
       <file>${PROJECT_ROOT}\_helper\intersections.m</file>
-      <file>${PROJECT_ROOT}\_helper\viridis.m</file>
     </fileset.depfun>
     <build-deliverables>
       <file location="${PROJECT_ROOT}\catheter_7dof\for_testing" name="readme.txt" optional="true">C:\Users\Yang\Documents\catheter\MATLAB\catheter_7dof\for_testing\readme.txt</file>
