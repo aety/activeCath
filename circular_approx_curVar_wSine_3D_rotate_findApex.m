@@ -4,19 +4,19 @@ clear; clc; ca;
 rot_arr = 0:5:80; % array of angles to rotate the catheter by (deg)
 
 %% define helix
-p1_helix = 75;      % helix starting point (% length)
+p1_helix = 55;      % helix starting point (% length)
 p2_helix = 95;      % helix ending point (% length)
-npt_helix = 250;    % number of points of the helix
+npt_helix = 200;    % number of points of the helix
 a_helix = 1;        % amplitude of the sine wave of the helix (mm)
-n_helix = 6;        % number of sinusoids of the helix
+n_helix = 8;        % number of sinusoids of the helix
 
 %% define catheter
 L = 100;        % length of catheter (mm)
 L_res = 0.5;      % catheter spatial resolution (interval between nodes) (mm)
-L_pct_bent = 30;  % percent length bent (%)
+L_pct_bent = 50;  % percent length bent (%)
 
 %% define varying parameter and associated file name and descriptions
-variable_arr = 0:5:90; % array of values for the varying parameter
+variable_arr = 5:5:90; % array of values for the varying parameter
 
 fname = 'curVar';
 var_name = '\theta_{end} (\circ)';
@@ -39,9 +39,12 @@ for aa = 1:length(rot_arr)
     M_rot = getRX(alpha_rot);     % the associated rotation matrix
     
     %% loop for bending the catheter
-    for rr = 1:length(variable_arr)
+    for rr = 1:length(variable_arr)        
         
         th_end = variable_arr(rr)*pi/180;  % radius of curvature (to define bent shape)
+        if th_end==0
+            error('Bending angle cannot be zero.');
+        end
         
         %% configure catheter
         L2 = 0.01*L_pct_bent*L;

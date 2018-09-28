@@ -64,6 +64,9 @@ for ii = 1:length(x0)-1
     temp = [tempx;tempy]'; temp = sortrows(temp); temp = temp';     % sort x and y so x is in ascending order
     tempxx = temp(1,:); tempyy = temp(2,:);                         % temporarily save sorted x and y
     [pks,~,~,~] = findpeaks(tempyy,tempxx,'NPeaks',1,'SortStr','descend');   % find the maximum peak
+    if sum(tempy==pks)~=1
+        error(['One of the peaks (ii = ' num2str(ii) ') has a number of representative nodes that is not equal to 1. The helices might be too wide.']);
+    end
     ind_peak(ii) = tempi(tempy==pks);                                           % find the indice of the maximum peak
 end
 x_pks_arr = xh(ind_peak); % save the peak's original x location
