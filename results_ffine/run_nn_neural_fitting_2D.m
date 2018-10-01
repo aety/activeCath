@@ -1,7 +1,7 @@
 load nn_findpeaks_attributes_2D predictor response
 
 nn_neural_fitting_2D;
-% neuralOutput = myNeuralNetworkFunction_2D(predictor);
+neuralOutput = y';
 
 %%
 
