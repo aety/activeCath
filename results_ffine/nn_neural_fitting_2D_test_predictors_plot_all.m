@@ -26,9 +26,9 @@ for nn = nn_arr
     ylim([0,1]);
     
     legend('\theta_{rot}','\theta_{bend}','orientation','horizontal','location','south');
-    xlabel('possible datasets');
+    xlabel('possible sets of predictors');
     ylabel('R');
-    title(['n\circ of predictors = ' num2str(nn)],'fontweight','normal');
+    title(['n\circ of predictors per sample = ' num2str(nn)],'fontweight','normal');
     set(gca,'xtick',[0,size(R_arr,1)]);
     
     set(gca,'fontsize',14);
