@@ -60,4 +60,4 @@ for kk = 1:size(predictor,2)
 end
 
 %% save
-save nn_findpeaks_attributes_2D predictor response txt_arr readme;
+save nn_neural_fitting_2D_pre predictor response txt_arr readme;
