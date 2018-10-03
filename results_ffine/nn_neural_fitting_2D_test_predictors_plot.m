@@ -9,17 +9,16 @@ if vidflag
     open(anim);
 end
 
-% c_arr = colormap(viridis(length(nn_arr)));
-c_arr = zeros(12,3);
-
 for nn = nn_arr
     
     load(['nn_neural_fitting_2D_test_predictors_' num2str(nn)]);
     
     hold on;
     
-    plot(R_arr(:,1),'^','color',c_arr(nn,:));
-    plot(R_arr(:,2),'*','color',c_arr(nn,:));
+    h1 = scatter(1:length(R_arr(:,1)),R_arr(:,1),60,'dk','filled');
+    h2 = scatter(1:length(R_arr(:,2)),R_arr(:,2),60,'ok','filled');
+    alpha(h1,0.3);
+    alpha(h2,0.3);
     
     box off;
     axis tight
@@ -28,12 +27,12 @@ for nn = nn_arr
     legend('\theta_{rot}','\theta_{bend}','orientation','horizontal','location','south');
     xlabel('possible sets of predictors');
     ylabel('R');
-    title(['n\circ of predictors per sample = ' num2str(nn)],'fontweight','normal');
+    title([num2str(nn) ' predictors per sample'],'fontweight','normal');
     set(gca,'xtick',[0,size(R_arr,1)]);
     
     set(gca,'fontsize',14);
     set(gca,'position',[0.11,0.15,0.78,0.78]);
-    set(gcf,'position',[1800,600,800,400]);
+    set(gcf,'position',[100,200,800,400]);
     set(gcf,'color','w');
     
     if vidflag

@@ -64,7 +64,7 @@ for ii = 1:2
     text(5,0.5,rsp_arr{ii},'fontsize',10);
     
     set(gcf,'paperposition',[0,0,11,5],'unit','inches');
-    print('-dtiff','-r300',['nn_neural_fitting_2D_test_predictors_findBest_all_' num2str(ii)]);
-    close;
+%     print('-dtiff','-r300',['nn_neural_fitting_2D_test_predictors_findBest_all_' num2str(ii)]);
+%     close;
     
 end

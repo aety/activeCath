@@ -2,7 +2,7 @@ clear;clc;ca;
 
 %% load pre-processed data from simulation
 
-load nn_findpeaks_attributes_2D
+load nn_neural_fitting_2D_pre
 predictor = predictor(:,4:end); % get rid of the first three (sums and means are redundant)
 txt_arr = txt_arr(4:end);       % get rid of the first three (sums and means are redundant)
 
