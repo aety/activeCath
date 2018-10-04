@@ -1,5 +1,5 @@
-nn_arr = 1:12;
-n_lab = 5; % number of predictors to label by text
+nn_arr = 1:24; % subscripts of files to load 
+n_lab = 4; % number of predictors to label by text
 
 vidflag = 1;
 
