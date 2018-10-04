@@ -80,5 +80,5 @@ for nn = 1:length(n_arr)
         R_arr(kk,:) = r;
         N_arr{kk} = net;
     end
-    save(['nn_neural_fitting_2D_test_predictors_' num2str(n)],'ind_arr','N_arr','predictor_original','R_arr','txt_arr');
+    save(['nn_neural_fitting_2D_test_predictors_' num2str(nn)],'ind_arr','N_arr','predictor_original','R_arr','txt_arr');
 end
