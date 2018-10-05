@@ -21,6 +21,8 @@ for nn = 1:length(n_arr)
     %%
     R_arr = nan(size(ind_arr,1),2); % preallocate
     N_arr = cell(1,size(ind_arr,1)); % preallocate
+    P_arr = nan(1,size(ind_arr,1)); % preallocate
+    e_arr = cell(1,size(ind_arr,1)); % preallocate
     
     for kk = 1:size(ind_arr,1)
         
@@ -77,8 +79,10 @@ for nn = 1:length(n_arr)
         
         [r,m,b] = regression(t,y);
         
+        P_arr(kk) = performance;
         R_arr(kk,:) = r;
         N_arr{kk} = net;
+        e_arr{kk} = e;
     end
-    save(['nn_neural_fitting_2D_test_predictors_' num2str(nn)],'ind_arr','N_arr','predictor_original','R_arr','txt_arr');
+    save(['nn_neural_fitting_2D_test_predictors_' num2str(nn)],'ind_arr','N_arr','predictor_original','R_arr','txt_arr','P_arr','e_arr');
 end
