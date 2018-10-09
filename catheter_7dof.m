@@ -22,7 +22,7 @@ function varargout = catheter_7dof(varargin)
 
 % Edit the above text to modify the response to help catheter_7dof
 
-% Last Modified by GUIDE v2.5 28-Sep-2018 11:56:59
+% Last Modified by GUIDE v2.5 09-Oct-2018 15:58:36
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -683,6 +683,10 @@ function configure_catheter_and_plot(hObject, eventdata, handles)
 
 clear_axes(hObject, eventdata, handles);
 
+% define camera
+cam_cl = [0,0.4470,0.7410]; % define camera color in RGB
+camAngle = get(handles.slider_cam,'Value')*pi/180;
+
 % define catheter
 L = str2double(get(handles.edit_L,'String'));            % length of catheter (mm)
 L_pct_bent = str2double(get(handles.edit_L_act,'String'));   % active length (%)
@@ -769,32 +773,61 @@ X = X + trans_x; xh = xh + trans_x;
 Y = Y + trans_y; yh = yh + trans_y;
 Z = Z + trans_z; zh = zh + trans_z;
 
+% prepare to plot
+c_arr = colormap(lines); % color array 
+ii_arr = 1 + [0,length(x1)]; % index along the catheter to start plotting from
+hh_arr = {handles.axes1,handles.axes2,handles.axes3}; % subplot handles
+vv_arr = [-37.5,30; 0,90; 0,90]; % view in each subplot
+xx_arr = {'x','x_c','x_c'}; % xlabel in each subplot
+yy_arr = {'y','y_c','y_c'}; % ylabel in each subplot
+zz_arr = {'z','z_c','z_c'}; % zlabel in each subplot
+axcl_arr = {'k',cam_cl,cam_cl}; % axis label color in each subplot
+
+% ------------ plot 1 ------------
+% plot 3D view
+hh = 1;
+hold(hh_arr{hh},'on');
+plot3(X(ii_arr(hh):end),Y(ii_arr(hh):end),Z(ii_arr(hh):end),'-','color',c_arr(3,:),'linewidth',2,'parent',hh_arr{hh}); % plot catheter
+plot3(xh,yh,zh,'color',c_arr(4,:),'linewidth',1,'parent',hh_arr{hh}); % plot helix
+
+% plot origin
+plot3(0+trans_x,0+trans_y,0+trans_z,'ko','linewidth',2,'parent',hh_arr{hh});
+
+% plot camera
+plotCamera('Location',[L/2,0,L],'Orientation',getRY(-camAngle),'Size',10,'Label','camera','Color',cam_cl,'Opacity',0.2,'AxesVisible',1,'parent',hh_arr{hh});
+
+% ------------ plot 2 & 3 ------------
+
+% rotate according to camera angle 
+temp = getRY(camAngle)*[X;Y;Z];
+X = temp(1,:); Y = temp(2,:); 
+temp = getRY(camAngle)*[xh;yh;zh];
+xh = temp(1,:); yh = temp(2,:);
+
 % find apexes in X-Y projection
 [x_pks,y_pks] = func_find_apex_rot(xh,yh,X,Y,0);
 
-% plot
-c_arr = colormap(lines);
-ii_arr = 1 + [0,length(x1)];
-hh_arr = {handles.axes1,handles.axes2,handles.axes3};
-vv_arr = [-37.5,30; 0,90; 0,90];
-for hh = 1:2
-    hold(hh_arr{hh},'on');
-    plot3(X(ii_arr(hh):end),Y(ii_arr(hh):end),Z(ii_arr(hh):end),'-','color',c_arr(3,:),'linewidth',2,'parent',hh_arr{hh}); % plot catheter
-    plot3(xh,yh,zh,'color',c_arr(1,:),'linewidth',1,'parent',hh_arr{hh}); % plot helix
-end
+% plot camera views 
+hh = 2;
+hold(hh_arr{hh},'on');
+plot(X(ii_arr(hh):end),Y(ii_arr(hh):end),'-','color',c_arr(3,:),'linewidth',2,'parent',hh_arr{hh}); % plot catheter
+plot(xh,yh,'color',c_arr(4,:),'linewidth',1,'parent',hh_arr{hh}); % plot helix
+
+% plot peaks
 for hh = 2:3
     plot(x_pks,y_pks,'.','color',c_arr(2,:),'markersize',14,'parent',hh_arr{hh});
 end
 
+% ------------ configure plots ------------
 for hh = 1:3
     view(hh_arr{hh},vv_arr(hh,:));
     axis(hh_arr{hh},'equal');
-    xlabel(hh_arr{hh},'x (mm)');
-    ylabel(hh_arr{hh},'y (mm)');
-    zlabel(hh_arr{hh},'z (mm)');
+    xlabel(hh_arr{hh},[xx_arr{hh} ' (mm)'],'color',axcl_arr{hh});
+    ylabel(hh_arr{hh},[yy_arr{hh} ' (mm)'],'color',axcl_arr{hh});
+    zlabel(hh_arr{hh},[zz_arr{hh} ' (mm)']);
     box(hh_arr{hh},'off');
 end
-grid(handles.axes1,'on');
+grid(hh_arr{1},'on');
 
 
 
@@ -828,4 +861,62 @@ set(handles.edit_yaw,'String',num2str(0));   % yaw (degree)
 set(handles.edit_pitch,'String',num2str(0)); % pitch (degree)
 set(handles.edit_bend,'String',num2str(1));  % bending (degree)
 
+set(handles.edit_cam,'String',num2str(0));  % camera rotation (degree)
+set(handles.slider_cam,'Value',0);          % camera rotation (degree)
+
 configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+% --- Executes during object creation, after setting all properties.
+function uibuttongroup3_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to uibuttongroup3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes on slider movement.
+function slider_cam_Callback(hObject, eventdata, handles)
+% hObject    handle to slider_cam (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+camAngle = get(hObject,'Value');
+set(handles.edit_cam,'String',num2str(camAngle));
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+% --- Executes during object creation, after setting all properties.
+function slider_cam_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider_cam (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+
+function edit_cam_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_cam (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_cam as text
+%        str2double(get(hObject,'String')) returns contents of edit_cam as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit_cam_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_cam (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

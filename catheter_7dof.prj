@@ -1,14 +1,14 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="2760928091" file="C:\Users\Yang\Documents\catheter\MATLAB\catheter_7dof.prj" location="C:\Users\Yang\Documents\catheter\MATLAB" name="catheter_7dof" preferred-package-location="C:\Users\Yang\Documents\catheter\MATLAB\catheter_7dof\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration file="C:\Users\Yang\Documents\catheter\MATLAB\catheter_7dof.prj" location="C:\Users\Yang\Documents\catheter\MATLAB" name="catheter_7dof" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>catheter_7dof</param.appname>
     <param.icon />
     <param.icons />
-    <param.version>1.0</param.version>
+    <param.version>2.0</param.version>
     <param.authnamewatermark>Anne YANG</param.authnamewatermark>
     <param.email>anne.yang@isir.upmc.fr</param.email>
     <param.company>ISIR, Sorbonne Universite</param.company>
-    <param.summary>Based on user input, this GUI displays a wire with a bendable distal portion and a helical wire wrapped around a segment.</param.summary>
-    <param.description>The display provides efficient visual intuition to guide the design of catheters (wires) and markers (helices). The display is in three windows-- full 3D view, the x-y projection of the active (bendable) portion, and the x-y projection of the peaks of the sinusoids along the helical wire. 
+    <param.summary>Based on user input, this GUI displays a wire with a bendable distal portion and the tracked peaks of a surrounding helix.</param.summary>
+    <param.description>The display provides efficient visual intuition to guide the design of catheters (wires) and markers (helices). The display is in three windows-- full 3D view, the x-y projection of the active (bendable) portion, and the camera view (projection) of the peaks of the sinusoids along the helical wire. The camera can be rotated about the y-axis.
 
 Each time a parameter is updated, the GUI automatically updates all three plots. The parameteres defining the initial configuration can be reset by hitting the "reset" button.</param.description>
     <param.screenshot />
@@ -42,7 +42,6 @@ Each time a parameter is updated, the GUI automatically updates all three plots.
     <unset>
       <param.icon />
       <param.icons />
-      <param.version />
       <param.screenshot />
       <param.guid />
       <param.installpath.string />

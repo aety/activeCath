@@ -1,0 +1,1891 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>catheter_7dof</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-10-09"><meta name="DC.source" content="catheter_7dof.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#3">get default parameters</a></li><li><a href="#4">initial plot</a></li></ul></div><pre class="codeinput"><span class="keyword">function</span> varargout = catheter_7dof(varargin)
+<span class="comment">% CATHETER_7DOF MATLAB code for catheter_7dof.fig</span>
+<span class="comment">%      CATHETER_7DOF, by itself, creates a new CATHETER_7DOF or raises the existing</span>
+<span class="comment">%      singleton*.</span>
+<span class="comment">%</span>
+<span class="comment">%      H = CATHETER_7DOF returns the handle to a new CATHETER_7DOF or the handle to</span>
+<span class="comment">%      the existing singleton*.</span>
+<span class="comment">%</span>
+<span class="comment">%      CATHETER_7DOF('CALLBACK',hObject,eventData,handles,...) calls the local</span>
+<span class="comment">%      function named CALLBACK in CATHETER_7DOF.M with the given input arguments.</span>
+<span class="comment">%</span>
+<span class="comment">%      CATHETER_7DOF('Property','Value',...) creates a new CATHETER_7DOF or raises the</span>
+<span class="comment">%      existing singleton*.  Starting from the left, property value pairs are</span>
+<span class="comment">%      applied to the GUI before catheter_7dof_OpeningFcn gets called.  An</span>
+<span class="comment">%      unrecognized property name or invalid value makes property application</span>
+<span class="comment">%      stop.  All inputs are passed to catheter_7dof_OpeningFcn via varargin.</span>
+<span class="comment">%</span>
+<span class="comment">%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one</span>
+<span class="comment">%      instance to run (singleton)".</span>
+<span class="comment">%</span>
+<span class="comment">% See also: GUIDE, GUIDATA, GUIHANDLES</span>
+
+<span class="comment">% Edit the above text to modify the response to help catheter_7dof</span>
+
+<span class="comment">% Last Modified by GUIDE v2.5 09-Oct-2018 15:58:36</span>
+
+<span class="comment">% Begin initialization code - DO NOT EDIT</span>
+gui_Singleton = 1;
+gui_State = struct(<span class="string">'gui_Name'</span>,       mfilename, <span class="keyword">...</span>
+    <span class="string">'gui_Singleton'</span>,  gui_Singleton, <span class="keyword">...</span>
+    <span class="string">'gui_OpeningFcn'</span>, @catheter_7dof_OpeningFcn, <span class="keyword">...</span>
+    <span class="string">'gui_OutputFcn'</span>,  @catheter_7dof_OutputFcn, <span class="keyword">...</span>
+    <span class="string">'gui_LayoutFcn'</span>,  [] , <span class="keyword">...</span>
+    <span class="string">'gui_Callback'</span>,   []);
+<span class="keyword">if</span> nargin &amp;&amp; ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+<span class="keyword">else</span>
+    gui_mainfcn(gui_State, varargin{:});
+<span class="keyword">end</span>
+<span class="comment">% End initialization code - DO NOT EDIT</span>
+
+
+
+
+<span class="comment">% --- Executes just before catheter_7dof is made visible.</span>
+<span class="keyword">function</span> catheter_7dof_OpeningFcn(hObject, eventdata, handles, varargin)
+</pre><pre class="codeinput"><span class="comment">% This function has no output args, see OutputFcn.</span>
+<span class="comment">% hObject    handle to figure</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+<span class="comment">% varargin   command line arguments to catheter_7dof (see VARARGIN)</span>
+
+<span class="comment">% Choose default command line output for catheter_7dof</span>
+handles.output = hObject;
+
+<span class="comment">% Update handles structure</span>
+guidata(hObject, handles);
+</pre><h2 id="3">get default parameters</h2><p>% % % global initialValues; % % % % % % initialValues = [ % % %     str2double(get(handles.edit_L,'String'));            % length of catheter (mm) % % %     str2double(get(handles.edit_L_act,'String'));   % active length (%) % % %     str2double(get(handles.edit_L_res,'String'));        % number of nodes along catheter length % % % % % %     str2double(get(handles.edit_h_1,'String'));     % helix starting point (% length) % % %     str2double(get(handles.edit_h_2,'String'));     % helix ending point (% length) % % %     str2double(get(handles.edit_h_n,'String'));    % number of points of the helix % % %     str2double(get(handles.edit_h_a,'String'));      % amplitude of the sine wave of the helix (mm) % % %     str2double(get(handles.edit_h_w,'String'));      % number of sinusoids of the helix % % % % % %     str2double(get(handles.edit_x,'String')); % base x-translation % % %     str2double(get(handles.edit_y,'String')); % base y-translation % % %     str2double(get(handles.edit_z,'String')); % base z-translation % % % % % %     get(handles.slider_roll, 'Value')*pi/180;   % roll (degree) % % %     get(handles.slider_yaw, 'Value')*pi/180;     % yaw (degree) % % %     get(handles.slider_pitch, 'Value')*pi/180;  % pitch (degree) % % %     get(handles.slider_bend, 'Value')*pi/180;  % bending (degree) % % %     ];</p><h2 id="4">initial plot</h2><pre class="codeinput">configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+<span class="comment">% UIWAIT makes catheter_7dof wait for user response (see UIRESUME)</span>
+<span class="comment">% uiwait(handles.figure1);</span>
+
+
+<span class="comment">% --- Outputs from this function are returned to the command line.</span>
+</pre><img vspace="5" hspace="5" src="catheter_7dof_01.png" alt=""> <pre class="codeinput"><span class="keyword">function</span> varargout = catheter_7dof_OutputFcn(hObject, eventdata, handles)
+<span class="comment">% varargout  cell array for returning output args (see VARARGOUT);</span>
+<span class="comment">% hObject    handle to figure</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Get default command line output from handles structure</span>
+varargout{1} = handles.output;
+
+
+
+
+
+<span class="keyword">function</span> edit_L_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_L (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_L as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_L as a double</span>
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_L_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_L (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> edit_L_act_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_L_act (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_L_act as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_L_act as a double</span>
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_L_act_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_L_act (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> edit_L_res_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_L_res (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_L_res as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_L_res as a double</span>
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_L_res_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_L_res (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> edit_h_1_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_L_res (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_L_res as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_L_res as a double</span>
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_h_1_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_L_res (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+
+<span class="keyword">function</span> edit_h_2_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_L_res (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_L_res as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_L_res as a double</span>
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_h_2_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_L_res (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+
+<span class="keyword">function</span> edit_h_n_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_h_n (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_h_n as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_h_n as a double</span>
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_h_n_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_h_n (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+
+<span class="keyword">function</span> edit_h_a_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_h_a (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_h_a as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_h_a as a double</span>
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_h_a_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_h_a (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> edit_h_w_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_h_w (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_h_w as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_h_w as a double</span>
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_h_w_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_h_w (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> edit_x_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_x (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_x as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_x as a double</span>
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_x_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_x (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> edit_y_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_y (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_y as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_y as a double</span>
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_y_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_y (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> edit_z_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_z (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_z as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_z as a double</span>
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_z_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_z (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> edit17_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit17 (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit17 as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit17 as a double</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit17_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit17 (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+<span class="comment">% % %</span>
+<span class="comment">% % %</span>
+<span class="comment">% % %</span>
+<span class="comment">% % % function edit18_Callback(hObject, eventdata, handles)</span>
+<span class="comment">% % % % hObject    handle to edit18 (see GCBO)</span>
+<span class="comment">% % % % eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% % % % handles    structure with handles and user data (see GUIDATA)</span>
+<span class="comment">% % %</span>
+<span class="comment">% % % % Hints: get(hObject,'String') returns contents of edit18 as text</span>
+<span class="comment">% % % %        str2double(get(hObject,'String')) returns contents of edit18 as a double</span>
+<span class="comment">% % %</span>
+<span class="comment">% % %</span>
+<span class="comment">% % % % --- Executes during object creation, after setting all properties.</span>
+<span class="comment">% % % function edit18_CreateFcn(hObject, eventdata, handles)</span>
+<span class="comment">% % % % hObject    handle to edit18 (see GCBO)</span>
+<span class="comment">% % % % eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% % % % handles    empty - handles not created until after all CreateFcns called</span>
+<span class="comment">% % %</span>
+<span class="comment">% % % % Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">% % % %       See ISPC and COMPUTER.</span>
+<span class="comment">% % % if ispc &amp;&amp; isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))</span>
+<span class="comment">% % %     set(hObject,'BackgroundColor','white');</span>
+<span class="comment">% % % end</span>
+
+
+
+<span class="comment">% --- Executes on Y_PKS movement.</span>
+<span class="keyword">function</span> slider_yaw_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to slider_yaw (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'Value') returns position of slider</span>
+<span class="comment">%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider</span>
+
+yawValue = get(handles.slider_yaw,<span class="string">'Value'</span>);
+set(handles.edit_yaw,<span class="string">'String'</span>,num2str(yawValue));
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> slider_yaw_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to slider_yaw (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: slider controls usually have a light gray background.</span>
+<span class="keyword">if</span> isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,[.9 .9 .9]);
+<span class="keyword">end</span>
+
+
+
+<span class="comment">% --- Executes on slider movement.</span>
+<span class="keyword">function</span> slider_pitch_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to slider_pitch (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'Value') returns position of slider</span>
+<span class="comment">%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider</span>
+
+pitchValue = get(handles.slider_pitch,<span class="string">'Value'</span>);
+set(handles.edit_pitch,<span class="string">'String'</span>,num2str(pitchValue));
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> slider_pitch_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to slider_pitch (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: slider controls usually have a light gray background.</span>
+<span class="keyword">if</span> isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,[.9 .9 .9]);
+<span class="keyword">end</span>
+
+
+
+<span class="comment">% --- Executes on slider movement.</span>
+<span class="keyword">function</span> slider_roll_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to slider_roll (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'Value') returns position of slider</span>
+<span class="comment">%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider</span>
+
+rollValue = get(handles.slider_roll,<span class="string">'Value'</span>);
+set(handles.edit_roll,<span class="string">'String'</span>,num2str(rollValue));
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> slider_roll_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to slider_roll (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: slider controls usually have a light gray background.</span>
+<span class="keyword">if</span> isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,[.9 .9 .9]);
+<span class="keyword">end</span>
+
+
+
+<span class="comment">% --- Executes on slider movement.</span>
+<span class="keyword">function</span> slider_bend_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to slider_bend (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'Value') returns position of slider</span>
+<span class="comment">%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider</span>
+
+bendValue = get(handles.slider_bend,<span class="string">'Value'</span>);
+set(handles.edit_bend,<span class="string">'String'</span>,num2str(bendValue));
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> slider_bend_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to slider_bend (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: slider controls usually have a light gray background.</span>
+<span class="keyword">if</span> isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,[.9 .9 .9]);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> edit_bend_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_bend (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_bend as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_bend as a double</span>
+bendValue = str2double(get(handles.edit_bend,<span class="string">'String'</span>));
+set(handles.slider_bend,<span class="string">'Value'</span>,bendValue);
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_bend_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_bend (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> edit_yaw_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_yaw (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_yaw as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_yaw as a double</span>
+
+yawValue = str2double(get(handles.edit_yaw,<span class="string">'String'</span>));
+set(handles.slider_yaw,<span class="string">'Value'</span>,yawValue);
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_yaw_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_yaw (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> edit_pitch_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_pitch (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_pitch as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_pitch as a double</span>
+
+pitchValue = str2double(get(handles.edit_pitch,<span class="string">'String'</span>));
+set(handles.slider_pitch,<span class="string">'Value'</span>,pitchValue);
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_pitch_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_pitch (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> edit_roll_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_roll (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_roll as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_roll as a double</span>
+
+rollValue = str2double(get(handles.edit_roll,<span class="string">'String'</span>));
+set(handles.slider_roll,<span class="string">'Value'</span>,rollValue);
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_roll_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_roll (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> clear_axes(hObject, eventdata, handles)
+cla(handles.axes1);
+cla(handles.axes2);
+cla(handles.axes3);
+
+
+
+<span class="keyword">function</span> configure_catheter_and_plot(hObject, eventdata, handles)
+
+clear_axes(hObject, eventdata, handles);
+
+<span class="comment">% define camera</span>
+cam_cl = [0,0.4470,0.7410]; <span class="comment">% define camera color in RGB</span>
+camAngle = get(handles.slider_cam,<span class="string">'Value'</span>)*pi/180;
+
+<span class="comment">% define catheter</span>
+L = str2double(get(handles.edit_L,<span class="string">'String'</span>));            <span class="comment">% length of catheter (mm)</span>
+L_pct_bent = str2double(get(handles.edit_L_act,<span class="string">'String'</span>));   <span class="comment">% active length (%)</span>
+L_res = str2double(get(handles.edit_L_res,<span class="string">'String'</span>));        <span class="comment">% number of nodes along catheter length</span>
+
+<span class="comment">% define helix</span>
+p1_helix = str2double(get(handles.edit_h_1,<span class="string">'String'</span>));     <span class="comment">% helix starting point (% length)</span>
+p2_helix = str2double(get(handles.edit_h_2,<span class="string">'String'</span>));     <span class="comment">% helix ending point (% length)</span>
+npt_helix = str2double(get(handles.edit_h_n,<span class="string">'String'</span>));    <span class="comment">% number of points of the helix</span>
+a_helix = str2double(get(handles.edit_h_a,<span class="string">'String'</span>));      <span class="comment">% amplitude of the sine wave of the helix (mm)</span>
+n_helix = str2double(get(handles.edit_h_w,<span class="string">'String'</span>));      <span class="comment">% number of sinusoids of the helix</span>
+
+<span class="comment">% define rotation</span>
+th_end = get(handles.slider_bend, <span class="string">'Value'</span>)*pi/180;  <span class="comment">% bending (degree)</span>
+alpha = get(handles.slider_roll, <span class="string">'Value'</span>)*pi/180;   <span class="comment">% roll (degree)</span>
+beta = get(handles.slider_yaw, <span class="string">'Value'</span>)*pi/180;     <span class="comment">% yaw (degree)</span>
+gamma = get(handles.slider_pitch, <span class="string">'Value'</span>)*pi/180;  <span class="comment">% pitch (degree)</span>
+M_rot = getRY(gamma)*getRZ(beta)*getRX(alpha);      <span class="comment">% the associated rotation matrix</span>
+
+<span class="comment">% define translation</span>
+trans_x = str2double(get(handles.edit_x,<span class="string">'String'</span>)); <span class="comment">% base x-translation</span>
+trans_y = str2double(get(handles.edit_y,<span class="string">'String'</span>)); <span class="comment">% base y-translation</span>
+trans_z = str2double(get(handles.edit_z,<span class="string">'String'</span>)); <span class="comment">% base z-translation</span>
+
+<span class="comment">% configure catheter</span>
+L2 = 0.01*L_pct_bent*L;
+L1 = L - L2;
+
+Rk = L2/th_end; <span class="comment">% radius of curvature of the bent section</span>
+
+x1 = 0:L_res:L1;              <span class="comment">% x of unbent</span>
+y1 = zeros(1,length(x1));   <span class="comment">% y of unbent</span>
+
+xc = L1;    <span class="comment">% x-location of the center of virtual circle</span>
+yc = Rk;    <span class="comment">% y-location of the center of virtual circle</span>
+
+th_c = th_end;                   <span class="comment">% total angle that the arc spans (rad)</span>
+th_incre = th_c/(L2/L_res);       <span class="comment">% angle increment (rad)</span>
+th_angles = (1:(L2/L_res))*th_incre; <span class="comment">% arc angle array</span>
+
+x2 = L1 + Rk*sin(th_angles);   <span class="comment">% x of bent section</span>
+y2 = Rk - Rk*cos(th_angles);   <span class="comment">% y of bent sectoin</span>
+
+X = [x1,x2];            <span class="comment">% catheter X coordinate</span>
+Y = [y1,y2];            <span class="comment">% catheter Y coordinate</span>
+Z = zeros(1,length(X)); <span class="comment">% catheter Z coordinate</span>
+
+M = [X;Y;Z]; <span class="comment">% catheter XYZ combined</span>
+
+<span class="comment">% configure helix</span>
+pct_helix = p2_helix - p1_helix; <span class="comment">% helix global length (% of cathetler L)</span>
+
+<span class="comment">% define three segments along the bent length (space 1, helix, space 2) % the three variables below should sum up to 1</span>
+frac_space_1 = (p1_helix - (100 - L_pct_bent))/L_pct_bent;  <span class="comment">% ratio of the bent section before helix coverage (a ratio of bent length)</span>
+frac_helix_bent = pct_helix/L_pct_bent;                   <span class="comment">% ratio of helix coverage (a ratio of bent length)</span>
+<span class="comment">% frac_space_2 = (100 - p2_helix)/L_pct_bent;               % ratio of the bent section after helix coverage (a ratio of bent length)</span>
+
+<span class="comment">% identify theta angle from the perspective of the big circle defining curvature</span>
+th_1 = -pi/2 + frac_space_1*th_c;
+th_helix_range = frac_helix_bent*th_c;
+th_2 = th_1 + th_helix_range;
+
+<span class="comment">% adjust the total number of sinusoids based on th_helix_range</span>
+n_effect_helix = n_helix*2*pi/th_helix_range;           <span class="comment">% effective number of sinusoids (adjusted for the equation)</span>
+
+<span class="comment">% define an array for all theta angles along the helix</span>
+th_helix = linspace(th_2,th_1,npt_helix);
+
+<span class="comment">% compile helix</span>
+xh = xc + (Rk + a_helix*sin(n_effect_helix*th_helix)).*cos(th_helix);   <span class="comment">% x location of helix</span>
+yh = yc + (Rk + a_helix*sin(n_effect_helix*th_helix)).*sin(th_helix);   <span class="comment">% y location of helix</span>
+zh = a_helix*cos(n_effect_helix*th_helix);
+
+M_helix = [xh;yh;zh];
+
+<span class="comment">% rotate both the catheter and the helix</span>
+M = M_rot*M;
+X = M(1,:); Y = M(2,:); Z = M(3,:);
+M_helix = M_rot*M_helix;
+xh = M_helix(1,:); yh = M_helix(2,:); zh = M_helix(3,:);
+
+<span class="comment">% translate both the catheter and the helix</span>
+X = X + trans_x; xh = xh + trans_x;
+Y = Y + trans_y; yh = yh + trans_y;
+Z = Z + trans_z; zh = zh + trans_z;
+
+<span class="comment">% prepare to plot</span>
+c_arr = colormap(lines); <span class="comment">% color array</span>
+ii_arr = 1 + [0,length(x1)]; <span class="comment">% index along the catheter to start plotting from</span>
+hh_arr = {handles.axes1,handles.axes2,handles.axes3}; <span class="comment">% subplot handles</span>
+vv_arr = [-37.5,30; 0,90; 0,90]; <span class="comment">% view in each subplot</span>
+xx_arr = {<span class="string">'x'</span>,<span class="string">'x_c'</span>,<span class="string">'x_c'</span>}; <span class="comment">% xlabel in each subplot</span>
+yy_arr = {<span class="string">'y'</span>,<span class="string">'y_c'</span>,<span class="string">'y_c'</span>}; <span class="comment">% ylabel in each subplot</span>
+zz_arr = {<span class="string">'z'</span>,<span class="string">'z_c'</span>,<span class="string">'z_c'</span>}; <span class="comment">% zlabel in each subplot</span>
+axcl_arr = {<span class="string">'k'</span>,cam_cl,cam_cl}; <span class="comment">% axis label color in each subplot</span>
+
+<span class="comment">% ------------ plot 1 ------------</span>
+<span class="comment">% plot 3D view</span>
+hh = 1;
+hold(hh_arr{hh},<span class="string">'on'</span>);
+plot3(X(ii_arr(hh):end),Y(ii_arr(hh):end),Z(ii_arr(hh):end),<span class="string">'-'</span>,<span class="string">'color'</span>,c_arr(3,:),<span class="string">'linewidth'</span>,2,<span class="string">'parent'</span>,hh_arr{hh}); <span class="comment">% plot catheter</span>
+plot3(xh,yh,zh,<span class="string">'color'</span>,c_arr(4,:),<span class="string">'linewidth'</span>,1,<span class="string">'parent'</span>,hh_arr{hh}); <span class="comment">% plot helix</span>
+
+<span class="comment">% plot origin</span>
+plot3(0+trans_x,0+trans_y,0+trans_z,<span class="string">'ko'</span>,<span class="string">'linewidth'</span>,2,<span class="string">'parent'</span>,hh_arr{hh});
+
+<span class="comment">% plot camera</span>
+plotCamera(<span class="string">'Location'</span>,[L/2,0,L],<span class="string">'Orientation'</span>,getRY(-camAngle),<span class="string">'Size'</span>,10,<span class="string">'Label'</span>,<span class="string">'camera'</span>,<span class="string">'Color'</span>,cam_cl,<span class="string">'Opacity'</span>,0.2,<span class="string">'AxesVisible'</span>,1,<span class="string">'parent'</span>,hh_arr{hh});
+
+<span class="comment">% ------------ plot 2 &amp; 3 ------------</span>
+
+<span class="comment">% rotate according to camera angle</span>
+temp = getRY(camAngle)*[X;Y;Z];
+X = temp(1,:); Y = temp(2,:);
+temp = getRY(camAngle)*[xh;yh;zh];
+xh = temp(1,:); yh = temp(2,:);
+
+<span class="comment">% find apexes in X-Y projection</span>
+[x_pks,y_pks] = func_find_apex_rot(xh,yh,X,Y,0);
+
+<span class="comment">% plot camera views</span>
+hh = 2;
+hold(hh_arr{hh},<span class="string">'on'</span>);
+plot(X(ii_arr(hh):end),Y(ii_arr(hh):end),<span class="string">'-'</span>,<span class="string">'color'</span>,c_arr(3,:),<span class="string">'linewidth'</span>,2,<span class="string">'parent'</span>,hh_arr{hh}); <span class="comment">% plot catheter</span>
+plot(xh,yh,<span class="string">'color'</span>,c_arr(4,:),<span class="string">'linewidth'</span>,1,<span class="string">'parent'</span>,hh_arr{hh}); <span class="comment">% plot helix</span>
+
+<span class="comment">% plot peaks</span>
+<span class="keyword">for</span> hh = 2:3
+    plot(x_pks,y_pks,<span class="string">'.'</span>,<span class="string">'color'</span>,c_arr(2,:),<span class="string">'markersize'</span>,14,<span class="string">'parent'</span>,hh_arr{hh});
+<span class="keyword">end</span>
+
+<span class="comment">% ------------ configure plots ------------</span>
+<span class="keyword">for</span> hh = 1:3
+    view(hh_arr{hh},vv_arr(hh,:));
+    axis(hh_arr{hh},<span class="string">'equal'</span>);
+    xlabel(hh_arr{hh},[xx_arr{hh} <span class="string">' (mm)'</span>],<span class="string">'color'</span>,axcl_arr{hh});
+    ylabel(hh_arr{hh},[yy_arr{hh} <span class="string">' (mm)'</span>],<span class="string">'color'</span>,axcl_arr{hh});
+    zlabel(hh_arr{hh},[zz_arr{hh} <span class="string">' (mm)'</span>]);
+    box(hh_arr{hh},<span class="string">'off'</span>);
+<span class="keyword">end</span>
+grid(hh_arr{1},<span class="string">'on'</span>);
+
+
+
+<span class="comment">% --- Executes on button press in pushbutton_reset.</span>
+<span class="keyword">function</span> pushbutton_reset_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to pushbutton_reset (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+set(handles.edit_L,<span class="string">'String'</span>,num2str(100));       <span class="comment">% length of catheter (mm)</span>
+set(handles.edit_L_act,<span class="string">'String'</span>,num2str(40));   <span class="comment">% active length (%)</span>
+set(handles.edit_L_res,<span class="string">'String'</span>,num2str(0.5));   <span class="comment">% number of nodes along catheter length</span>
+
+set(handles.edit_h_1,<span class="string">'String'</span>,num2str(70));     <span class="comment">% helix starting point (% length)</span>
+set(handles.edit_h_2,<span class="string">'String'</span>,num2str(90));     <span class="comment">% helix ending point (% length)</span>
+set(handles.edit_h_n,<span class="string">'String'</span>,num2str(100));     <span class="comment">% number of points of the helix</span>
+set(handles.edit_h_a,<span class="string">'String'</span>,num2str(1));     <span class="comment">% amplitude of the sine wave of the helix (mm)</span>
+set(handles.edit_h_w,<span class="string">'String'</span>,num2str(5));     <span class="comment">% number of sinusoids of the helix</span>
+
+set(handles.edit_x,<span class="string">'String'</span>,num2str(0));   <span class="comment">% base x-translation</span>
+set(handles.edit_y,<span class="string">'String'</span>,num2str(0));  <span class="comment">% base y-translation</span>
+set(handles.edit_z,<span class="string">'String'</span>,num2str(0));  <span class="comment">% base z-translation</span>
+
+set(handles.slider_roll,<span class="string">'Value'</span>,0);  <span class="comment">% roll (degree)</span>
+set(handles.slider_yaw,<span class="string">'Value'</span>,0);   <span class="comment">% yaw (degree)</span>
+set(handles.slider_pitch,<span class="string">'Value'</span>,0); <span class="comment">% pitch (degree)</span>
+set(handles.slider_bend,<span class="string">'Value'</span>,1);  <span class="comment">% bending (degree)</span>
+
+set(handles.edit_roll,<span class="string">'String'</span>,num2str(0));  <span class="comment">% roll (degree)</span>
+set(handles.edit_yaw,<span class="string">'String'</span>,num2str(0));   <span class="comment">% yaw (degree)</span>
+set(handles.edit_pitch,<span class="string">'String'</span>,num2str(0)); <span class="comment">% pitch (degree)</span>
+set(handles.edit_bend,<span class="string">'String'</span>,num2str(1));  <span class="comment">% bending (degree)</span>
+
+set(handles.edit_cam,<span class="string">'String'</span>,num2str(0));  <span class="comment">% camera rotation (degree)</span>
+set(handles.slider_cam,<span class="string">'Value'</span>,0);          <span class="comment">% camera rotation (degree)</span>
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> uibuttongroup3_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to uibuttongroup3 (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+
+<span class="comment">% --- Executes on slider movement.</span>
+<span class="keyword">function</span> slider_cam_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to slider_cam (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'Value') returns position of slider</span>
+<span class="comment">%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider</span>
+camAngle = get(hObject,<span class="string">'Value'</span>);
+set(handles.edit_cam,<span class="string">'String'</span>,num2str(camAngle));
+
+configure_catheter_and_plot(hObject, eventdata, handles); <span class="comment">%%%%%%%% regenerate plot %%%%%%%%</span>
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> slider_cam_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to slider_cam (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: slider controls usually have a light gray background.</span>
+<span class="keyword">if</span> isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,[.9 .9 .9]);
+<span class="keyword">end</span>
+
+
+
+<span class="keyword">function</span> edit_cam_Callback(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_cam (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    structure with handles and user data (see GUIDATA)</span>
+
+<span class="comment">% Hints: get(hObject,'String') returns contents of edit_cam as text</span>
+<span class="comment">%        str2double(get(hObject,'String')) returns contents of edit_cam as a double</span>
+
+
+<span class="comment">% --- Executes during object creation, after setting all properties.</span>
+<span class="keyword">function</span> edit_cam_CreateFcn(hObject, eventdata, handles)
+<span class="comment">% hObject    handle to edit_cam (see GCBO)</span>
+<span class="comment">% eventdata  reserved - to be defined in a future version of MATLAB</span>
+<span class="comment">% handles    empty - handles not created until after all CreateFcns called</span>
+
+<span class="comment">% Hint: edit controls usually have a white background on Windows.</span>
+<span class="comment">%       See ISPC and COMPUTER.</span>
+<span class="keyword">if</span> ispc &amp;&amp; isequal(get(hObject,<span class="string">'BackgroundColor'</span>), get(0,<span class="string">'defaultUicontrolBackgroundColor'</span>))
+    set(hObject,<span class="string">'BackgroundColor'</span>,<span class="string">'white'</span>);
+<span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+function varargout = catheter_7dof(varargin)
+% CATHETER_7DOF MATLAB code for catheter_7dof.fig
+%      CATHETER_7DOF, by itself, creates a new CATHETER_7DOF or raises the existing
+%      singleton*.
+%
+%      H = CATHETER_7DOF returns the handle to a new CATHETER_7DOF or the handle to
+%      the existing singleton*.
+%
+%      CATHETER_7DOF('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in CATHETER_7DOF.M with the given input arguments.
+%
+%      CATHETER_7DOF('Property','Value',...) creates a new CATHETER_7DOF or raises the
+%      existing singleton*.  Starting from the left, property value pairs are
+%      applied to the GUI before catheter_7dof_OpeningFcn gets called.  An
+%      unrecognized property name or invalid value makes property application
+%      stop.  All inputs are passed to catheter_7dof_OpeningFcn via varargin.
+%
+%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%      instance to run (singleton)".
+%
+% See also: GUIDE, GUIDATA, GUIHANDLES
+
+% Edit the above text to modify the response to help catheter_7dof
+
+% Last Modified by GUIDE v2.5 09-Oct-2018 15:58:36
+
+% Begin initialization code - DO NOT EDIT
+gui_Singleton = 1;
+gui_State = struct('gui_Name',       mfilename, ...
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @catheter_7dof_OpeningFcn, ...
+    'gui_OutputFcn',  @catheter_7dof_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
+if nargin && ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+end
+
+if nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+    gui_mainfcn(gui_State, varargin{:});
+end
+% End initialization code - DO NOT EDIT
+
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes just before catheter_7dof is made visible.
+function catheter_7dof_OpeningFcn(hObject, eventdata, handles, varargin)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   command line arguments to catheter_7dof (see VARARGIN)
+
+% Choose default command line output for catheter_7dof
+handles.output = hObject;
+
+% Update handles structure
+guidata(hObject, handles);
+
+%% get default parameters
+% % % % global initialValues;
+% % % %
+% % % % initialValues = [
+% % % %     str2double(get(handles.edit_L,'String'));            % length of catheter (mm)
+% % % %     str2double(get(handles.edit_L_act,'String'));   % active length (%)
+% % % %     str2double(get(handles.edit_L_res,'String'));        % number of nodes along catheter length
+% % % %
+% % % %     str2double(get(handles.edit_h_1,'String'));     % helix starting point (% length)
+% % % %     str2double(get(handles.edit_h_2,'String'));     % helix ending point (% length)
+% % % %     str2double(get(handles.edit_h_n,'String'));    % number of points of the helix
+% % % %     str2double(get(handles.edit_h_a,'String'));      % amplitude of the sine wave of the helix (mm)
+% % % %     str2double(get(handles.edit_h_w,'String'));      % number of sinusoids of the helix
+% % % %
+% % % %     str2double(get(handles.edit_x,'String')); % base x-translation
+% % % %     str2double(get(handles.edit_y,'String')); % base y-translation
+% % % %     str2double(get(handles.edit_z,'String')); % base z-translation
+% % % %
+% % % %     get(handles.slider_roll, 'Value')*pi/180;   % roll (degree)
+% % % %     get(handles.slider_yaw, 'Value')*pi/180;     % yaw (degree)
+% % % %     get(handles.slider_pitch, 'Value')*pi/180;  % pitch (degree)
+% % % %     get(handles.slider_bend, 'Value')*pi/180;  % bending (degree)
+% % % %     ];
+
+%% initial plot
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+% UIWAIT makes catheter_7dof wait for user response (see UIRESUME)
+% uiwait(handles.figure1);
+
+
+% REPLACE_WITH_DASH_DASH- Outputs from this function are returned to the command line.
+function varargout = catheter_7dof_OutputFcn(hObject, eventdata, handles)
+% varargout  cell array for returning output args (see VARARGOUT);
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get default command line output from handles structure
+varargout{1} = handles.output;
+
+
+
+
+
+function edit_L_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_L (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_L as text
+%        str2double(get(hObject,'String')) returns contents of edit_L as a double
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_L_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_L (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit_L_act_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_L_act (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_L_act as text
+%        str2double(get(hObject,'String')) returns contents of edit_L_act as a double
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_L_act_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_L_act (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit_L_res_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_L_res (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_L_res as text
+%        str2double(get(hObject,'String')) returns contents of edit_L_res as a double
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_L_res_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_L_res (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit_h_1_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_L_res (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_L_res as text
+%        str2double(get(hObject,'String')) returns contents of edit_L_res as a double
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_h_1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_L_res (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+
+function edit_h_2_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_L_res (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_L_res as text
+%        str2double(get(hObject,'String')) returns contents of edit_L_res as a double
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_h_2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_L_res (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+
+function edit_h_n_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_h_n (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_h_n as text
+%        str2double(get(hObject,'String')) returns contents of edit_h_n as a double
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_h_n_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_h_n (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+
+function edit_h_a_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_h_a (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_h_a as text
+%        str2double(get(hObject,'String')) returns contents of edit_h_a as a double
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_h_a_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_h_a (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit_h_w_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_h_w (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_h_w as text
+%        str2double(get(hObject,'String')) returns contents of edit_h_w as a double
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_h_w_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_h_w (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit_x_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_x (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_x as text
+%        str2double(get(hObject,'String')) returns contents of edit_x as a double
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_x_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_x (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit_y_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_y (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_y as text
+%        str2double(get(hObject,'String')) returns contents of edit_y as a double
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_y_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_y (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit_z_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_z (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_z as text
+%        str2double(get(hObject,'String')) returns contents of edit_z as a double
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_z_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_z (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit17_Callback(hObject, eventdata, handles)
+% hObject    handle to edit17 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit17 as text
+%        str2double(get(hObject,'String')) returns contents of edit17 as a double
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit17_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit17 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+% % %
+% % %
+% % %
+% % % function edit18_Callback(hObject, eventdata, handles)
+% % % % hObject    handle to edit18 (see GCBO)
+% % % % eventdata  reserved - to be defined in a future version of MATLAB
+% % % % handles    structure with handles and user data (see GUIDATA)
+% % %
+% % % % Hints: get(hObject,'String') returns contents of edit18 as text
+% % % %        str2double(get(hObject,'String')) returns contents of edit18 as a double
+% % %
+% % %
+% % % % REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+% % % function edit18_CreateFcn(hObject, eventdata, handles)
+% % % % hObject    handle to edit18 (see GCBO)
+% % % % eventdata  reserved - to be defined in a future version of MATLAB
+% % % % handles    empty - handles not created until after all CreateFcns called
+% % %
+% % % % Hint: edit controls usually have a white background on Windows.
+% % % %       See ISPC and COMPUTER.
+% % % if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+% % %     set(hObject,'BackgroundColor','white');
+% % % end
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes on Y_PKS movement.
+function slider_yaw_Callback(hObject, eventdata, handles)
+% hObject    handle to slider_yaw (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+yawValue = get(handles.slider_yaw,'Value');
+set(handles.edit_yaw,'String',num2str(yawValue));
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function slider_yaw_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider_yaw (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes on slider movement.
+function slider_pitch_Callback(hObject, eventdata, handles)
+% hObject    handle to slider_pitch (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+pitchValue = get(handles.slider_pitch,'Value');
+set(handles.edit_pitch,'String',num2str(pitchValue));
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function slider_pitch_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider_pitch (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes on slider movement.
+function slider_roll_Callback(hObject, eventdata, handles)
+% hObject    handle to slider_roll (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+rollValue = get(handles.slider_roll,'Value');
+set(handles.edit_roll,'String',num2str(rollValue));
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function slider_roll_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider_roll (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes on slider movement.
+function slider_bend_Callback(hObject, eventdata, handles)
+% hObject    handle to slider_bend (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+
+bendValue = get(handles.slider_bend,'Value');
+set(handles.edit_bend,'String',num2str(bendValue));
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function slider_bend_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider_bend (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+
+function edit_bend_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_bend (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_bend as text
+%        str2double(get(hObject,'String')) returns contents of edit_bend as a double
+bendValue = str2double(get(handles.edit_bend,'String'));
+set(handles.slider_bend,'Value',bendValue);
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_bend_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_bend (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit_yaw_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_yaw (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_yaw as text
+%        str2double(get(hObject,'String')) returns contents of edit_yaw as a double
+
+yawValue = str2double(get(handles.edit_yaw,'String'));
+set(handles.slider_yaw,'Value',yawValue);
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_yaw_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_yaw (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit_pitch_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_pitch (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_pitch as text
+%        str2double(get(hObject,'String')) returns contents of edit_pitch as a double
+
+pitchValue = str2double(get(handles.edit_pitch,'String'));
+set(handles.slider_pitch,'Value',pitchValue);
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_pitch_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_pitch (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit_roll_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_roll (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_roll as text
+%        str2double(get(hObject,'String')) returns contents of edit_roll as a double
+
+rollValue = str2double(get(handles.edit_roll,'String'));
+set(handles.slider_roll,'Value',rollValue);
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_roll_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_roll (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function clear_axes(hObject, eventdata, handles)
+cla(handles.axes1);
+cla(handles.axes2);
+cla(handles.axes3);
+
+
+
+function configure_catheter_and_plot(hObject, eventdata, handles)
+
+clear_axes(hObject, eventdata, handles);
+
+% define camera
+cam_cl = [0,0.4470,0.7410]; % define camera color in RGB
+camAngle = get(handles.slider_cam,'Value')*pi/180;
+
+% define catheter
+L = str2double(get(handles.edit_L,'String'));            % length of catheter (mm)
+L_pct_bent = str2double(get(handles.edit_L_act,'String'));   % active length (%)
+L_res = str2double(get(handles.edit_L_res,'String'));        % number of nodes along catheter length
+
+% define helix
+p1_helix = str2double(get(handles.edit_h_1,'String'));     % helix starting point (% length)
+p2_helix = str2double(get(handles.edit_h_2,'String'));     % helix ending point (% length)
+npt_helix = str2double(get(handles.edit_h_n,'String'));    % number of points of the helix
+a_helix = str2double(get(handles.edit_h_a,'String'));      % amplitude of the sine wave of the helix (mm)
+n_helix = str2double(get(handles.edit_h_w,'String'));      % number of sinusoids of the helix
+
+% define rotation
+th_end = get(handles.slider_bend, 'Value')*pi/180;  % bending (degree)
+alpha = get(handles.slider_roll, 'Value')*pi/180;   % roll (degree)
+beta = get(handles.slider_yaw, 'Value')*pi/180;     % yaw (degree)
+gamma = get(handles.slider_pitch, 'Value')*pi/180;  % pitch (degree)
+M_rot = getRY(gamma)*getRZ(beta)*getRX(alpha);      % the associated rotation matrix
+
+% define translation
+trans_x = str2double(get(handles.edit_x,'String')); % base x-translation
+trans_y = str2double(get(handles.edit_y,'String')); % base y-translation
+trans_z = str2double(get(handles.edit_z,'String')); % base z-translation
+
+% configure catheter
+L2 = 0.01*L_pct_bent*L;
+L1 = L - L2;
+
+Rk = L2/th_end; % radius of curvature of the bent section
+
+x1 = 0:L_res:L1;              % x of unbent
+y1 = zeros(1,length(x1));   % y of unbent
+
+xc = L1;    % x-location of the center of virtual circle
+yc = Rk;    % y-location of the center of virtual circle
+
+th_c = th_end;                   % total angle that the arc spans (rad)
+th_incre = th_c/(L2/L_res);       % angle increment (rad)
+th_angles = (1:(L2/L_res))*th_incre; % arc angle array
+
+x2 = L1 + Rk*sin(th_angles);   % x of bent section
+y2 = Rk - Rk*cos(th_angles);   % y of bent sectoin
+
+X = [x1,x2];            % catheter X coordinate
+Y = [y1,y2];            % catheter Y coordinate
+Z = zeros(1,length(X)); % catheter Z coordinate
+
+M = [X;Y;Z]; % catheter XYZ combined
+
+% configure helix
+pct_helix = p2_helix - p1_helix; % helix global length (% of cathetler L)
+
+% define three segments along the bent length (space 1, helix, space 2) % the three variables below should sum up to 1
+frac_space_1 = (p1_helix - (100 - L_pct_bent))/L_pct_bent;  % ratio of the bent section before helix coverage (a ratio of bent length)
+frac_helix_bent = pct_helix/L_pct_bent;                   % ratio of helix coverage (a ratio of bent length)
+% frac_space_2 = (100 - p2_helix)/L_pct_bent;               % ratio of the bent section after helix coverage (a ratio of bent length)
+
+% identify theta angle from the perspective of the big circle defining curvature
+th_1 = -pi/2 + frac_space_1*th_c;
+th_helix_range = frac_helix_bent*th_c;
+th_2 = th_1 + th_helix_range;
+
+% adjust the total number of sinusoids based on th_helix_range
+n_effect_helix = n_helix*2*pi/th_helix_range;           % effective number of sinusoids (adjusted for the equation)
+
+% define an array for all theta angles along the helix
+th_helix = linspace(th_2,th_1,npt_helix);
+
+% compile helix
+xh = xc + (Rk + a_helix*sin(n_effect_helix*th_helix)).*cos(th_helix);   % x location of helix
+yh = yc + (Rk + a_helix*sin(n_effect_helix*th_helix)).*sin(th_helix);   % y location of helix
+zh = a_helix*cos(n_effect_helix*th_helix);
+
+M_helix = [xh;yh;zh];
+
+% rotate both the catheter and the helix
+M = M_rot*M;
+X = M(1,:); Y = M(2,:); Z = M(3,:);
+M_helix = M_rot*M_helix;
+xh = M_helix(1,:); yh = M_helix(2,:); zh = M_helix(3,:);
+
+% translate both the catheter and the helix
+X = X + trans_x; xh = xh + trans_x;
+Y = Y + trans_y; yh = yh + trans_y;
+Z = Z + trans_z; zh = zh + trans_z;
+
+% prepare to plot
+c_arr = colormap(lines); % color array 
+ii_arr = 1 + [0,length(x1)]; % index along the catheter to start plotting from
+hh_arr = {handles.axes1,handles.axes2,handles.axes3}; % subplot handles
+vv_arr = [-37.5,30; 0,90; 0,90]; % view in each subplot
+xx_arr = {'x','x_c','x_c'}; % xlabel in each subplot
+yy_arr = {'y','y_c','y_c'}; % ylabel in each subplot
+zz_arr = {'z','z_c','z_c'}; % zlabel in each subplot
+axcl_arr = {'k',cam_cl,cam_cl}; % axis label color in each subplot
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH plot 1 REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+% plot 3D view
+hh = 1;
+hold(hh_arr{hh},'on');
+plot3(X(ii_arr(hh):end),Y(ii_arr(hh):end),Z(ii_arr(hh):end),'-','color',c_arr(3,:),'linewidth',2,'parent',hh_arr{hh}); % plot catheter
+plot3(xh,yh,zh,'color',c_arr(4,:),'linewidth',1,'parent',hh_arr{hh}); % plot helix
+
+% plot origin
+plot3(0+trans_x,0+trans_y,0+trans_z,'ko','linewidth',2,'parent',hh_arr{hh});
+
+% plot camera
+plotCamera('Location',[L/2,0,L],'Orientation',getRY(-camAngle),'Size',10,'Label','camera','Color',cam_cl,'Opacity',0.2,'AxesVisible',1,'parent',hh_arr{hh});
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH plot 2 & 3 REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+
+% rotate according to camera angle 
+temp = getRY(camAngle)*[X;Y;Z];
+X = temp(1,:); Y = temp(2,:); 
+temp = getRY(camAngle)*[xh;yh;zh];
+xh = temp(1,:); yh = temp(2,:);
+
+% find apexes in X-Y projection
+[x_pks,y_pks] = func_find_apex_rot(xh,yh,X,Y,0);
+
+% plot camera views 
+hh = 2;
+hold(hh_arr{hh},'on');
+plot(X(ii_arr(hh):end),Y(ii_arr(hh):end),'-','color',c_arr(3,:),'linewidth',2,'parent',hh_arr{hh}); % plot catheter
+plot(xh,yh,'color',c_arr(4,:),'linewidth',1,'parent',hh_arr{hh}); % plot helix
+
+% plot peaks
+for hh = 2:3
+    plot(x_pks,y_pks,'.','color',c_arr(2,:),'markersize',14,'parent',hh_arr{hh});
+end
+
+% REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH configure plots REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH
+for hh = 1:3
+    view(hh_arr{hh},vv_arr(hh,:));
+    axis(hh_arr{hh},'equal');
+    xlabel(hh_arr{hh},[xx_arr{hh} ' (mm)'],'color',axcl_arr{hh});
+    ylabel(hh_arr{hh},[yy_arr{hh} ' (mm)'],'color',axcl_arr{hh});
+    zlabel(hh_arr{hh},[zz_arr{hh} ' (mm)']);
+    box(hh_arr{hh},'off');
+end
+grid(hh_arr{1},'on');
+
+
+
+% REPLACE_WITH_DASH_DASH- Executes on button press in pushbutton_reset.
+function pushbutton_reset_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton_reset (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+set(handles.edit_L,'String',num2str(100));       % length of catheter (mm)
+set(handles.edit_L_act,'String',num2str(40));   % active length (%)
+set(handles.edit_L_res,'String',num2str(0.5));   % number of nodes along catheter length
+
+set(handles.edit_h_1,'String',num2str(70));     % helix starting point (% length)
+set(handles.edit_h_2,'String',num2str(90));     % helix ending point (% length)
+set(handles.edit_h_n,'String',num2str(100));     % number of points of the helix
+set(handles.edit_h_a,'String',num2str(1));     % amplitude of the sine wave of the helix (mm)
+set(handles.edit_h_w,'String',num2str(5));     % number of sinusoids of the helix
+
+set(handles.edit_x,'String',num2str(0));   % base x-translation
+set(handles.edit_y,'String',num2str(0));  % base y-translation
+set(handles.edit_z,'String',num2str(0));  % base z-translation
+
+set(handles.slider_roll,'Value',0);  % roll (degree)
+set(handles.slider_yaw,'Value',0);   % yaw (degree)
+set(handles.slider_pitch,'Value',0); % pitch (degree)
+set(handles.slider_bend,'Value',1);  % bending (degree)
+
+set(handles.edit_roll,'String',num2str(0));  % roll (degree)
+set(handles.edit_yaw,'String',num2str(0));   % yaw (degree)
+set(handles.edit_pitch,'String',num2str(0)); % pitch (degree)
+set(handles.edit_bend,'String',num2str(1));  % bending (degree)
+
+set(handles.edit_cam,'String',num2str(0));  % camera rotation (degree)
+set(handles.slider_cam,'Value',0);          % camera rotation (degree)
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function uibuttongroup3_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to uibuttongroup3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+
+% REPLACE_WITH_DASH_DASH- Executes on slider movement.
+function slider_cam_Callback(hObject, eventdata, handles)
+% hObject    handle to slider_cam (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+camAngle = get(hObject,'Value');
+set(handles.edit_cam,'String',num2str(camAngle));
+
+configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function slider_cam_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider_cam (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+
+function edit_cam_Callback(hObject, eventdata, handles)
+% hObject    handle to edit_cam (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit_cam as text
+%        str2double(get(hObject,'String')) returns contents of edit_cam as a double
+
+
+% REPLACE_WITH_DASH_DASH- Executes during object creation, after setting all properties.
+function edit_cam_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit_cam (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+##### SOURCE END #####
+--></body></html>
