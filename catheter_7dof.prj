@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration file="C:\Users\Yang\Documents\catheter\MATLAB\catheter_7dof.prj" location="C:\Users\Yang\Documents\catheter\MATLAB" name="catheter_7dof" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="3642833548" file="C:\Users\Yang\Documents\catheter\MATLAB\catheter_7dof.prj" location="C:\Users\Yang\Documents\catheter\MATLAB" name="catheter_7dof" preferred-package-location="C:\Users\Yang\Documents\catheter\MATLAB\catheter_7dof\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>catheter_7dof</param.appname>
     <param.icon />
     <param.icons />
@@ -76,6 +76,7 @@ Each time a parameter is updated, the GUI automatically updates all three plots.
     <fileset.resources />
     <fileset.package />
     <fileset.depfun>
+      <file>${PROJECT_ROOT}\_helper\CameraProjection.m</file>
       <file>${PROJECT_ROOT}\_helper\func_find_apex_rot.m</file>
       <file>${PROJECT_ROOT}\_helper\getRX.m</file>
       <file>${PROJECT_ROOT}\_helper\getRY.m</file>

@@ -683,10 +683,6 @@ function configure_catheter_and_plot(hObject, eventdata, handles)
 
 clear_axes(hObject, eventdata, handles);
 
-% define camera
-cam_cl = [0,0.4470,0.7410]; % define camera color in RGB
-camAngle = get(handles.slider_cam,'Value')*pi/180;
-
 % define catheter
 L = str2double(get(handles.edit_L,'String'));            % length of catheter (mm)
 L_pct_bent = str2double(get(handles.edit_L_act,'String'));   % active length (%)
@@ -710,6 +706,11 @@ M_rot = getRY(gamma)*getRZ(beta)*getRX(alpha);      % the associated rotation ma
 trans_x = str2double(get(handles.edit_x,'String')); % base x-translation
 trans_y = str2double(get(handles.edit_y,'String')); % base y-translation
 trans_z = str2double(get(handles.edit_z,'String')); % base z-translation
+
+% define camera
+cam_cl = [0,0.4470,0.7410];                         % camera color in RGB
+camAngle = get(handles.slider_cam,'Value')*pi/180;  % camera y-rotation angle
+cam_lc = [L/2,0,L/2];                               % camera position
 
 % configure catheter
 L2 = 0.01*L_pct_bent*L;
@@ -774,13 +775,13 @@ Y = Y + trans_y; yh = yh + trans_y;
 Z = Z + trans_z; zh = zh + trans_z;
 
 % prepare to plot
-c_arr = colormap(lines); % color array 
+c_arr = colormap(lines); % color array
 ii_arr = 1 + [0,length(x1)]; % index along the catheter to start plotting from
 hh_arr = {handles.axes1,handles.axes2,handles.axes3}; % subplot handles
 vv_arr = [-37.5,30; 0,90; 0,90]; % view in each subplot
-xx_arr = {'x','x_c','x_c'}; % xlabel in each subplot
-yy_arr = {'y','y_c','y_c'}; % ylabel in each subplot
-zz_arr = {'z','z_c','z_c'}; % zlabel in each subplot
+xx_arr = {'x_0','x_c','x_c'}; % xlabel in each subplot
+yy_arr = {'y_0','y_c','y_c'}; % ylabel in each subplot
+zz_arr = {'z_0','z_c','z_c'}; % zlabel in each subplot
 axcl_arr = {'k',cam_cl,cam_cl}; % axis label color in each subplot
 
 % ------------ plot 1 ------------
@@ -794,20 +795,18 @@ plot3(xh,yh,zh,'color',c_arr(4,:),'linewidth',1,'parent',hh_arr{hh}); % plot hel
 plot3(0+trans_x,0+trans_y,0+trans_z,'ko','linewidth',2,'parent',hh_arr{hh});
 
 % plot camera
-plotCamera('Location',[L/2,0,L],'Orientation',getRY(-camAngle),'Size',10,'Label','camera','Color',cam_cl,'Opacity',0.2,'AxesVisible',1,'parent',hh_arr{hh});
+plotCamera('Location',cam_lc,'Orientation',getRY(camAngle),'Size',10,'Label','camera','Color',cam_cl,'Opacity',0.2,'AxesVisible',1,'parent',hh_arr{hh});
 
 % ------------ plot 2 & 3 ------------
 
-% rotate according to camera angle 
-temp = getRY(camAngle)*[X;Y;Z];
-X = temp(1,:); Y = temp(2,:); 
-temp = getRY(camAngle)*[xh;yh;zh];
-xh = temp(1,:); yh = temp(2,:);
+% rotate according to camera angle
+[X,Y] = CameraProjection([X;Y;Z],[0;camAngle;0],cam_lc,[0,0,-cam_lc(3)]);
+[xh,yh] = CameraProjection([xh;yh;zh],[0;camAngle;0],cam_lc,[0,0,-cam_lc(3)]);
 
 % find apexes in X-Y projection
 [x_pks,y_pks] = func_find_apex_rot(xh,yh,X,Y,0);
 
-% plot camera views 
+% plot camera views
 hh = 2;
 hold(hh_arr{hh},'on');
 plot(X(ii_arr(hh):end),Y(ii_arr(hh):end),'-','color',c_arr(3,:),'linewidth',2,'parent',hh_arr{hh}); % plot catheter
