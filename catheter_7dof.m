@@ -60,31 +60,7 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
-%% get default parameters
-% % % % global initialValues;
-% % % %
-% % % % initialValues = [
-% % % %     str2double(get(handles.edit_L,'String'));            % length of catheter (mm)
-% % % %     str2double(get(handles.edit_L_act,'String'));   % active length (%)
-% % % %     str2double(get(handles.edit_L_res,'String'));        % number of nodes along catheter length
-% % % %
-% % % %     str2double(get(handles.edit_h_1,'String'));     % helix starting point (% length)
-% % % %     str2double(get(handles.edit_h_2,'String'));     % helix ending point (% length)
-% % % %     str2double(get(handles.edit_h_n,'String'));    % number of points of the helix
-% % % %     str2double(get(handles.edit_h_a,'String'));      % amplitude of the sine wave of the helix (mm)
-% % % %     str2double(get(handles.edit_h_w,'String'));      % number of sinusoids of the helix
-% % % %
-% % % %     str2double(get(handles.edit_x,'String')); % base x-translation
-% % % %     str2double(get(handles.edit_y,'String')); % base y-translation
-% % % %     str2double(get(handles.edit_z,'String')); % base z-translation
-% % % %
-% % % %     get(handles.slider_roll, 'Value')*pi/180;   % roll (degree)
-% % % %     get(handles.slider_yaw, 'Value')*pi/180;     % yaw (degree)
-% % % %     get(handles.slider_pitch, 'Value')*pi/180;  % pitch (degree)
-% % % %     get(handles.slider_bend, 'Value')*pi/180;  % bending (degree)
-% % % %     ];
-
-%% initial plot
+% initial plot
 configure_catheter_and_plot(hObject, eventdata, handles); %%%%%%%% regenerate plot %%%%%%%%
 
 
@@ -415,29 +391,6 @@ function edit17_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-% % %
-% % %
-% % %
-% % % function edit18_Callback(hObject, eventdata, handles)
-% % % % hObject    handle to edit18 (see GCBO)
-% % % % eventdata  reserved - to be defined in a future version of MATLAB
-% % % % handles    structure with handles and user data (see GUIDATA)
-% % %
-% % % % Hints: get(hObject,'String') returns contents of edit18 as text
-% % % %        str2double(get(hObject,'String')) returns contents of edit18 as a double
-% % %
-% % %
-% % % % --- Executes during object creation, after setting all properties.
-% % % function edit18_CreateFcn(hObject, eventdata, handles)
-% % % % hObject    handle to edit18 (see GCBO)
-% % % % eventdata  reserved - to be defined in a future version of MATLAB
-% % % % handles    empty - handles not created until after all CreateFcns called
-% % %
-% % % % Hint: edit controls usually have a white background on Windows.
-% % % %       See ISPC and COMPUTER.
-% % % if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-% % %     set(hObject,'BackgroundColor','white');
-% % % end
 
 
 
