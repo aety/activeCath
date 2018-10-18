@@ -1,6 +1,6 @@
 %% load pre-processed data from simulation
 clear;clc;ca;
-load nn_fitting_2D_pre
+load nn_fitting_pre
 
 %% generate all possible combinations (choose predictors)
 n_pdt = size(predictor,1);  % number of predictors
@@ -10,7 +10,7 @@ response_org = response;    % save original response array
 
 n_arr = 1:12;
 
-for nn = 3:4 % :length(n_arr)
+for nn = 1:3 % :length(n_arr)
     
     n = n_arr(nn);          % number of predictors per sample
     ind_arr = combnk(v,n);  % possible combinations of predictors (choose k out of all)
@@ -80,6 +80,8 @@ for nn = 3:4 % :length(n_arr)
         R_arr(kk,:) = r;
         N_arr{kk} = net;
         e_arr{kk} = e;
+        
+        save temp
         
     end
     save(['nn_fitting_test_predictors_' num2str(nn)],'ind_arr','response_org','predictor_org','P_arr','R_arr','N_arr','e_arr','*txt_arr');
