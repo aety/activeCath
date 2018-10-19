@@ -1,7 +1,9 @@
 clear; clc; ca;
 
-fsz = 16; % major fontsize
-vidflag = 1;
+fsz = 10; % major fontsize
+mks = 10; % markersize
+
+vidflag = 0;
 
 if vidflag
     opengl('software');
@@ -39,7 +41,8 @@ for nn = 1:length(best_net)
     text(5,75,num2str(pfm,3),'fontsize',fsz-2);
     
     for pp = 1:2
-        a = scatter(response_org(pp,:),response_nn(pp,:),20,c_arr(pp,:),'*');
+        a = scatter(response_org(pp,:),response_nn(pp,:),mks,c_arr(pp,:),'o','filled');
+        alpha(a,0.4);
         text(95,90-10*pp,['R = ' num2str(r(pp),3)],'color',c_arr(pp,:),'fontsize',fsz);
     end
     
