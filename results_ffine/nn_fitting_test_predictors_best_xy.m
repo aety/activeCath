@@ -1,12 +1,12 @@
 clear; clc; ca;
 %%
-fsz = 7; % major fontsize
+fsz = 10; % major fontsize
 
-nn_arr = 1:3; % 12; % subscripts of files to load
+nn_arr = 1:4; % subscripts of files to load
 n_lab = 1; % number of predictor sets to label by text
 
-vidflag = 0;
-savflag = 1;
+vidflag = 1;
+savflag = 0;
 
 if vidflag
     opengl('software');
@@ -18,8 +18,7 @@ end
 for nn = nn_arr
     
     load(['nn_fitting_test_predictors_' num2str(nn)]);
-    
-    figure;
+        
     c_arr = colormap(lines(2));
     hold on;
     
@@ -75,11 +74,9 @@ for nn = nn_arr
         writeVideo(anim,frame);
         clf;
     else
-        if savflag
-            set(gcf,'paperposition',[0,0,3,2.5],'unit','inches');
-            print('-dtiff','-r300',['nn_fitting_test_predictors_best_xy_' num2str(nn)]);
-            close;
-        end
+        set(gcf,'paperposition',[0,0,3,2.5],'unit','inches');
+        print('-dtiff','-r300',['nn_fitting_test_predictors_best_xy_' num2str(nn)]);
+        close;        
     end
 end
 

@@ -10,7 +10,7 @@ response_org = response;    % save original response array
 
 n_arr = 1:12;
 
-for nn = 1:3 % :length(n_arr)
+for nn = 5 % :length(n_arr)
     
     n = n_arr(nn);          % number of predictors per sample
     ind_arr = combnk(v,n);  % possible combinations of predictors (choose k out of all)
@@ -21,7 +21,7 @@ for nn = 1:3 % :length(n_arr)
     P_arr = nan(1,size(ind_arr,1));     % preallocate
     e_arr = cell(1,size(ind_arr,1));    % preallocate
     
-    for kk = 1:size(ind_arr,1)
+    parfor kk = 1:size(ind_arr,1)        
         
         predictor = predictor_org(ind_arr(kk,:),:);
         
@@ -80,8 +80,6 @@ for nn = 1:3 % :length(n_arr)
         R_arr(kk,:) = r;
         N_arr{kk} = net;
         e_arr{kk} = e;
-        
-        save temp
         
     end
     save(['nn_fitting_test_predictors_' num2str(nn)],'ind_arr','response_org','predictor_org','P_arr','R_arr','N_arr','e_arr','*txt_arr');
