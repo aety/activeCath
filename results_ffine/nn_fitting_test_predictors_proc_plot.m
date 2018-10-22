@@ -15,8 +15,7 @@ end
 
 %%
 load nn_fitting_test_predictors_proc;
-load nn_fitting_pre pdt_txt_arr response
-response_org = response;
+load nn_fitting_pre pdt_txt_arr 
 
 %%
 

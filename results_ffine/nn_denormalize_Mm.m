@@ -6,7 +6,7 @@ function [Xin] = nn_denormalize_Mm(Xout,MX,mn)
 Xin = nan(size(Xout,1),size(Xout,2));
 
 for ii = 1:size(Xin,1)
-    temp = Xout(ii,:);    
+    temp = Xout(ii,:);        
     temp = temp*(MX(ii)-mn(ii)) + mn(ii);
     
     Xin(ii,:) = temp;

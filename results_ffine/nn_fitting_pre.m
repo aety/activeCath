@@ -104,4 +104,4 @@ for kk = 1:size(predictor,1)
 end
 
 %% save
-save nn_fitting_pre predictor response *_txt_arr readme PDT* RSP*;
+save nn_fitting_pre *_txt_arr readme PDT* RSP*;
