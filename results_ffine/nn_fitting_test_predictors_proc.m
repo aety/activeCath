@@ -1,6 +1,6 @@
 clear; clc; ca;
 %%
-nn_arr = 1:2; % subscripts of files to load
+nn_arr = 1; % subscripts of files to load
 
 best_net = cell(1,length(nn_arr));
 best_lab = best_net;
@@ -8,7 +8,7 @@ best_rsp = best_net;
 best_R = nan(length(nn_arr),2);
 best_pfm = nan(1,length(nn_arr));
 
-load nn_fitting_pre PDT_mean PDT_std
+load nn_fitting_pre PDT_MX PDT_mn
 
 for nn = nn_arr
     
@@ -21,9 +21,9 @@ for nn = nn_arr
     n = I(1);                   % best index
     net = N_arr{n};             % best neural net
     lab = ind_arr(n,:);         % best predictor labels
-    pdt = predictor_org(lab,:); % best predictors
+    pdt = nn_denormalize_Mm(predictor_org(lab,:),PDT_MX,PDT_mn); % best predictors
     response_nn = y_arr{n};     % best response
-    respnnse_nn = nn_denormalize_MS(response_nn,PDT_mean,PDT_std);
+    respnnse_nn = nn_denormalize_Mm(response_nn,PDT_MX,PDT_mn);
     
     % save best results
     best_net{nn} = net;         % best network

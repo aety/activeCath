@@ -89,8 +89,8 @@ for ii = 1:size(X_ARR,1)
 end
 
 % Normalize predictors and responses for neural network
-[PDT,PDT_mean,PDT_std] = nn_normalize_MS(predictor);
-[RSP,RSP_mean,RSP_std] = nn_normalize_MS(response);
+[PDT,PDT_MX,PDT_mn] = nn_normalize_Mm(predictor);
+[RSP,RSP_MX,RSP_mn] = nn_normalize_Mm(response);
 
 %%
 n_col_plt = 4;
