@@ -88,16 +88,20 @@ for ii = 1:size(X_ARR,1)
     end
 end
 
+% Normalize predictors and responses for neural network
+[PDT,PDT_mean,PDT_std] = nn_normalize_MS(predictor);
+[RSP,RSP_mean,RSP_std] = nn_normalize_MS(response);
+
 %%
 n_col_plt = 4;
 hold on;
 c_arr = colormap(plasma(size(predictor,1)));
 for kk = 1:size(predictor,1)
     subplot(n_col_plt,ceil(size(predictor,1)/n_col_plt),kk);
-    plot(predictor(kk,:),'.','color',c_arr(kk,:));
+    plot(PDT(kk,:),'.','color',c_arr(kk,:));
     axis tight;
     title(pdt_txt_arr{kk},'color',c_arr(kk,:));
 end
 
 %% save
-save nn_fitting_pre predictor response *_txt_arr readme;
+save nn_fitting_pre predictor response *_txt_arr readme PDT* RSP*;
