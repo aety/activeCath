@@ -1,12 +1,13 @@
 %% load pre-processed data from simulation
 clear;clc;ca;
 load nn_fitting_pre
+n_train = 5; % number of times to repeat training for
 
 %% generate all possible combinations (choose predictors)
 n_pdt = size(predictor,1);  % number of predictors
 v = 1:n_pdt;                % array of predictor labels
-predictor_org = predictor;  % save original predictor array
-response_org = response;    % save original response array
+predictor_org = PDT;  % save original predictor array
+response_org = RSP;    % save original response array
 
 n_arr = 1:2;
 
@@ -21,7 +22,7 @@ for nn = 1:length(n_arr)
     P_arr = nan(1,size(ind_arr,1));     % preallocate
     e_arr = cell(1,size(ind_arr,1));    % preallocate
     
-    parfor kk = 1:size(ind_arr,1)        
+    parfor kk = 1:size(ind_arr,1)
         
         predictor = predictor_org(ind_arr(kk,:),:);
         
@@ -55,32 +56,36 @@ for nn = 1:length(n_arr)
         net.divideParam.valRatio = 15/100;
         net.divideParam.testRatio = 15/100;
         
-        % Train the Network
-        [net,tr] = train(net,x,t);
+        temp_net = cell(1,n_train); temp_y = temp_net; temp_e = temp_net;
+        temp_p = nan(1,n_train); temp_r = temp_p;
         
-        % Test the Network
-        y = net(x);
-        e = gsubtract(t,y);
-        performance = perform(net,t,y);
+        for tt = 1:n_train
+            
+            % Train the Network
+            [net,tr] = train(net,x,t);
+            
+            % Test the Network
+            y = net(x);
+            e = gsubtract(t,y);
+            p = perform(net,t,y);
+            [r,~,~] = regression(t,y);
+            
+            temp_net{tt} = net;
+            temp_y{tt} = y;
+            temp_e{tt} = e;
+            temp_p(tt) = p;
+            temp_r(tt) = r;
+            
+        end
         
-        % % View the Network
-        % view(net)
+        [~,temp_i] = min(temp_p);
         
-        % % Plots
-        % % Uncomment these lines to enable various plots.
-        %figure, plotperform(tr)
-        %figure, plottrainstate(tr)
-        %figure, ploterrhist(e)
-        %figure, plotregression(t,y)
-        %figure, plotfit(net,x,t)
-        
-        [r,m,b] = regression(t,y);
-        
-        P_arr(kk) = performance;
-        R_arr(kk,:) = r;
-        N_arr{kk} = net;
-        e_arr{kk} = e;
+        N_arr{kk} = temp_net{temp_i};
+        y_arr{kk} = temp_y{temp_i};
+        e_arr{kk} = temp_e{temp_i};
+        P_arr(kk) = temp_p(temp_i);
+        R_arr(kk,:) = temp_r(temp_i);
         
     end
-    save(['nn_fitting_test_predictors_' num2str(nn)],'ind_arr','response_org','predictor_org','P_arr','R_arr','N_arr','e_arr','*txt_arr');
+    save(['nn_fitting_test_predictors_' num2str(nn)],'ind_arr','response_org','predictor_org','P_arr','R_arr','N_arr','e_arr','y_arr','*txt_arr');
 end
