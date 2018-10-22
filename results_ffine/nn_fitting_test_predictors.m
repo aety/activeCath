@@ -16,11 +16,12 @@ for nn = 1:length(n_arr)
     n = n_arr(nn);          % number of predictors per sample
     ind_arr = combnk(v,n);  % possible combinations of predictors (choose k out of all)
     
-    %%
-    R_arr = nan(size(ind_arr,1),2);     % preallocate
+    %%    
     N_arr = cell(1,size(ind_arr,1));    % preallocate
-    P_arr = nan(1,size(ind_arr,1));     % preallocate
+    y_arr = N_arr;                      % preallocate
     e_arr = cell(1,size(ind_arr,1));    % preallocate
+    P_arr = nan(1,size(ind_arr,1));     % preallocate
+    R_arr = nan(size(ind_arr,1),2);     % preallocate    
     
     parfor kk = 1:size(ind_arr,1)
         
@@ -57,7 +58,7 @@ for nn = 1:length(n_arr)
         net.divideParam.testRatio = 15/100;
         
         temp_net = cell(1,n_train); temp_y = temp_net; temp_e = temp_net;
-        temp_p = nan(1,n_train); temp_r = temp_p;
+        temp_p = nan(n_train,1); temp_r = nan(n_train,2);
         
         for tt = 1:n_train
             
@@ -74,7 +75,7 @@ for nn = 1:length(n_arr)
             temp_y{tt} = y;
             temp_e{tt} = e;
             temp_p(tt) = p;
-            temp_r(tt) = r;
+            temp_r(tt,:) = r;
             
         end
         
@@ -84,7 +85,7 @@ for nn = 1:length(n_arr)
         y_arr{kk} = temp_y{temp_i};
         e_arr{kk} = temp_e{temp_i};
         P_arr(kk) = temp_p(temp_i);
-        R_arr(kk,:) = temp_r(temp_i);
+        R_arr(kk,:) = temp_r(temp_i,:);
         
     end
     save(['nn_fitting_test_predictors_' num2str(nn)],'ind_arr','response_org','predictor_org','P_arr','R_arr','N_arr','e_arr','y_arr','*txt_arr');
