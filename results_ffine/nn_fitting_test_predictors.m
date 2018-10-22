@@ -8,7 +8,7 @@ v = 1:n_pdt;                % array of predictor labels
 predictor_org = predictor;  % save original predictor array
 response_org = response;    % save original response array
 
-n_arr = 1:3;
+n_arr = 1:2;
 
 for nn = 1:length(n_arr)
     
