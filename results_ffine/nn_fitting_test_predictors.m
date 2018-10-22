@@ -8,9 +8,9 @@ v = 1:n_pdt;                % array of predictor labels
 predictor_org = predictor;  % save original predictor array
 response_org = response;    % save original response array
 
-n_arr = 1:12;
+n_arr = 1:3;
 
-for nn = 5 % :length(n_arr)
+for nn = 1:length(n_arr)
     
     n = n_arr(nn);          % number of predictors per sample
     ind_arr = combnk(v,n);  % possible combinations of predictors (choose k out of all)
