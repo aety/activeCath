@@ -37,7 +37,7 @@ for nn = 1:length(best_net)
         
         title(['R = ' num2str(r(pp),3)],'fontweight','normal');
         xlabel(['actual ' rsp_txt_arr{pp} '(\circ)']);
-        xlabel(['predicted ' rsp_txt_arr{pp} '(\circ)']);
+        ylabel(['predicted ' rsp_txt_arr{pp} '(\circ)']);
         
         set(gca,'fontsize',fsz);
         set(gcf,'position',[100,150,800,600]);
