@@ -40,7 +40,7 @@ for ii = 1:size(X_ARR,1)
         % extract peaks in each frame
         x = X_PKS_ARR{ii,jj};   % helix peaks x
         y = Y_PKS_ARR{ii,jj};   % helix peaks y
-        d = sqrt(x.^2 + y.^2);  % helix peaks distance from origin
+        d = sqrt(diff(x).^2 + diff(y).^2);  % helix peaks distance from previous node (length = N-1)
         
         % slope change
         alpha= atan2(diff(y),diff(x));  % arctangent of local slopes (length = N-1)

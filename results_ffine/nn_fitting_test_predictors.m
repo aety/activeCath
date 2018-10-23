@@ -97,5 +97,5 @@ for nn = 1:length(n_arr)
         R_arr(kk,:) = temp_r(temp_i,:);
         
     end
-    save(['nn_fitting_test_predictors_' num2str(nn)],'ind_arr','P_arr','R_arr','N_arr','e_arr','y_arr','*txt_arr','PDT','RSP');
+    save(['nn_fitting_test_predictors_' num2str(nn)],'ind_arr','P_arr','R_arr','N_arr','e_arr','y_arr','*txt_arr','PDT','RSP','TGL_shuffle');
 end
