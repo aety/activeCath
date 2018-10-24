@@ -1,7 +1,7 @@
 clear; clc; ca;
 
 %% define catheter 3D rotation (about x-axis)
-rot_arr = 0:2:80; % array of angles to rotate the catheter by (deg)
+rot_arr = 15:10:75; % array of angles to rotate the catheter by (deg)
 
 %% define helix
 p1_helix = 55;      % helix starting point (% length)
@@ -16,7 +16,7 @@ L_res = 0.5;      % catheter spatial resolution (interval between nodes) (mm)
 L_pct_bent = 50;  % percent length bent (%)
 
 %% define varying parameter and associated file name and descriptions
-variable_arr = 2:2:90; % array of values for the varying parameter
+variable_arr = 5:10:85; % array of values for the varying parameter
 
 fname = 'curVar';
 var_name = '\theta_{end} (\circ)';

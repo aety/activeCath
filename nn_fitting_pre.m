@@ -112,7 +112,7 @@ end
 % randomly shuffle columns
 if TGL_shuffle
     temp = [PDT;RSP];
-    temp = temp(:,randperm(length(temp)));
+    temp = temp(:,randperm(size(temp,2)));
     PDT = temp(1:size(PDT,1),:);  % save original predictor array
     RSP = temp(size(PDT,1)+1:end,:);    % save original response array
 end

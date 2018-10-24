@@ -1,30 +1,28 @@
 clear; clc; ca;
 
-load results_regular\circular_approx_curVar_wSine_3D_rotate_findApex;
+load ..\..\results_forTest\nn_fitting_pre PDT* RSP*
 
 fsz = 10; % major fontsize
 mks = 10; % markersize
 
 %%
 c_map = {plasma,viridis};
-
+ttl_txt = 'independent test';
 %%
-load nn_fitting_test_predictors_proc;
+load nn_fitting_test_predictors_proc best_*;
 load nn_fitting_pre pdt_txt_arr rsp_txt_arr
 
 %%
 for nn = 1:length(best_net)
     
     lab = best_lab{nn};         % best labels of predictors
-    response_nn = best_rsp{nn}; % best NN response
+    net = best_net{nn};
+    response_org = RSP;
+    response_org = nn_denormalize_Mm(response_org,RSP_MX,RSP_mn);
+    response_nn = net(PDT(lab,:));
+    response_nn = nn_denormalize_Mm(response_nn,RSP_MX,RSP_mn);
     
-    if TGL_test
-        ind = best_tr{nn}.testInd;
-    else
-        ind = best_tr{nn}.trainInd;
-    end
-    
-    r = regression(response_org(:,ind),response_nn(:,ind));
+    r = regression(response_org,response_nn);
     
     c_lab = 2:-1:1;
     
@@ -34,18 +32,14 @@ for nn = 1:length(best_net)
         colormap(c_map{pp});
         
         txt_temp = strcat(pdt_txt_arr{lab});
-        text(5,75,'Best predictors:','fontsize',fsz-2);
-        text(10,70,txt_temp,'fontsize',fsz-2);
+        text(15,70,'Best predictors:','fontsize',fsz-2);
+        text(20,65,txt_temp,'fontsize',fsz-2);
         
-        a = scatter(response_org(pp,ind),response_nn(pp,ind),mks,response_org(c_lab(pp),ind),'o','filled');
+        a = scatter(response_org(pp,:),response_nn(pp,:),mks,response_org(c_lab(pp),:),'o','filled');
         alpha(a,0.7);
         
-        box off;
-        axis tight;
-        temp = [get(gca,'xlim'),get(gca,'ylim')];
-        temp = [min(temp),max(temp)];
-        axis([temp,temp]);
         
+                
         title([ttl_txt ', R = ' num2str(r(pp),3)],'fontweight','normal');
         xlabel(['actual ' rsp_txt_arr{pp} '(\circ)']);
         ylabel(['predicted ' rsp_txt_arr{pp} '(\circ)']);
@@ -59,8 +53,14 @@ for nn = 1:length(best_net)
         cb.Location = 'eastoutside';
         ylabel(cb,['actual ' rsp_txt_arr{c_lab(pp)} ' (\circ)']);
         
+        box off;
+        axis tight;
+        temp = [get(gca,'xlim'),get(gca,'ylim')];
+        temp = [min(temp),max(temp)];
+        axis([temp,temp]);
+        
         set(gcf,'paperposition',[0,0,4,3],'unit','inches');
-        print('-dtiff','-r300',['nn_fitting_test_predictors_proc_plot_sep_' ttl_txt '_' num2str(nn) '_' num2str(pp)]);
+        print('-dtiff','-r300',['nn_fitting_test_predictors_proc_plot_sep_newInputs_' num2str(nn) '_' num2str(pp)]);
         close;
     end
 end
