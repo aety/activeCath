@@ -5,19 +5,9 @@ n_train = 5; % number of times to repeat training for
 
 n_arr = 1:2; % number of predictors to run in each simulation (nn loop)
 
-TGL_shuffle = 1;
-
 %% generate all possible combinations (choose predictors)
 n_pdt = size(PDT,1);  % number of predictors
 v = 1:n_pdt;                % array of predictor labels
-
-%% randomly shuffle columns
-if TGL_shuffle
-    temp = [PDT;RSP];
-    temp = temp(:,randperm(length(temp)));
-    PDT = temp(1:size(PDT,1),:);  % save original predictor array
-    RSP = temp(size(PDT,1)+1:end,:);    % save original response array
-end
 
 %%
 for nn = 1:length(n_arr)
@@ -27,6 +17,7 @@ for nn = 1:length(n_arr)
     
     %%
     N_arr = cell(1,size(ind_arr,1));    % preallocate
+    TR_arr = N_arr;                     % preallocate
     y_arr = N_arr;                      % preallocate
     e_arr = cell(1,size(ind_arr,1));    % preallocate
     P_arr = nan(1,size(ind_arr,1));     % preallocate
@@ -50,11 +41,9 @@ for nn = 1:length(n_arr)
         % Choose a Training Function
         % For a list of all training functions type: help nntrain
         % 'trainlm' is usually fastest.
-        % 'trainbr' takes longer but may be better for challenging problems.
+        % 'trainbr' takes longer but may be better for challenging problems. %%%%%% SUPPORTS REGULARIZATION %%%%%%
         % 'trainscg' uses less memory. Suitable in low memory situations.
         trainFcn = 'trainlm';  % Levenberg-Marquardt backpropagation.
-        
-        % trainFcn = 'trainbr'; %%%%%% SUPPORTS REGULARIZATION %%%%%%
         
         % Create a Fitting Network
         hiddenLayerSize = 10;
@@ -65,7 +54,7 @@ for nn = 1:length(n_arr)
         net.divideParam.valRatio = 15/100;
         net.divideParam.testRatio = 15/100;
         
-        temp_net = cell(1,n_train); temp_y = temp_net; temp_e = temp_net;
+        temp_net = cell(1,n_train); temp_tr = temp_net; temp_y = temp_net; temp_e = temp_net;
         temp_p = nan(n_train,1); temp_r = nan(n_train,2);
         
         %% repeatedly train the network and find the best
@@ -81,6 +70,7 @@ for nn = 1:length(n_arr)
             [r,~,~] = regression(t,y);
             
             temp_net{tt} = net;
+            temp_tr{tt} = tr;
             temp_y{tt} = y;
             temp_e{tt} = e;
             temp_p(tt) = p;
@@ -91,11 +81,12 @@ for nn = 1:length(n_arr)
         [~,temp_i] = min(temp_p);
         
         N_arr{kk} = temp_net{temp_i};
+        TR_arr{kk} = temp_tr{temp_i};
         y_arr{kk} = temp_y{temp_i};
         e_arr{kk} = temp_e{temp_i};
         P_arr(kk) = temp_p(temp_i);
         R_arr(kk,:) = temp_r(temp_i,:);
         
     end
-    save(['nn_fitting_test_predictors_' num2str(nn)],'ind_arr','P_arr','R_arr','N_arr','e_arr','y_arr','*txt_arr','PDT','RSP','TGL_shuffle');
+    save(['nn_fitting_test_predictors_' num2str(nn)],'ind_arr','P_arr','R_arr','N_arr','TR_arr','e_arr','y_arr','*txt_arr');
 end

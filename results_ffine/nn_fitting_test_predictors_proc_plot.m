@@ -1,10 +1,13 @@
 clear; clc; ca;
 
+TGL_test = 1; % plot testing set only (vs. plot all data)
+
 fsz = 10; % major fontsize
 mks = 10; % markersize
 
 vidflag = 0;
 
+%%
 if vidflag
     opengl('software');
     anim = VideoWriter(datestr(datetime('now'),'yyyy-mm-dd-HHMMss'),'Motion JPEG AVI');
@@ -12,13 +15,17 @@ if vidflag
     open(anim);
 end
 
+if TGL_test
+    ttl_txt = 'test';
+else
+    ttl_txt = 'train';
+end
 
 %%
 load nn_fitting_test_predictors_proc;
-load nn_fitting_pre pdt_txt_arr 
+load nn_fitting_pre pdt_txt_arr
 
 %%
-
 for nn = 1:length(best_net)
     
     c_arr = colormap(lines(2));
@@ -27,19 +34,21 @@ for nn = 1:length(best_net)
     text(0,90,'Best predictors:','fontsize',fsz-2);
     
     lab = best_lab{nn};         % best labels of predictors
-    response_nn = best_rsp{nn}; % best NN response
-    r = best_R(nn,:);             % best correlation coefficient
-    pfm = best_pfm(nn);         % best performance
+    response_nn = best_rsp{nn}; % best NN response    
+    
+    if TGL_test
+        ind = best_tr{nn}.testInd;
+    else
+        ind = best_tr{nn}.trainInd;
+    end
+    
+    r = regression(response_org(:,ind),response_nn(:,ind));
     
     txt_temp = strcat(pdt_txt_arr{lab});
     text(5,85,txt_temp,'fontsize',fsz-2);
     
-    
-    text(0,80,'Performance:','fontsize',fsz-2);
-    text(5,75,num2str(pfm,3),'fontsize',fsz-2);
-    
     for pp = 1:2
-        a = scatter(response_org(pp,:),response_nn(pp,:),mks,c_arr(pp,:),'o','filled');
+        a = scatter(response_org(pp,ind),response_nn(pp,ind),mks,c_arr(pp,:),'o','filled');
         alpha(a,0.4);
         text(95,90-10*pp,['R = ' num2str(r(pp),3)],'color',c_arr(pp,:),'fontsize',fsz);
     end
@@ -52,7 +61,7 @@ for nn = 1:length(best_net)
     legend('\theta_{rot}','\theta_{bend}','location','southeast');
     xlabel('actual (\circ)');
     ylabel('predicted (\circ)');
-    title(['n\circ of predictors per sample = ' num2str(length(best_lab{nn}))],'fontweight','normal');
+    title(ttl_txt,'fontweight','normal');
     
     set(gca,'fontsize',fsz);
     set(gcf,'position',[100,150,800,600]);
@@ -64,12 +73,11 @@ for nn = 1:length(best_net)
         clf;
     else
         set(gcf,'paperposition',[0,0,4,3],'unit','inches');
-        print('-dtiff','-r300',['nn_fitting_test_predictors_proc_plot_' num2str(nn)]);
+        print('-dtiff','-r300',['nn_fitting_test_predictors_proc_plot__' ttl_txt '_' num2str(nn)]);
         close;
     end
     
 end
-
 
 if vidflag
     close(anim);

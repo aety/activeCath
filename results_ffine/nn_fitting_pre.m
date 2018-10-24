@@ -1,6 +1,9 @@
 clear; clc; ca;
 load circular_approx_curVar_wSine_3D_rotate_findApex;
 
+TGL_norm = 1;
+TGL_shuffle = 1;
+
 %%
 readme = 'Varying bending angles and varying rotation angles';
 
@@ -88,20 +91,31 @@ for ii = 1:size(X_ARR,1)
     end
 end
 
-% Normalize predictors and responses for neural network
-[PDT,PDT_MX,PDT_mn] = nn_normalize_Mm(predictor);
-[RSP,RSP_MX,RSP_mn] = nn_normalize_Mm(response);
-
 %%
 n_col_plt = 4;
 hold on;
 c_arr = colormap(plasma(size(predictor,1)));
 for kk = 1:size(predictor,1)
     subplot(n_col_plt,ceil(size(predictor,1)/n_col_plt),kk);
-    plot(PDT(kk,:),'.','color',c_arr(kk,:));
+    plot(predictor(kk,:),'.','color',c_arr(kk,:));
     axis tight;
     title(pdt_txt_arr{kk},'color',c_arr(kk,:));
 end
 
+%%
+if TGL_norm
+% Normalize predictors and responses for neural network
+[PDT,PDT_MX,PDT_mn] = nn_normalize_Mm(predictor);
+[RSP,RSP_MX,RSP_mn] = nn_normalize_Mm(response);
+end
+
+% randomly shuffle columns
+if TGL_shuffle
+    temp = [PDT;RSP];
+    temp = temp(:,randperm(length(temp)));
+    PDT = temp(1:size(PDT,1),:);  % save original predictor array
+    RSP = temp(size(PDT,1)+1:end,:);    % save original response array
+end
+
 %% save
-save nn_fitting_pre *_txt_arr readme PDT* RSP*;
+save nn_fitting_pre *_txt_arr readme PDT* RSP* TGL_*
