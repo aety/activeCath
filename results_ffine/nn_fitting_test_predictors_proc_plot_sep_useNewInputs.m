@@ -1,18 +1,12 @@
 clear; clc; ca;
 
-TGL_test = 1; % plot testing set only (vs. plot all data)
+load results_regular\circular_approx_curVar_wSine_3D_rotate_findApex;
 
 fsz = 10; % major fontsize
 mks = 10; % markersize
 
 %%
 c_map = {plasma,viridis};
-
-if TGL_test
-    ttl_txt = 'test';
-else
-    ttl_txt = 'train';
-end
 
 %%
 load nn_fitting_test_predictors_proc;
