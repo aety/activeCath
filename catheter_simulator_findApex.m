@@ -118,4 +118,4 @@ for aa = 1:length(rot_arr)
     
 end
 
-save circular_approx_curVar_wSine_3D_rotate_findApex *_ARR *_arr *name p1_helix p2_helix npt_helix a_helix n_helix L L_res L_pct_bent
+save catheter_simulator_findApex *_ARR *_arr *name p1_helix p2_helix npt_helix a_helix n_helix L L_res L_pct_bent
