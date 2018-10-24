@@ -15,6 +15,7 @@ load nn_fitting_pre pdt_txt_arr rsp_txt_arr
 %%
 for nn = 1:length(best_net)
     
+    %% Predict responses from the trained network using new inputs
     lab = best_lab{nn};         % best labels of predictors
     net = best_net{nn};
     response_org = RSP;
@@ -37,9 +38,7 @@ for nn = 1:length(best_net)
         
         a = scatter(response_org(pp,:),response_nn(pp,:),mks,response_org(c_lab(pp),:),'o','filled');
         alpha(a,0.7);
-        
-        
-                
+                        
         title([ttl_txt ', R = ' num2str(r(pp),3)],'fontweight','normal');
         xlabel(['actual ' rsp_txt_arr{pp} '(\circ)']);
         ylabel(['predicted ' rsp_txt_arr{pp} '(\circ)']);
