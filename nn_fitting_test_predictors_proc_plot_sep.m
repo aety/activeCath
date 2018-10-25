@@ -1,6 +1,6 @@
 clear; clc; ca;
 
-TGL_test = 1; % plot testing set only (vs. plot all data)
+TGL_test = 0; % plot testing set only (vs. plot all data)
 
 fsz = 10; % major fontsize
 mks = 10; % markersize
@@ -51,6 +51,9 @@ for nn = 1:length(best_net)
         temp = [get(gca,'xlim'),get(gca,'ylim')];
         temp = [min(temp),max(temp)];
         axis([temp,temp]);
+        temp = linspace(temp(1),temp(2),300);
+        a = scatter(temp,temp,2,0.25*[1,1,1],'filled');
+        alpha(a,0.3);
         
         title([ttl_txt ', R = ' num2str(r(pp),3)],'fontweight','normal');
         xlabel(['actual ' rsp_txt_arr{pp} '(\circ)']);

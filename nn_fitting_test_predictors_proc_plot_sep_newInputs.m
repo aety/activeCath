@@ -1,6 +1,6 @@
 clear; clc; ca;
 
-load ..\..\results_forTest\nn_fitting_pre PDT* RSP*
+load ..\results_forTest\nn_fitting_pre PDT* RSP*
 
 fsz = 10; % major fontsize
 mks = 10; % markersize
@@ -57,6 +57,10 @@ for nn = 1:length(best_net)
         temp = [get(gca,'xlim'),get(gca,'ylim')];
         temp = [min(temp),max(temp)];
         axis([temp,temp]);
+        
+        temp = linspace(temp(1),temp(2),300);
+        a = scatter(temp,temp,2,0.25*[1,1,1],'filled');
+        alpha(a,0.3);
         
         set(gcf,'paperposition',[0,0,4,3],'unit','inches');
         print('-dtiff','-r300',['nn_fitting_test_predictors_proc_plot_sep_newInputs_' num2str(nn) '_' num2str(pp)]);
