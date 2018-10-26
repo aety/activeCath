@@ -1,6 +1,6 @@
 clear; clc; ca;
 
-TGL_test = 0; % plot testing set only (vs. plot all data)
+TGL_test = 1; % plot testing set only (vs. plot all data)
 
 fsz = 10; % major fontsize
 mks = 10; % markersize
@@ -37,7 +37,7 @@ for nn = 1:length(best_net)
         figure(pp); hold on;
         colormap(c_map{pp});
                
-        err = response_nn(pp,ind) - response_org(pp,ind);
+        err = abs(response_nn(pp,ind) - response_org(pp,ind));
         errm = mean(err);
         errstd = std(err);
         

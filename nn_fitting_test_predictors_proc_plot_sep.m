@@ -1,6 +1,6 @@
 clear; clc; ca;
 
-TGL_test = 0; % plot testing set only (vs. plot all data)
+TGL_test = 1; % plot testing set only (vs. plot all data)
 
 fsz = 10; % major fontsize
 mks = 10; % markersize

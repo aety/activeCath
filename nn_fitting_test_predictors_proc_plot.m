@@ -3,14 +3,14 @@ clear; clc; ca;
 TGL_test = 1; % plot testing set only (vs. plot all data)
 
 fsz = 10; % major fontsize
-mks = 10; % markersize
+mks = 30; % markersize
 
-vidflag = 0;
+vidflag = 1;
 
 %%
 if vidflag
     opengl('software');
-    anim = VideoWriter(datestr(datetime('now'),'yyyy-mm-dd-HHMMss'),'Motion JPEG AVI');
+    anim = VideoWriter('nn_fitting_test_predictor_proc_plot','Motion JPEG AVI');
     anim.FrameRate = 1;
     open(anim);
 end
