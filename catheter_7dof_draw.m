@@ -1,3 +1,7 @@
+fsz = 12;
+mks = 20;
+lwd = 2;
+
 TGL_sav = 1;
 
 % define catheter
@@ -13,12 +17,13 @@ a_helix = 1;        % amplitude of the sine wave of the helix (mm)
 n_helix = 5;        % number of sinusoids of the helix
 
 % define rotation
-th_b = 1;           % bending (degree)
-th_r = 80;           % rotation (degree)
+th_b = 60           % bending (degree)
+th_r = 10;           % rotation (degree)
+th_yaw = 10;        % yaw (degree)
 
 th_end = th_b*pi/180;% bending (rad)
 alpha = th_r*pi/180;    % roll (rad)
-beta = 0*pi/180;        % yaw (rad)
+beta = th_yaw*pi/180;        % yaw (rad)
 gamma = 0*pi/180;       % pitch (rad)
 M_rot = getRY(gamma)*getRZ(beta)*getRX(alpha); % associated rotation matrix
 
@@ -111,11 +116,11 @@ axcl_arr = {'k',cam_cl,cam_cl}; % axis label color in each subplot
 % plot 3D view
 hh = 1;
 subplot(1,3,hh); hold on;
-plot3(X(ii_arr(hh):end),Y(ii_arr(hh):end),Z(ii_arr(hh):end),'-','color',c_arr(3,:),'linewidth',2); % plot catheter
-plot3(xh,yh,zh,'color',c_arr(4,:),'linewidth',1); % plot helix
+plot3(X(ii_arr(hh):end),Y(ii_arr(hh):end),Z(ii_arr(hh):end),'-','color',c_arr(3,:),'linewidth',2*lwd); % plot catheter
+plot3(xh,yh,zh,'color',c_arr(4,:),'linewidth',lwd); % plot helix
 
 % plot origin
-plot3(0+trans_x,0+trans_y,0+trans_z,'ko','linewidth',2);
+plot3(0+trans_x,0+trans_y,0+trans_z,'ko','linewidth',2*lwd);
 
 % plot camera
 plotCamera('Location',cam_lc,'Orientation',getRY(camAngle),'Size',10,'Label','camera','Color',cam_cl,'Opacity',0.2,'AxesVisible',1);
@@ -141,7 +146,7 @@ plot(xh,yh,'color',c_arr(4,:),'linewidth',1); % plot helix
 for hh = 2:3
     subplot(1,3,hh);
     hold on;
-    plot(x_pks,y_pks,'.','color',c_arr(2,:),'markersize',10);
+    plot(x_pks,y_pks,'.','color',c_arr(2,:),'markersize',mks);
 end
 
 % ------------ configure plots ------------
@@ -151,7 +156,7 @@ for hh = 1:3
     axis tight;
     axis equal;
     
-    set(gca,'fontsize',12);
+    set(gca,'fontsize',fsz);
     xlabel([xx_arr{hh} ' (mm)'],'color',axcl_arr{hh});
     ylabel([yy_arr{hh} ' (mm)'],'color',axcl_arr{hh});
     zlabel([zz_arr{hh} ' (mm)']);
