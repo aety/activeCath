@@ -52,7 +52,7 @@ for nn = 1:length(best_net)
         title({[ttl_txt ' (n = ' num2str(length(err)) ')'];...
             ['(m \pm std = ' num2str(errm,3) '\pm' num2str(errstd,3) ')']},'fontweight','normal');
         xlabel(['actual ' rsp_txt_arr{pp} '(\circ)']);
-        ylabel(['predicted ' rsp_txt_arr{pp} '(\circ)']);
+        ylabel(['| error ' rsp_txt_arr{pp} '| (\circ)']);
         
         set(gca,'fontsize',fsz);
         set(gcf,'position',[100,150,800,600]);

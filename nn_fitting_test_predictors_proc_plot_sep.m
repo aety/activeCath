@@ -37,11 +37,7 @@ for nn = 1:length(best_net)
     for pp = 1:2
         
         figure(pp); hold on;
-        colormap(c_map{pp});
-        
-        txt_temp = strcat(pdt_txt_arr{lab});
-        text(5,75,'Best predictors:','fontsize',fsz-2);
-        text(10,70,txt_temp,'fontsize',fsz-2);
+        colormap(c_map{pp});        
         
         a = scatter(response_org(pp,ind),response_nn(pp,ind),mks,response_org(c_lab(pp),ind),'o','filled');
         alpha(a,0.7);
