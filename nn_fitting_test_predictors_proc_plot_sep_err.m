@@ -41,6 +41,8 @@ for nn = 1:length(best_net)
         errm = mean(err);
         errstd = std(err);
         
+        a = scatter(linspace(min(response_org(pp,ind)),max(response_org(pp,ind)),100),errm*ones(1,100),2,0.35*[1,1,1],'filled');
+        alpha(a,0.35);
         a = scatter(response_org(pp,ind),err,mks,response_org(c_lab(pp),ind),'o','filled');
         alpha(a,0.7);
         

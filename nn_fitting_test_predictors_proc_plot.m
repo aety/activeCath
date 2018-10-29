@@ -2,10 +2,10 @@ clear; clc; ca;
 
 TGL_test = 1; % plot testing set only (vs. plot all data)
 
-fsz = 10; % major fontsize
-mks = 30; % markersize
+fsz = 8; % major fontsize
+mks = 15; % markersize
 
-vidflag = 1;
+vidflag = 0;
 
 %%
 if vidflag
@@ -44,8 +44,9 @@ for nn = 1:length(best_net)
     
     r = regression(response_org(:,ind),response_nn(:,ind));
     
-    txt_temp = strcat(pdt_txt_arr{lab});
-    text(5,85,txt_temp,'fontsize',fsz-2);
+    for tt = 1:length(lab)
+        text(5,90-5*tt,pdt_txt_arr{lab(tt)},'fontsize',fsz-2);
+    end
     
     for pp = 1:2
         a = scatter(response_org(pp,ind),response_nn(pp,ind),mks,c_arr(pp,:),'o','filled');
@@ -61,7 +62,7 @@ for nn = 1:length(best_net)
     legend('\theta_{rot}','\theta_{bend}','location','southeast');
     xlabel('actual (\circ)');
     ylabel('predicted (\circ)');
-    title(ttl_txt,'fontweight','normal');
+    title([ttl_txt ' (n = ' num2str(length(ind)) ')'],'fontweight','normal');
     
     set(gca,'fontsize',fsz);
     set(gcf,'position',[100,150,800,600]);

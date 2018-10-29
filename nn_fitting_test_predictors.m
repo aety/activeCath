@@ -3,7 +3,7 @@ clear;clc;ca;
 load nn_fitting_pre
 n_train = 5; % number of times to repeat training for
 
-n_arr = 1:10; % number of predictors to run in each simulation (nn loop)
+n_arr = 1:7; % number of predictors to run in each simulation (nn loop)
 
 %% generate all possible combinations (choose predictors)
 n_pdt = size(PDT,1);  % number of predictors
@@ -50,9 +50,9 @@ for nn = 1:length(n_arr)
         net = fitnet(hiddenLayerSize,trainFcn);
         
         % Setup Division of Data for Training, Validation, Testing
-        net.divideParam.trainRatio = 70/100;
+        net.divideParam.trainRatio = 80/100;
         net.divideParam.valRatio = 15/100;
-        net.divideParam.testRatio = 15/100;
+        net.divideParam.testRatio = 5/100;
         
         temp_net = cell(1,n_train); temp_tr = temp_net; temp_y = temp_net; temp_e = temp_net;
         temp_p = nan(n_train,1); temp_r = nan(n_train,2);
