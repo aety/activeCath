@@ -9,12 +9,13 @@ readme = 'Varying bending angles and varying rotation angles';
 
 pdt_txt_arr = {
     '|mean(d_{odd}) - mean(d_{even})|_{normal.}',... % average distance difference between odd and even
-    '|mean(alpha_{odd}) - mean(alpha_{even})|',... % average slope difference between odd and even
+    '|mean(\alpha_{odd}) - mean(\alpha_{even})|',... % average slope difference between odd and even
     '[max(d_{lateral}) - min(d_{lateral})]_{normal.}',... % lateral distance, max - min
-    'max(alpha_{lateral})-min(alpha_{lateral})',... % lateral slope, max - min
-    'std(alpha_{lateral})',... % lateral slope, std
+    'max(\alpha_{lateral})-min(\alpha_{lateral})',... % lateral slope, max - min
+    'std(\alpha_{lateral})',... % lateral slope, std
     'std(d_{lateral})',... % lateral distance, std
     'd_{prox,rel.}',... % relative displacement of the first node
+    'mean(\Delta\alpha_{lateral})',... % average lateral slope change
     };
 
 rsp_txt_arr = {'\theta_{rot}','\theta_{bend}'};
@@ -68,6 +69,7 @@ for ii = 1:size(X_ARR,1)
             std(alpha_lat),... % lateral slope, std
             std(d_lat),... % lateral distance, std
             sqrt((x(end)-first_x)^2 + (y(end)-first_y)^2),...
+            mean(d_alpha_lat),...
             ];        
         
         % list responses

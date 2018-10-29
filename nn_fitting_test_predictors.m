@@ -3,7 +3,7 @@ clear;clc;ca;
 load nn_fitting_pre
 n_train = 5; % number of times to repeat training for
 
-n_arr = 1:7; % number of predictors to run in each simulation (nn loop)
+n_arr = 1:8; % number of predictors to run in each simulation (nn loop)
 
 %% generate all possible combinations (choose predictors)
 n_pdt = size(PDT,1);  % number of predictors
