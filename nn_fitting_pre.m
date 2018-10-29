@@ -64,8 +64,8 @@ for ii = 1:size(X_ARR,1)
         predictor(:,nn) = [...
             (abs(mean(d_odd) - mean(d_even)))/mean(d_lat),... % average distance difference between odd and even
             abs(mean(alpha_odd) - mean(alpha_even)),... % average slope difference between odd and even
-            (max(d_lat) - min(d_lat))/mean(d_lat),... % NORMALIZED lateral distance, max - min
-            max(alpha_lat)-min(alpha_lat),... % lateral slope, max - min
+            range(d_lat)/mean(d_lat),... % NORMALIZED lateral distance, max - min
+            range(alpha_lat),... % lateral slope, max - min
             std(alpha_lat),... % lateral slope, std
             std(d_lat),... % lateral distance, std
             sqrt((x(end)-first_x)^2 + (y(end)-first_y)^2),...
