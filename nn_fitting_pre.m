@@ -8,19 +8,25 @@ TGL_shuffle = 1;
 readme = 'Varying bending angles and varying rotation angles';
 
 pdt_txt_arr = {
-    '|mean(d_{odd}) - mean(d_{even})|',... % average distance difference between odd and even
+    '|mean(d_{odd}) - mean(d_{even})|_{normal.}',... % average distance difference between odd and even
     '|mean(alpha_{odd}) - mean(alpha_{even})|',... % average slope difference between odd and even
-    'max(d_{lateral}) - min(d_{lateral})',... % lateral distance, max - min
+    '[max(d_{lateral}) - min(d_{lateral})]_{normal.}',... % lateral distance, max - min
     'max(alpha_{lateral})-min(alpha_{lateral})',... % lateral slope, max - min
     'std(alpha_{lateral})',... % lateral slope, std
     'std(d_{lateral})',... % lateral distance, std
-    'd_{prox,org}',...
+    'd_{prox,rel.}',... % relative displacement of the first node
     };
 
 rsp_txt_arr = {'\theta_{rot}','\theta_{bend}'};
 
 predictor = nan(length(pdt_txt_arr),size(X_ARR,1)*size(X_ARR,2));
 response = nan(length(rsp_txt_arr),size(X_ARR,1)*size(X_ARR,2));
+
+% find a first [x,y] point for reference
+first_x = X_ARR{1,1}(end); 
+first_y = Y_ARR{1,1}(end); 
+
+c_arr = colormap(parula(1845));
 
 for ii = 1:size(X_ARR,1)
     for jj = 1:size(X_ARR,2)
@@ -55,15 +61,15 @@ for ii = 1:size(X_ARR,1)
         
         % list predictors (summarize into single parameters)
         predictor(:,nn) = [...
-            abs(mean(d_odd) - mean(d_even)),... % average distance difference between odd and even
+            (abs(mean(d_odd) - mean(d_even)))/mean(d_lat),... % average distance difference between odd and even
             abs(mean(alpha_odd) - mean(alpha_even)),... % average slope difference between odd and even
-            max(d_lat) - min(d_lat),... % lateral distance, max - min
+            (max(d_lat) - min(d_lat))/mean(d_lat),... % NORMALIZED lateral distance, max - min
             max(alpha_lat)-min(alpha_lat),... % lateral slope, max - min
             std(alpha_lat),... % lateral slope, std
             std(d_lat),... % lateral distance, std
-            sqrt(x(end)^2+y(end)^2),...
+            sqrt((x(end)-first_x)^2 + (y(end)-first_y)^2),...
             ];        
-
+        
         % list responses
         response(:,nn) = [rot_arr(ii);
             variable_arr(jj)];
