@@ -47,8 +47,8 @@ end
 ind_arr = sort(ind_arr);
 
 %% find apexes of the helix
-ind_peak = nan(1,length(x0)-1);
-for ii = 1:length(x0)-1
+ind_peak = nan(1,length(ind_arr)-1);
+for ii = 1:length(ind_arr)-1
     tempi = ind_arr(ii):ind_arr(ii+1);      % array of indices to go through
     if length(tempi)<2
         error('Indices overlapped because the intersections are too close to each other. Increase the number of nodes along the helix.');
@@ -62,8 +62,8 @@ for ii = 1:length(x0)-1
         tempy = -tempy;                                             % flip y coordinates if concave up
     end
     temp = [tempx;tempy]'; temp = sortrows(temp); temp = temp';     % sort x and y so x is in ascending order
-    tempxx = temp(1,:); tempyy = temp(2,:);                         % temporarily save sorted x and y
-    [pks,~,~,~] = findpeaks(tempyy,tempxx,'NPeaks',1,'SortStr','descend');   % find the maximum peak
+    tempyy = temp(2,:);                         % temporarily save sorted x and y
+    pks = max(tempyy);
     if sum(tempy==pks)~=1
         error(['One of the peaks (ii = ' num2str(ii) ') has a number of representative nodes that is not equal to 1. The helices might be too wide.']);
     end
