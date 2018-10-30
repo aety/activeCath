@@ -14,7 +14,7 @@ pdt_txt_arr = {
     'max(\alpha_{lateral})-min(\alpha_{lateral})',... % lateral slope, max - min
     'std(\alpha_{lateral})',... % lateral slope, std
     'std(d_{lateral})',... % lateral distance, std
-    'd_{prox,rel.}',... % relative displacement of the first node
+    'd_{0,axial}',... % longitudinal distance of the first peak from the base of helix
     'mean(\Delta\alpha_{lateral})',... % average lateral slope change
     };
 
@@ -60,7 +60,21 @@ for ii = 1:size(X_ARR,1)
         d_alphaeven = diff(alpha_even); % separate odd/even first and than take slopes (n_even-2)
         d_alpha_lat = [d_alphaodd,d_alphaeven]; % combined (n-4)
         
-        % list predictors (summarize into single parameters)
+        %% calculate the longitudinal distance of the first peak from the first node of the helix
+        % Here, to simulate how far the most proximal tracked peak is 
+        % offset longitudinally from the most proximal end of the catheter,
+        % we find the two points that forms a critical line. The line
+        % passes through the first point of the helix, is perpendicular to
+        % the catheter, and has a length of 2*a_helix. We than simply
+        % calculate the distances from the tracked peak of interest to
+        % these two points, respectively, and choose the lesser.         
+        xh = XH_ARR{ii,jj}; yh = YH_ARR{ii,jj}; % find helix shape
+        x = X_ARR{ii,jj}; y = Y_ARR{ii,jj}; % find catheter curve
+        [xxx,yyy] = func_find_helix_start_pair(xh(end),yh(end),x,y,a_helix); 
+        d0 = sqrt((x(end)-xxx).^2 + (y(end)-yyy).^2); % the most proximal point is with the last index 
+        d0 = min(d0);
+        
+        %% list predictors (summarize into single parameters)
         predictor(:,nn) = [...
             (abs(mean(d_odd) - mean(d_even)))/mean(d_lat),... % average distance difference between odd and even
             abs(mean(alpha_odd) - mean(alpha_even)),... % average slope difference between odd and even
@@ -68,9 +82,9 @@ for ii = 1:size(X_ARR,1)
             range(alpha_lat),... % lateral slope, max - min
             std(alpha_lat),... % lateral slope, std
             std(d_lat),... % lateral distance, std
-            sqrt((x(end)-first_x)^2 + (y(end)-first_y)^2),...
-            mean(d_alpha_lat),...
-            ];        
+            d0,... % first node displacement 
+            mean(d_alpha_lat),... % average lateral slope change
+            ];              
         
         % list responses
         response(:,nn) = [rot_arr(ii);
