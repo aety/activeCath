@@ -31,11 +31,10 @@ temp = sortrows(temp);
 ind_arr = temp(:,1); x0 = temp(:,2); y0 = temp(:,3);
 
 % check if the critical indices are unique
-rep = length(ind_arr) - length(unique(ind_arr)); % no. of elements - no. of unique elements
+rep = sum(diff(ind_arr)<2);
 if  rep > 0
     warning([num2str(rep) ' catheter-helix intersections too close. Examine the surrounding nodes for substitutes.']);
-    [~,b] = unique(ind_arr); % find indices of unique elements
-    i_problem = setdiff(1:length(ind_arr),sort(b)); % find the repeating indices
+    i_problem = find(diff(ind_arr)<2); %     i_problem = setdiff(1:length(ind_arr),sort(b)); % find the repeating indices
     for pp = 1:length(i_problem)
         ii = i_problem(pp); % index in the array of intersections
         temp = sqrt((xh-x0(ii)).^2 + (yh-y0(ii)).^2); % recalculate distance
@@ -50,7 +49,7 @@ ind_arr = sort(ind_arr);
 ind_peak = nan(1,length(ind_arr)-1);
 for ii = 1:length(ind_arr)-1
     tempi = ind_arr(ii):ind_arr(ii+1);      % array of indices to go through
-    if length(tempi)<2
+    if length(tempi)<3
         error('Indices overlapped because the intersections are too close to each other. Increase the number of nodes along the helix.');
     else
     end
