@@ -1,5 +1,5 @@
 clear; clc; ca;
-load('circular_approx_curVar_wSine_3D_rotate_findApex');
+load('catheter_simulator_findApex');
 
 sbp_a = 0.16; % top/bottom border size
 sbp_b = 0.075; % left/right broder size
