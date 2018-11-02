@@ -1,6 +1,6 @@
 clear; clc; ca;
 %%
-nn_arr = 1:8; % subscripts of files to load
+nn_arr = 1:7; % subscripts of files to load
 
 best_net = cell(1,length(nn_arr));
 best_tr = best_net;

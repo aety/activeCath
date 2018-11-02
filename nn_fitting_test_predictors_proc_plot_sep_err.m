@@ -70,7 +70,7 @@ for nn = 3 % 1:length(best_net)
             ylabel(cb,['actual ' rsp_txt_arr{q} ' (\circ)']);
             
             set(gcf,'paperposition',[0,0,4,3],'unit','inches');
-            print('-dtiff','-r300',['nn_fitting_test_predictors_proc_plot_sep_err_' ttl_txt '_' num2str(nn) '_' num2str(pp)]);
+            print('-dtiff','-r300',['nn_fitting_test_predictors_proc_plot_sep_err_' ttl_txt '_' num2str(nn) '_' num2str(pp) '_' num2str(q)]);
             close;
         end
     end

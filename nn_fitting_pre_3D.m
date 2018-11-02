@@ -8,16 +8,13 @@ TGL_shuffle = 1;
 readme = 'Varying bending angles and varying rotation angles';
 
 pdt_txt_arr = {
-%     '|mean(d_{odd}) - mean(d_{even})|_{normal.}',... % average distance difference between odd and even
-%     '|mean(\alpha_{odd}) - mean(\alpha_{even})|',... % average slope difference between odd and even
-    '[max(d_{lateral}) - min(d_{lateral})]_{normal.}',... % lateral distance, max - min
-    'max(\alpha_{lateral})-min(\alpha_{lateral})',... % lateral slope, max - min
-    'std(\alpha_{lateral})',... % lateral slope, std
+    'range(d_{lateral})_{normal.}',... % lateral distance, max - min
+    'range(\alpha_{lateral})',... % lateral slope, max - min    
     'std(d_{lateral})',... % lateral distance, std
+    'std(\alpha_{lateral})',... % lateral slope, std
     'd_{0,axial}',... % longitudinal distance of the first peak from the base of helix
     'mean(\Delta\alpha_{lateral})',... % average lateral slope change
-    'std(d_{lateral})/mean(d_{lateral})',...
-    'mean(\Delta\alpha_{even})/mean(\Delta\alpha_{lateral})',...
+    'CV(d_{lateral})',...
     };
 
 rsp_txt_arr = {'\theta_{bend}','\theta_{roll}','\theta_{pitch}'};
@@ -76,16 +73,13 @@ for kk = 1:size(X_ARR,3) % pitch
             
             %% list predictors (summarize into single parameters)
             predictor(:,nn) = [...
-%                 (abs(mean(d_odd) - mean(d_even)))/mean(d_lat),... % average distance difference between odd and even
-%                 abs(mean(alpha_odd) - mean(alpha_even)),... % average slope difference between odd and even
                 range(d_lat)...,%/mean(d_lat),... % NORMALIZED lateral distance, max - min
-                range(alpha_lat),... % lateral slope, max - min
-                std(alpha_lat),... % lateral slope, std
+                range(alpha_lat),... % lateral slope, max - min                
                 std(d_lat),... % lateral distance, std
+                std(alpha_lat),... % lateral slope, std
                 d0,... % first node displacement
                 mean(d_alpha_lat),... % average lateral slope change
-                std(d_lat)/mean(d_lat),...
-                mean(dalpha_even)/mean(d_alpha_lat),...                
+                std(d_lat)/mean(d_lat),...                
                 ];
             
             % list responses
@@ -97,7 +91,7 @@ for kk = 1:size(X_ARR,3) % pitch
 end
 
 %%
-n_col_plt = 3;
+n_col_plt = 4;
 hold on;
 c_arr = colormap(lines(size(predictor,1)));
 for kk = 1:size(predictor,1)

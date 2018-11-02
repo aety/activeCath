@@ -2,7 +2,7 @@ clear; clc; ca;
 
 TGL_test = 1; % plot testing set only (vs. plot all data)
 
-fsz = 8; % major fontsize
+fsz = 7; % major fontsize
 mks = 15; % markersize
 
 vidflag = 0;
