@@ -108,16 +108,16 @@ for kk = 1:size(predictor,1)
 end
 
 %%
-figure;
-n_col_plt = 3;
-hold on;
-c_arr = colormap(lines(size(response,1)));
-for kk = 1:size(response,1)
-    subplot(n_col_plt,ceil(size(response,1)/n_col_plt),kk);
-    plot(response(kk,:),'.','color',c_arr(kk,:));
-    axis tight;
-    title(rsp_txt_arr{kk},'color',c_arr(kk,:));
-end
+% % % figure;
+% % % n_col_plt = 3;
+% % % hold on;
+% % % c_arr = colormap(lines(size(response,1)));
+% % % for kk = 1:size(response,1)
+% % %     subplot(n_col_plt,ceil(size(response,1)/n_col_plt),kk);
+% % %     plot(response(kk,:),'.','color',c_arr(kk,:));
+% % %     axis tight;
+% % %     title(rsp_txt_arr{kk},'color',c_arr(kk,:));
+% % % end
 %%
 if TGL_norm
     % Normalize predictors and responses for neural network
