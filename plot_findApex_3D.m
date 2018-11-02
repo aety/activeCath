@@ -11,12 +11,12 @@ for bb = 1:length(pitch_arr)
             x_pks = X_PKS_ARR{rr,aa,bb};
             y_pks = Y_PKS_ARR{rr,aa,bb};
             subplot(3,3,rr); hold on;
-            plot3(x_pks,y_pks,roll_arr(aa)*ones(1,length(x_pks)),'color',c_arr(bb,:));
-            
+            plot3(x_pks,y_pks,roll_arr(aa)*ones(1,length(x_pks)),'color',c_arr(bb,:),'linewidth',2);            
         end
     end
 end
 
+%%
 for pp = 1:9
     
     subplot(3,3,pp);
@@ -31,4 +31,3 @@ c.Ticks = temp;
 c.TickLabels = pitch_arr;
 ylabel(c,'pitch');
 
-    

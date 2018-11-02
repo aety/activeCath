@@ -8,7 +8,7 @@ best_lab = best_net;
 best_pdt = best_net;
 best_rsp = best_net;
 
-load nn_fitting_pre PDT PDT_MX PDT_mn RSP RSP_MX RSP_mn
+load nn_fitting_pre_3D PDT PDT_MX PDT_mn RSP RSP_MX RSP_mn
 
 for nn = nn_arr
     

@@ -1,6 +1,6 @@
 %% load pre-processed data from simulation
 clear;clc;ca;
-load nn_fitting_pre
+load nn_fitting_pre_3D
 n_train = 5; % number of times to repeat training for
 
 n_arr = 1:8; % number of predictors to run in each simulation (nn loop)
@@ -21,7 +21,7 @@ for nn = 1:length(n_arr)
     y_arr = N_arr;                      % preallocate
     e_arr = cell(1,size(ind_arr,1));    % preallocate
     P_arr = nan(1,size(ind_arr,1));     % preallocate
-    R_arr = nan(size(ind_arr,1),2);     % preallocate
+    R_arr = nan(size(ind_arr,1),size(RSP,1));     % preallocate
     
     parfor kk = 1:size(ind_arr,1)
         
@@ -55,7 +55,7 @@ for nn = 1:length(n_arr)
         net.divideParam.testRatio = 5/100;
         
         temp_net = cell(1,n_train); temp_tr = temp_net; temp_y = temp_net; temp_e = temp_net;
-        temp_p = nan(n_train,1); temp_r = nan(n_train,2);
+        temp_p = nan(n_train,1); temp_r = nan(n_train,size(RSP,1));
         
         %% repeatedly train the network and find the best
         for tt = 1:n_train

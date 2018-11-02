@@ -5,7 +5,7 @@ TGL_test = 1; % plot testing set only (vs. plot all data)
 fsz = 8; % major fontsize
 mks = 15; % markersize
 
-vidflag = 1;
+vidflag = 0;
 
 %%
 if vidflag
@@ -25,12 +25,12 @@ end
 
 %%
 load nn_fitting_test_predictors_proc;
-load nn_fitting_pre pdt_txt_arr
+load nn_fitting_pre_3D pdt_txt_arr
 
 %%
 for nn = 1:length(best_net)
     
-    c_arr = colormap(lines(2));
+    c_arr = colormap(lines(size(response_org,1)));
     hold on;
     
     text(0,90,'Best predictors:','fontsize',fsz-2);
@@ -50,7 +50,7 @@ for nn = 1:length(best_net)
         text(5,90-5*tt,pdt_txt_arr{lab(tt)},'fontsize',fsz-2);
     end
     
-    for pp = 1:2
+    for pp = 1:size(response_org,1)
         a = scatter(response_org(pp,ind),response_nn(pp,ind),mks,c_arr(pp,:),'o','filled');
         alpha(a,0.4);
         text(95,90-10*pp,['R = ' num2str(r(pp),3)],'color',c_arr(pp,:),'fontsize',fsz);
