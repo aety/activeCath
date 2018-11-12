@@ -2,7 +2,7 @@ clear; clc; ca;
 
 TGL_test = 1; % plot testing set only (vs. plot all data)
 
-fsz = 7; % major fontsize
+fsz = 8; % major fontsize
 mks = 15; % markersize
 
 vidflag = 0;
@@ -25,7 +25,7 @@ end
 
 %%
 load nn_fitting_test_predictors_proc;
-load nn_fitting_pre_3D pdt_txt_arr
+load nn_fitting_pre_3D pdt_txt_arr rsp_txt_arr
 
 %%
 for nn = 1:length(best_net)
@@ -61,7 +61,7 @@ for nn = 1:length(best_net)
     axis equal
     axis([-5,95,-5,95]);
     
-    legend('\theta_{rot}','\theta_{bend}','location','southeast');
+    legend(rsp_txt_arr,'location','southeast');
     xlabel('actual (\circ)');
     ylabel('predicted (\circ)');
     title([ttl_txt ' (n = ' num2str(length(ind)) ')'],'fontweight','normal');
