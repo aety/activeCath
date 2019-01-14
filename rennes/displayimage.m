@@ -2,10 +2,12 @@ clear; ca; clc;
 
 flg_plot = 0;
 
-vidflag = 1;
+vidflag = 0;
+
+c_arr = lines(3); clab = c_arr(3,:); % marker color label
 
 %% load image
-dname = '20SDR-H_30_0135'; % DSA_2_0042
+dname = '20SDR-H_30_0135';
 cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
 cd(dname);
 
@@ -123,24 +125,28 @@ for ff = ind_arr(1):ind_arr(end) % 35-40,47-56,70-
     % %     Centroid = cat(1, s.Centroid);
     % %     hold on; plot(Centroid(:,1),Centroid(:,2),'o','markersize',5,'markerfacecolor','g','markeredgecolor','g');
     
-    c_arr = lines(3);
-    
     % BoundingBox
-    cc = bwconncomp(K);
-    s = regionprops('table',cc,'BoundingBox');
+    cc = bwconncomp(K); %  returns the connected components CC found in the binary image BW
+    s = regionprops('table',cc,'Centroid','BoundingBox');
+    Centroid = cat(1,s.Centroid);
     BoundingBox = cat(1, s.BoundingBox);
+    Centroid(BoundingBox(:,4)>400,:) = [];
     BoundingBox(BoundingBox(:,4)>400,:) = [];
+    
+    
+    % plot full areas
     %     for ii = 1:size(BoundingBox,1)
-    %         hold on; rectangle('Position',BoundingBox(ii,:),'facecolor','r','edgecolor','r');
+    %         hold on; rectangle('Position',BoundingBox(ii,:),'facecolor',clab,'edgecolor',clab);
     %     end
-    temp = BoundingBox(:,1:2);
-    hold on; plot(temp(:,1),temp(:,2),'o','markersize',5,'markerfacecolor',c_arr(2,:),'markeredgecolor',c_arr(2,:));
+    
+    % plot only centroid of those areas
+    temp = Centroid;
+    hold on; plot(temp(:,1),temp(:,2),'o','markersize',5,'markerfacecolor',clab,'markeredgecolor',c_arr(2,:));
     
     
     %%
     title(['\theta_{roll} = ' num2str(th1_arr(ff))]);
-    set(gcf,'position',[1,581,1600,737]);
-    %     pause(0.001);
+    set(gcf,'position',[1,41,2560,1327]);
     if vidflag
         frame = getframe(figure(1000));
         writeVideo(anim,frame);
