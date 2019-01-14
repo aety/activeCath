@@ -2,9 +2,10 @@ clear; ca; clc;
 
 flg_plot = 0;
 
-vidflag = 0;
+vidflag = 1;
 
 c_arr = lines(3); clab = c_arr(3,:); % marker color label
+msize = 3;
 
 %% load image
 dname = '20SDR-H_30_0135';
@@ -23,7 +24,7 @@ cd C:\Users\yang\ownCloud\MATLAB\rennes
 if vidflag
     opengl('software');
     anim = VideoWriter([dname '_proc'],'Motion JPEG AVI');
-    anim.FrameRate = 5;
+    anim.FrameRate = 10;
     open(anim);
 end
 
@@ -31,13 +32,13 @@ end
 X3 = permute(X,[1,2,4,3]); % 4D images information usually comprises of Height, Width, Color Plane, Frame Number (Color Plane is in the order Red, Green, Blue)
 
 %% find interesting frames
-th1_bound = [-55,65]; % [-55,65];
+th1_bound = [-75,75];
 th1_arr = info.PositionerPrimaryAngleIncrement;
 ind_arr = find(th1_arr > th1_bound(1) & th1_arr < th1_bound(2));
 
 %% show image (all frames)
 
-for ff = ind_arr(1):ind_arr(end) % 35-40,47-56,70-
+for ff = ind_arr(1):ind_arr(end)
     
     % select frame
     I = X3(:,:,ff);
@@ -61,9 +62,11 @@ for ff = ind_arr(1):ind_arr(end) % 35-40,47-56,70-
     end
     
     %% thresholding using matlab remove background
-    level = graythresh(J);
-    K = imbinarize(J,level);
-    
+    %     level = graythresh(J);
+    %     K = imbinarize(J,level);
+    level = multithresh(J,2);
+    K = imquantize(J,level);
+    K(K==1) = 0; K(K~=0) = 1;
     %% thresholding using the histogram
     
     % %     % no-filter on the histogram
@@ -110,7 +113,7 @@ for ff = ind_arr(1):ind_arr(end) % 35-40,47-56,70-
     %% plot current image
     [countsK,~] = imhist(K); % saturation should occur on the furthest left and right
     figure(1000); subplot(1,2,1); imshow(J); %subplot(1,4,2); plot(counts,'linewidth',2);
-    subplot(1,2,2); imshow(K); %subplot(1,4,4); plot(countsK,'linewidth',2);
+    subplot(1,2,2); imshow(K,[]); %subplot(1,4,4); plot(countsK,'linewidth',2);
     
     %% edge detection
     % % %     %'Sobel' (default) | 'Prewitt' | 'Roberts' | 'log' | 'zerocross' | 'Canny' | 'approxcanny'
@@ -126,7 +129,7 @@ for ff = ind_arr(1):ind_arr(end) % 35-40,47-56,70-
     % %     hold on; plot(Centroid(:,1),Centroid(:,2),'o','markersize',5,'markerfacecolor','g','markeredgecolor','g');
     
     % BoundingBox
-    cc = bwconncomp(K); %  returns the connected components CC found in the binary image BW
+    cc = bwconncomp(K,4); %  returns the connected components CC found in the binary image BW
     s = regionprops('table',cc,'Centroid','BoundingBox');
     Centroid = cat(1,s.Centroid);
     BoundingBox = cat(1, s.BoundingBox);
@@ -141,16 +144,18 @@ for ff = ind_arr(1):ind_arr(end) % 35-40,47-56,70-
     
     % plot only centroid of those areas
     temp = Centroid;
-    hold on; plot(temp(:,1),temp(:,2),'o','markersize',5,'markerfacecolor',clab,'markeredgecolor',c_arr(2,:));
+    hold on; plot(temp(:,1),temp(:,2),'o','markersize',msize,'markerfacecolor',clab,'markeredgecolor',c_arr(2,:));
     
     
     %%
     title(['\theta_{roll} = ' num2str(th1_arr(ff))]);
-    set(gcf,'position',[1,41,2560,1327]);
+    set(gcf,'position',[20,20,600,500]); % [1,41,2560,1327]);
     if vidflag
         frame = getframe(figure(1000));
         writeVideo(anim,frame);
         clf;
+    else
+        pause(0.001);
     end
 end
 
