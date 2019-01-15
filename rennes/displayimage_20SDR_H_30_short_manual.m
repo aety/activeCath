@@ -2,7 +2,7 @@ clear; ca; clc;
 
 flg_plot = 0;
 
-vidflag = 0;
+vidflag = 1;
 
 c_arr = lines(3); clab = c_arr(3,:); % marker color label
 msize = 5;
