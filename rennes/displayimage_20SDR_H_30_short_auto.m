@@ -1,16 +1,34 @@
 clear; ca; clc;
 
-flg_plot = 0;
+% display toggle
+pltflag = 0; % plot (dianostics)
+vidflag = 1; % save video
+vidrate = 20; % video frame rate
 
-vidflag = 1;
+% figure parameters
+c_arr = lines(3); c_lab = c_arr(3,:); % marker color label
+msize = 5; % markersize
+lwd = 2; % linewidth
+ht = 400; % figure height (pixels)
+txt_d = 30; % distance of labeling text from the edge (pixels)
+txt_s = 14; % font size
 
-c_arr = lines(3); clab = c_arr(3,:); % marker color label
-msize = 5;
-lwd = 3;
+% image processing parameters
+th1_range = [-75,85]; % range of "roll" rotations to include
+plt_range = [201,850,251,800]; % range of pixels to plot ([x_0,x_end,y_0,y_end])
+sharp_r = 3; % sharpening radius
+sharp_a = 3; % sharpening amount
+thrs_small = 100; % (pixels)^2 threshold for removing small objects (during arbitrary stage; helps remove tip positioning boxes)
+thrs_big = 50; % (pixels)^2 threshold for removing oversized identified area (catheter diameter is about 10 pixels)
+thrs_dev = 10; % (pixels) maximum deviation from the catheter (fitted curve) an identified point is allowed to be (wire envelopes are about 5 pixels outside of the catheter)
+y_min = 550; % (pixels) vertical pixel location of the lowest interesting extracted features (to avoid inclusion of the catheter base holder)
+
+
+
 
 %% load image
 
-dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; % ,'20SDR-H_30_0021'
+dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
 for dd = 1:length(dname_arr)
     
@@ -30,7 +48,7 @@ for dd = 1:length(dname_arr)
     if vidflag
         opengl('software');
         anim = VideoWriter([dname '_proc_auto'],'Motion JPEG AVI');
-        anim.FrameRate = 10;
+        anim.FrameRate = vidrate;
         open(anim);
     end
     
@@ -38,9 +56,8 @@ for dd = 1:length(dname_arr)
     X3 = permute(X,[1,2,4,3]); % 4D images information usually comprises of Height, Width, Color Plane, Frame Number (Color Plane is in the order Red, Green, Blue)
     
     %% find interesting frames
-    th1_bound = [-75,65];
     th1_arr = info.PositionerPrimaryAngleIncrement;
-    ind_arr = find(th1_arr > th1_bound(1) & th1_arr < th1_bound(2));
+    ind_arr = find(th1_arr > th1_range(1) & th1_arr < th1_range(2));
     
     %% show image (all frames)
     
@@ -48,123 +65,144 @@ for dd = 1:length(dname_arr)
         
         % select frame
         H = X3(:,:,ff);
-        H = H(201:850,251:800);
+        H = H(plt_range(1):plt_range(2),plt_range(3):plt_range(4));
         
-        %% contrast stretching and sharpening
-        n = 256;
+        %% contrast stretching (I_str)
         fr = stretchlim(H); % default: [0.01,0.99]
-        I = imadjust(H,fr);
+        I_str = imadjust(H,fr);
         
-        if flg_plot
+        if pltflag
             figure;
-            imshow(I);
+            imshow(I_str);
             title('contrast strecthing');
         end
         
-        J = imsharpen(I,'radius',3,'amount',3); % (default radius = 1; default amount = 0.8)
+        %% sharpening (I_shp)
+        I_shp = imsharpen(I_str,'radius',sharp_r,'amount',sharp_a); % (default radius = 1; default amount = 0.8)
         
-        if flg_plot
+        if pltflag
             figure;
-            imshow(J);
+            imshow(I_shp);
             title('sharpen');
         end
         
-        %% distance transform
-        K = bwdist(J);
+        %% distance transform (I_dtr)
+        I_dtr = bwdist(I_shp);
         
-        if flg_plot
+        if pltflag
             figure;
-            imshow(K);
+            imshow(I_dtr);
             title('distance tranform');
         end
         
-        %% erode
-        % % %     SE = strel('rectangle',[50,2]);
-        % % %     K = imerode(K,SE);
-        % % %
-        % % %     if flg_plot
-        % % %         figure;
-        % % %         imshow(K);
-        % % %         title('eroded');
-        % % %     end
-        
-        %% remove smaller objects
-        P = 100;
-        K = bwareaopen(K,P);
-        if flg_plot
-            ca;
+        %% remove smaller objects (I_rsm)
+        P = thrs_small;
+        I_rsm = bwareaopen(I_dtr,P);
+        if pltflag
             figure;
-            imshow(K);
+            imshow(I_rsm);
             title('bwareaopen');
         end
         
         %% identify catheter
-        
         % find the area with maximum height
-        s = regionprops('table',K,'Area','BoundingBox','PixelIdxList');
+        s = regionprops('table',I_rsm,'Area','BoundingBox','PixelIdxList');
         BoundingBox = s.BoundingBox;
         PixelIdxList = s.PixelIdxList;
         [~,ind] = max(BoundingBox(:,4));
-        temp = BoundingBox(ind,:);
-        axlim = round([temp(1),temp(2),temp(3),temp(4)]); % round to the nearest pixel integer
+        bbox_big = BoundingBox(ind,:);
+        axlim = round(bbox_big); % round to the nearest pixel integer
         
-        if flg_plot
+        if pltflag
             figure;
-            imshow(K);
+            imshow(I_rsm);
             hold on;
-            rectangle('Position',axlim,'edgecolor',clab,'linewidth',2);
+            rectangle('Position',axlim,'edgecolor',c_lab,'linewidth',lwd);
             title('tallest bounding box');
+            
+            for ii = 1:size(BoundingBox,1)
+                hold on; rectangle('Position',BoundingBox(ii,:),'facecolor','none','edgecolor',c_lab,'linewidth',lwd);
+            end
         end
         
-        %% exclude pixels outside of the catheter bounding box
-        tgl = zeros(size(K));
+        %% exclude smaller boxes (I_exsb)
+        bbox_rest = BoundingBox; bbox_rest(ind,:) = [];
+        tgl = zeros(size(I_rsm));
+        for bb = 1:size(bbox_rest,1)
+            temp = bbox_rest(bb,:);
+            bxlim = round(temp); % round to the nearest pixel integer
+            tgl(bxlim(2):bxlim(2)+bxlim(4),bxlim(1):bxlim(1)+bxlim(3)) = 1;
+        end
+        tgl = logical(tgl);
+        I_exsb = I_dtr;
+        I_exsb(tgl) = 0; % turn irrelevant area in original image black
+        
+        if pltflag
+            figure;
+            imshow(I_exsb);
+            hold on;
+            title('exclude small boxes');
+        end
+        
+        %% fit a curve to the catheter
+        [x,y] = find(I_exsb==1);
+        p = polyfit(x,y,2); % y = p(1)*x^2 + p(2)*x + p(3)
+        
+        if pltflag
+            a = linspace(min(x),max(x),100);
+            b = polyval(p,a);
+            plot(b,a,'linewidth',lwd);
+        end
+        
+        %% retain bounding box of catheter only (I_ctol)
+        tgl = zeros(size(I_dtr));
         tgl(axlim(2):axlim(2)+axlim(4),axlim(1):axlim(1)+axlim(3)) = 1;
-        L = J;
+        L = I_shp;
         L(~tgl) = 0; % turn irrelevant area in original image black
         
         level = graythresh(L);
-        M = imbinarize(L,level);
+        I_ctol = imbinarize(L,level);
         
-        if flg_plot
+        if pltflag
             figure;
-            imshow(M);
+            imshow(I_ctol);
             title('exclude outside');
         end
-        
-        %% edge detection
-        % % %     %'Sobel' (default) | 'Prewitt' | 'Roberts' | 'log' | 'zerocross' | 'Canny' | 'approxcanny'
-        % % %     method = 'Sobel';
-        % % %     BW = edge(K,method);
-        % % %     figure; imshow(BW);
         
         %% regionprops
         
         % BoundingBox
-        cc = bwconncomp(M,4); %  returns the connected components CC found in the binary image BW
+        cc = bwconncomp(I_ctol,4); %  returns the connected components CC found in the binary image BW % 4 is the specification of connectivity
         s = regionprops('table',cc,'Centroid','BoundingBox','Area');
         Centroid = s.Centroid;
         Area = s.Area;
         BoundingBox = s.BoundingBox;
         
-        Centroid(Area>10,:) = [];
-        BoundingBox(Area>10,:) = [];
+        % Exclude big boxes, low centroids, and outliers from the catheter
+        tgl = zeros(size(Centroid,1),1);
+        tgl(Area > thrs_big) = 1; % remove identified boxes that are much bigger than an "envelope" size
+        tgl(Centroid(:,2) > y_min) = 1;
+        test = abs(p(1)*Centroid(:,2).^2 + p(2)*Centroid(:,2) + p(3) - Centroid(:,1));
+        tgl(test > thrs_dev,:) = 1; % remove points that deviate too much from the catheter (fitted curve)
+        BoundingBox(logical(tgl),:) = [];
+        Centroid(logical(tgl),:) = [];
         
-        % plot only centroid of those areas
-        %     temp = Centroid;
-        %     hold on; plot(temp(:,1),temp(:,2),'o','markersize',msize,'markerfacecolor',clab,'markeredgecolor',clab);
+        %% main plot
+        % figure sizing
+        wd = size(I_str,2)*ht/size(I_str,1);
+        set(gcf,'position',[1000,800,wd,ht]);
+        set(gca,'position',[0.01,0.01,.99,.99]);
         
-        % plot full areas
-        figure(100);
-        imshow(I);
+        % plot
+        imshow(I_str);
         for ii = 1:size(BoundingBox,1)
-            hold on; rectangle('Position',BoundingBox(ii,:),'facecolor','none','edgecolor',clab,'linewidth',lwd);
+            hold on; rectangle('Position',BoundingBox(ii,:),'facecolor',c_lab,'edgecolor',c_lab,'linewidth',lwd);
         end
+        text(txt_d,size(I_str,1)-txt_d,['\theta_{roll} = ' num2str(th1_arr(ff))],'fontsize',txt_s);
         
-        %%
-        title(['\theta_{roll} = ' num2str(th1_arr(ff))]);
-        set(gcf,'position',[1024,807,500,500]); % [20,20,600,500]); 2560,1327
+        %% save frame
         if vidflag
-            frame = getframe(figure(100));
+            frame = getframe(gcf);
             writeVideo(anim,frame);
             clf;
         else
