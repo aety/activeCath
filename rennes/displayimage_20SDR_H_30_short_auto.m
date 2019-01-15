@@ -6,10 +6,11 @@ vidflag = 1;
 
 c_arr = lines(3); clab = c_arr(3,:); % marker color label
 msize = 5;
+lwd = 3;
 
 %% load image
 
-dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'};
+dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; % ,'20SDR-H_30_0021'
 
 for dd = 1:length(dname_arr)
     
@@ -88,13 +89,14 @@ for dd = 1:length(dname_arr)
         % % %     end
         
         %% remove smaller objects
-        % %     P = 2;
-        % %     L = bwareaopen(K,P);
-        % %     if flg_plot
-        % %         figure;
-        % %         imshow(L);
-        % %         title('bwareaopen');
-        % %     end
+        P = 100;
+        K = bwareaopen(K,P);
+        if flg_plot
+            ca;
+            figure;
+            imshow(K);
+            title('bwareaopen');
+        end
         
         %% identify catheter
         
@@ -152,17 +154,17 @@ for dd = 1:length(dname_arr)
         %     hold on; plot(temp(:,1),temp(:,2),'o','markersize',msize,'markerfacecolor',clab,'markeredgecolor',clab);
         
         % plot full areas
-        figure(1);
+        figure(100);
         imshow(I);
         for ii = 1:size(BoundingBox,1)
-            hold on; rectangle('Position',BoundingBox(ii,:),'facecolor','none','edgecolor',clab,'linewidth',3);
+            hold on; rectangle('Position',BoundingBox(ii,:),'facecolor','none','edgecolor',clab,'linewidth',lwd);
         end
         
         %%
         title(['\theta_{roll} = ' num2str(th1_arr(ff))]);
         set(gcf,'position',[1024,807,500,500]); % [20,20,600,500]); 2560,1327
         if vidflag
-            frame = getframe(figure(1));
+            frame = getframe(figure(100));
             writeVideo(anim,frame);
             clf;
         else
