@@ -6,7 +6,7 @@ vidflag = 1; % save video
 vidrate = 20; % video frame rate
 
 % figure parameters
-c_arr = lines(3); c_lab = c_arr(3,:); % marker color label
+c_arr = lines(5); c_lab_1 = c_arr(2,:); c_lab_2 = c_arr(5,:); % marker color label
 msize = 5; % markersize
 lwd = 1; % linewidth
 ht = 600; % figure height (pixels)
@@ -30,7 +30,7 @@ y_min = 550; % (pixels) vertical pixel location of the lowest interesting extrac
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
-for dd = 5%:length(dname_arr)
+for dd = 1:length(dname_arr)
     
     dname = dname_arr{dd};
     cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
@@ -182,12 +182,12 @@ for dd = 5%:length(dname_arr)
         tgl_exc = zeros(size(Centroid,1),1);
         tgl_exc(Area > thrs_big) = 1; % remove identified boxes that are much bigger than an "envelope" size
         tgl_exc(Centroid(:,2) > y_min) = 1;
-%         test = abs(p(1)*Centroid(:,2).^2 + p(2)*Centroid(:,2) + p(3) - Centroid(:,1));
-%         tgl_exc(test > thrs_dev,:) = 1; % remove points that deviate too much from the catheter (fitted curve)
+        %         test = abs(p(1)*Centroid(:,2).^2 + p(2)*Centroid(:,2) + p(3) - Centroid(:,1));
+        %         tgl_exc(test > thrs_dev,:) = 1; % remove points that deviate too much from the catheter (fitted curve)
         BoundingBox(logical(tgl_exc),:) = [];
         Centroid(logical(tgl_exc),:) = [];
         
-        xx1 = Centroid(:,1); yy1 = Centroid(:,2);        
+        xx1 = Centroid(:,1); yy1 = Centroid(:,2);
         
         %% edge and regionprops (for convex back)
         % edge
@@ -210,11 +210,13 @@ for dd = 5%:length(dname_arr)
         set(gcf,'position',[1000,200,wd,ht]);
         set(gca,'position',[0.01,0.01,.99,.99]);
         
-        imshow(I_str);
+        I_disp = imadjust(I_str,[0,level*2]);
+        imshow(I_disp);
         hold on;
-        plot(xx1,yy1,'o','linewidth',lwd,'color',c_lab);
-        plot(xx2,yy2,'o','linewidth',lwd,'color',c_arr(1,:));
+        plot(xx1,yy1,'o','linewidth',lwd,'color',c_lab_1,'markersize',msize);
+        plot(xx2,yy2,'o','linewidth',lwd,'color',c_lab_2,'markersize',msize);
         
+        text(txt_d,size(I_str,1)-txt_d,['\theta_{roll} = ' num2str(th1_arr(ff))],'fontsize',txt_s);
         
         %% save frame
         if vidflag
