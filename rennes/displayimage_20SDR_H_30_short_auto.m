@@ -2,14 +2,14 @@ clear; ca; clc;
 
 % display toggle
 pltflag = 0; % plot (dianostics)
-vidflag = 0; % save video
+vidflag = 1; % save video
 vidrate = 20; % video frame rate
 
 % figure parameters
 c_arr = lines(3); c_lab = c_arr(3,:); % marker color label
 msize = 5; % markersize
-lwd = 5; % linewidth
-ht = 400; % figure height (pixels)
+lwd = 1; % linewidth
+ht = 600; % figure height (pixels)
 txt_d = 30; % distance of labeling text from the edge (pixels)
 txt_s = 14; % font size
 
@@ -61,7 +61,7 @@ for dd = 5%:length(dname_arr)
     
     %% show image (all frames)
     
-    for ff = ind_arr(100)%:ind_arr(end)
+    for ff = ind_arr(1):ind_arr(end)
         
         % select frame
         H = X3(:,:,ff);
@@ -158,10 +158,10 @@ for dd = 5%:length(dname_arr)
         tgl = zeros(size(I_dtr));
         tgl(axlim(2):axlim(2)+axlim(4),axlim(1):axlim(1)+axlim(3)) = 1;
         L = I_shp;
-        L(~tgl) = max(max(L)); % turn irrelevant area in original image black
         
-        level = graythresh(L);
+        level = graythresh(L(axlim(2):axlim(2)+axlim(4),axlim(1):axlim(1)+axlim(3)));
         I_ctol = imbinarize(L,level);
+        I_ctol(~tgl) = 1;
         
         if pltflag
             figure;
@@ -192,11 +192,11 @@ for dd = 5%:length(dname_arr)
         %% edge and regionprops (for convex back)
         % edge
         BW = I_ctol;
-        BW1= edge(BW,'Canny');
+        BW= edge(BW,'Canny');
         
         % regionprops
-        BW1(y_min:end,:) = 0;
-        s = regionprops('table',BW1,'ConvexHull','ConvexArea');
+        BW(y_min:end,:) = 0;
+        s = regionprops('table',BW,'ConvexHull','ConvexArea');
         ConvexHull = s.ConvexHull;
         ConvexArea = s.ConvexArea;
         [~,ind] = max(ConvexArea);
@@ -207,13 +207,13 @@ for dd = 5%:length(dname_arr)
         %% main plot
         % figure sizing
         wd = size(I_str,2)*ht/size(I_str,1);
-        set(gcf,'position',[1,41,2560,1327]);
+        set(gcf,'position',[1000,200,wd,ht]);
         set(gca,'position',[0.01,0.01,.99,.99]);
         
-        imshow(BW1);
+        imshow(I_str);
         hold on;
-        plot(xx1,yy1,'*','linewidth',lwd,'color',c_lab);
-        plot(xx2,yy2,'*','linewidth',lwd,'color',c_arr(1,:));
+        plot(xx1,yy1,'o','linewidth',lwd,'color',c_lab);
+        plot(xx2,yy2,'o','linewidth',lwd,'color',c_arr(1,:));
         
         
         %% save frame
