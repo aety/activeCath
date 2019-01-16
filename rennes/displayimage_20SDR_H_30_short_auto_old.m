@@ -8,8 +8,8 @@ vidrate = 20; % video frame rate
 % figure parameters
 c_arr = lines(3); c_lab = c_arr(3,:); % marker color label
 msize = 5; % markersize
-lwd = 5; % linewidth
-ht = 400; % figure height (pixels)
+lwd = 1; % linewidth
+ht = 600; % figure height (pixels)
 txt_d = 30; % distance of labeling text from the edge (pixels)
 txt_s = 14; % font size
 
@@ -30,7 +30,7 @@ y_min = 550; % (pixels) vertical pixel location of the lowest interesting extrac
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
-for dd = 5%:length(dname_arr)
+for dd = 5%1:length(dname_arr)
     
     dname = dname_arr{dd};
     cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
@@ -145,14 +145,14 @@ for dd = 5%:length(dname_arr)
         end
         
         %% fit a curve to the catheter
-        [x,y] = find(I_exsb==1);
-        p = polyfit(x,y,2); % y = p(1)*x^2 + p(2)*x + p(3)
-        
-        a = linspace(min(x),max(x),100);
-        b = polyval(p,a);
-        if pltflag
-            plot(b,a,'linewidth',lwd);
-        end
+% % %         [x,y] = find(I_exsb==1);
+% % %         p = polyfit(x,y,2); % y = p(1)*x^2 + p(2)*x + p(3)
+% % %         
+% % %         if pltflag
+% % %             a = linspace(min(x),max(x),100);
+% % %             b = polyval(p,a);
+% % %             plot(b,a,'linewidth',lwd);
+% % %         end
         
         %% retain bounding box of catheter only (I_ctol)
         tgl = zeros(size(I_dtr));
@@ -160,7 +160,7 @@ for dd = 5%:length(dname_arr)
         L = I_shp;
         L(~tgl) = max(max(L)); % turn irrelevant area in original image black
         
-        level = graythresh(L);
+        level = graythresh(L(axlim(2):axlim(2)+axlim(4),axlim(1):axlim(1)+axlim(3))); % only use the interesting region to find binarize threshold
         I_ctol = imbinarize(L,level);
         
         if pltflag
@@ -187,16 +187,18 @@ for dd = 5%:length(dname_arr)
         BoundingBox(logical(tgl_exc),:) = [];
         Centroid(logical(tgl_exc),:) = [];
         
-        xx1 = Centroid(:,1); yy1 = Centroid(:,2);        
+        xx1 = Centroid(:,1); yy1 = Centroid(:,2);
+        
         
         %% edge and regionprops (for convex back)
         % edge
         BW = I_ctol;
-        BW1= edge(BW,'Canny');
+        BW(~tgl) = 1;
+        BW= edge(BW,'Canny');
         
         % regionprops
-        BW1(y_min:end,:) = 0;
-        s = regionprops('table',BW1,'ConvexHull','ConvexArea');
+        BW(y_min:end,:) = 0;
+        s = regionprops('table',BW,'ConvexHull','ConvexArea');
         ConvexHull = s.ConvexHull;
         ConvexArea = s.ConvexArea;
         [~,ind] = max(ConvexArea);
@@ -206,14 +208,20 @@ for dd = 5%:length(dname_arr)
         
         %% main plot
         % figure sizing
-        wd = size(I_str,2)*ht/size(I_str,1);
-        set(gcf,'position',[1,41,2560,1327]);
-        set(gca,'position',[0.01,0.01,.99,.99]);
+        wd = 2*size(I_str,2)*ht/size(I_str,1);
+        set(gcf,'position',[1000,200,wd,ht]);
+%         set(gca,'position',[0.01,0.01,.99,.99]);
         
-        imshow(BW1);
-        hold on;
-        plot(xx1,yy1,'*','linewidth',lwd,'color',c_lab);
-        plot(xx2,yy2,'*','linewidth',lwd,'color',c_arr(1,:));
+        % plot
+        subplot('position',[0.01,0.01,0.48,.99]);
+        imshow(I_str);
+        text(txt_d,size(I_str,1)-txt_d,['\theta_{roll} = ' num2str(th1_arr(ff))],'fontsize',txt_s);
+        
+        subplot('position',[0.51,0.01,0.48,.99]);
+        imshow(I_ctol); hold on;        
+        h1 = scatter(xx1,yy1,'markeredgecolor',c_lab,'markerfacecolor','none','linewidth',lwd);        
+        h2 = scatter(xx2,yy2,'markeredgecolor',c_arr(1,:),'markerfacecolor','none','linewidth',lwd);        
+        
         
         
         %% save frame
