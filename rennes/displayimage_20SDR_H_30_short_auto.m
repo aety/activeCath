@@ -111,17 +111,17 @@ for dd = 1:length(dname_arr)
         PixelIdxList = s.PixelIdxList;
         [~,ind] = max(BoundingBox(:,4));
         bbox_big = BoundingBox(ind,:);
-        axlim = round(bbox_big); % round to the nearest pixel integer
+        bbox_big= round(bbox_big); % round to the nearest pixel integer
         
         if pltflag
             figure;
             imshow(I_rsm);
             hold on;
-            rectangle('Position',axlim,'edgecolor',c_lab,'linewidth',lwd);
+            rectangle('Position',bbox_big,'edgecolor',c_lab_1,'linewidth',lwd);
             title('tallest bounding box');
             
             for ii = 1:size(BoundingBox,1)
-                hold on; rectangle('Position',BoundingBox(ii,:),'facecolor','none','edgecolor',c_lab,'linewidth',lwd);
+                hold on; rectangle('Position',BoundingBox(ii,:),'facecolor','none','edgecolor',c_lab_1,'linewidth',lwd);
             end
         end
         
@@ -156,10 +156,10 @@ for dd = 1:length(dname_arr)
         
         %% retain bounding box of catheter only (I_ctol)
         tgl = zeros(size(I_dtr));
-        tgl(axlim(2):axlim(2)+axlim(4),axlim(1):axlim(1)+axlim(3)) = 1;
+        tgl(bbox_big(2):bbox_big(2)+bbox_big(4),bbox_big(1):bbox_big(1)+bbox_big(3)) = 1;
         L = I_shp;
         
-        level = graythresh(L(axlim(2):axlim(2)+axlim(4),axlim(1):axlim(1)+axlim(3)));
+        level = graythresh(L(bbox_big(2):bbox_big(2)+bbox_big(4),bbox_big(1):bbox_big(1)+bbox_big(3)));
         I_ctol = imbinarize(L,level);
         I_ctol(~tgl) = 1;
         
@@ -213,8 +213,9 @@ for dd = 1:length(dname_arr)
         I_disp = imadjust(I_str,[0,level*2]);
         imshow(I_disp);
         hold on;
-        plot(xx1,yy1,'o','linewidth',lwd,'color',c_lab_1,'markersize',msize);
-        plot(xx2,yy2,'o','linewidth',lwd,'color',c_lab_2,'markersize',msize);
+        %         plot(xx1,yy1,'o','linewidth',lwd,'color',c_lab_1,'markersize',msize);
+        %         plot(xx2,yy2,'o','linewidth',lwd,'color',c_lab_2,'markersize',msize);
+        rectangle('Position',bbox_big,'edgecolor',c_lab_1,'linewidth',lwd);
         
         text(txt_d,size(I_str,1)-txt_d,['\theta_{roll} = ' num2str(th1_arr(ff))],'fontsize',txt_s);
         
