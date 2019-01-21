@@ -2,11 +2,11 @@ clear; ca; clc;
 
 % display toggle
 pltflag = 0; % plot (dianostics)
-vidflag = 0; % save video
+vidflag = 1; % save video
 vidrate = 20; % video frame rate
 
 % figure parameters
-c_arr = lines(3); c_lab = c_arr(3,:); % marker color label
+c_arr = lines(5); c_lab_1 = c_arr(2,:); c_lab_2 = c_arr(5,:); % marker color label
 msize = 5; % markersize
 lwd = 1; % linewidth
 ht = 600; % figure height (pixels)
@@ -30,7 +30,7 @@ y_min = 550; % (pixels) vertical pixel location of the lowest interesting extrac
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
-for dd = 5%1:length(dname_arr)
+for dd = 1:length(dname_arr)
     
     dname = dname_arr{dd};
     cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
@@ -61,7 +61,7 @@ for dd = 5%1:length(dname_arr)
     
     %% show image (all frames)
     
-    for ff = ind_arr(100)%:ind_arr(end)
+    for ff = ind_arr(1):ind_arr(end)
         
         % select frame
         H = X3(:,:,ff);
@@ -111,17 +111,17 @@ for dd = 5%1:length(dname_arr)
         PixelIdxList = s.PixelIdxList;
         [~,ind] = max(BoundingBox(:,4));
         bbox_big = BoundingBox(ind,:);
-        axlim = round(bbox_big); % round to the nearest pixel integer
+        bbox_big= round(bbox_big); % round to the nearest pixel integer
         
         if pltflag
             figure;
             imshow(I_rsm);
             hold on;
-            rectangle('Position',axlim,'edgecolor',c_lab,'linewidth',lwd);
+            rectangle('Position',bbox_big,'edgecolor',c_lab_1,'linewidth',lwd);
             title('tallest bounding box');
             
             for ii = 1:size(BoundingBox,1)
-                hold on; rectangle('Position',BoundingBox(ii,:),'facecolor','none','edgecolor',c_lab,'linewidth',lwd);
+                hold on; rectangle('Position',BoundingBox(ii,:),'facecolor','none','edgecolor',c_lab_1,'linewidth',lwd);
             end
         end
         
@@ -145,23 +145,23 @@ for dd = 5%1:length(dname_arr)
         end
         
         %% fit a curve to the catheter
-% % %         [x,y] = find(I_exsb==1);
-% % %         p = polyfit(x,y,2); % y = p(1)*x^2 + p(2)*x + p(3)
-% % %         
-% % %         if pltflag
-% % %             a = linspace(min(x),max(x),100);
-% % %             b = polyval(p,a);
-% % %             plot(b,a,'linewidth',lwd);
-% % %         end
+        [x,y] = find(I_exsb==1);
+        p = polyfit(x,y,2); % y = p(1)*x^2 + p(2)*x + p(3)
+        
+        a = linspace(min(x),max(x),100);
+        b = polyval(p,a);
+        if pltflag
+            plot(b,a,'linewidth',lwd);
+        end
         
         %% retain bounding box of catheter only (I_ctol)
         tgl = zeros(size(I_dtr));
-        tgl(axlim(2):axlim(2)+axlim(4),axlim(1):axlim(1)+axlim(3)) = 1;
+        tgl(bbox_big(2):bbox_big(2)+bbox_big(4),bbox_big(1):bbox_big(1)+bbox_big(3)) = 1;
         L = I_shp;
-        L(~tgl) = max(max(L)); % turn irrelevant area in original image black
         
-        level = graythresh(L(axlim(2):axlim(2)+axlim(4),axlim(1):axlim(1)+axlim(3))); % only use the interesting region to find binarize threshold
+        level = graythresh(L(bbox_big(2):bbox_big(2)+bbox_big(4),bbox_big(1):bbox_big(1)+bbox_big(3)));
         I_ctol = imbinarize(L,level);
+        I_ctol(~tgl) = 1;
         
         if pltflag
             figure;
@@ -182,18 +182,16 @@ for dd = 5%1:length(dname_arr)
         tgl_exc = zeros(size(Centroid,1),1);
         tgl_exc(Area > thrs_big) = 1; % remove identified boxes that are much bigger than an "envelope" size
         tgl_exc(Centroid(:,2) > y_min) = 1;
-%         test = abs(p(1)*Centroid(:,2).^2 + p(2)*Centroid(:,2) + p(3) - Centroid(:,1));
-%         tgl_exc(test > thrs_dev,:) = 1; % remove points that deviate too much from the catheter (fitted curve)
+        %         test = abs(p(1)*Centroid(:,2).^2 + p(2)*Centroid(:,2) + p(3) - Centroid(:,1));
+        %         tgl_exc(test > thrs_dev,:) = 1; % remove points that deviate too much from the catheter (fitted curve)
         BoundingBox(logical(tgl_exc),:) = [];
         Centroid(logical(tgl_exc),:) = [];
         
         xx1 = Centroid(:,1); yy1 = Centroid(:,2);
         
-        
         %% edge and regionprops (for convex back)
         % edge
         BW = I_ctol;
-        BW(~tgl) = 1;
         BW= edge(BW,'Canny');
         
         % regionprops
@@ -208,21 +206,18 @@ for dd = 5%1:length(dname_arr)
         
         %% main plot
         % figure sizing
-        wd = 2*size(I_str,2)*ht/size(I_str,1);
+        wd = size(I_str,2)*ht/size(I_str,1);
         set(gcf,'position',[1000,200,wd,ht]);
-%         set(gca,'position',[0.01,0.01,.99,.99]);
+        set(gca,'position',[0.01,0.01,.99,.99]);
         
-        % plot
-        subplot('position',[0.01,0.01,0.48,.99]);
-        imshow(I_str);
+        I_disp = imadjust(I_str,[0,level*2]);
+        imshow(I_disp);
+        hold on;
+        %         plot(xx1,yy1,'o','linewidth',lwd,'color',c_lab_1,'markersize',msize);
+        %         plot(xx2,yy2,'o','linewidth',lwd,'color',c_lab_2,'markersize',msize);
+        rectangle('Position',bbox_big,'edgecolor',c_lab_1,'linewidth',lwd);
+        
         text(txt_d,size(I_str,1)-txt_d,['\theta_{roll} = ' num2str(th1_arr(ff))],'fontsize',txt_s);
-        
-        subplot('position',[0.51,0.01,0.48,.99]);
-        imshow(I_ctol); hold on;        
-        h1 = scatter(xx1,yy1,'markeredgecolor',c_lab,'markerfacecolor','none','linewidth',lwd);        
-        h2 = scatter(xx2,yy2,'markeredgecolor',c_arr(1,:),'markerfacecolor','none','linewidth',lwd);        
-        
-        
         
         %% save frame
         if vidflag
