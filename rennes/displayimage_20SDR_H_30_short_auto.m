@@ -2,7 +2,7 @@ clear; ca; clc;
 
 % display toggle
 pltflag = 0; % plot (dianostics)
-vidflag = 1; % save video
+vidflag = 0; % save video
 vidrate = 20; % video frame rate
 
 % figure parameters
@@ -25,12 +25,14 @@ thrs_small = 100; % (pixels)^2 threshold for removing small objects (during arbi
 thrs_big = 50; % (pixels)^2 threshold for removing oversized identified area (catheter diameter is about 10 pixels)
 thrs_dev = 10; % (pixels) maximum deviation from the catheter (fitted curve) an identified point is allowed to be (wire envelopes are about 5 pixels outside of the catheter)
 y_min = 510; % (pixels) vertical pixel location of the lowest interesting extracted features (to avoid inclusion of the catheter base holder)
+sch_rm_pxl = 3; % (pixels) threshold for removing small object during helix base identification process
+sch_d = 15; % (pixels) minimum number of pixels for two horizontally aligned points to be considered the helix base 
 
 %% load image
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
-for dd = 1:length(dname_arr)
+for dd = 1%:length(dname_arr)
     
     dname = dname_arr{dd};
     cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
@@ -61,56 +63,41 @@ for dd = 1:length(dname_arr)
     
     %% show image (all frames)
     
-    for ff = ind_arr(1):ind_arr(end)
-        
-        clear G H I_str_temp test a b mat n ind *_avg *_diff ind_temp
-        G = X3(:,:,ff); % select frame
+    for ff = ind_arr(1)%:ind_arr(end)
+                
+        G = X3(:,:,ff); % load frame
         
         %% Find the base of the helical marker (closed coils)
-        H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4));
-        fr = stretchlim(H); % default: [0.01,0.99]
-        I_str_temp = imadjust(H,fr);
-        test = edge(I_str_temp);
-        test = bwareaopen(test,3);
+        H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4)); % extract the "global" area of interest
+        fr = stretchlim(H); % default: [0.01,0.99] % calculate stretch imits
+        I_str_temp = imadjust(H,fr); % stretch image (contract adjusting)
+        I_ref_sch = edge(I_str_temp); % identify edges
+        I_ref_sch = bwareaopen(I_ref_sch,sch_rm_pxl); % remove small objects (smaller than 3 pixels)
         
-        test = test(ref_range(1):ref_range(2),ref_range(3):ref_range(4));
-        test = double(test);
+        I_ref_sch = I_ref_sch(ref_range(1):ref_range(2),ref_range(3):ref_range(4)); % focus on the "reference" area of interest
+        I_ref_sch = double(I_ref_sch); % convert into doubles
         
-        [xx_pk,yy_pk] = FindMaxHorzDist(ref_range,test);
-        xx_pk = xx_pk + ref_range(1);
-        yy_pk = yy_pk + ref_range(3);
-        a_mean = mean(xx_pk);
-        b_mean = mean(yy_pk);
-        
-        a_diff = a_mean - ref_pt(2); b_diff = b_mean - ref_pt(1);
-        
-        G = imtranslate(G,-[b_diff,a_diff]);
-        H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4));
-        I_str = imadjust(H,fr);
-        
-        subplot(1,2,1);
-        imshow(I_str_temp);
-        hold on;
-        plot(yy_pk,xx_pk,'.');
-        plot(b_mean,a_mean,'*y','markersize',msize,'linewidth',lwd);
-        plot(ref_pt(1),ref_pt(2),'or','markersize',msize,'linewidth',lwd);
-        title(ff);
-        
-        subplot(1,2,2);
-        imshow(I_str); hold on;
-        plot(ref_pt(1),ref_pt(2),'*y','markersize',1,'linewidth',lwd);        
-        set(gcf,'position',[1,41,1023,487]);
-        
-        %% contrast stretching (I_str)
-        fr = stretchlim(H); % default: [0.01,0.99]
-        I_str = imadjust(H,fr);
+        [x_base,y_base] = FindLowestHelix(ref_range,I_ref_sch,sch_d); % identify the lowest pair of horizontal pixels that are at least "d" pixels apart
+        x_base = x_base + ref_range(1); y_base = y_base + ref_range(3); % offset critical pixels to the gloabl area of interest
+        a_mean = mean(x_base); b_mean = mean(y_base); % average critical pixels
+        a_diff = a_mean - ref_pt(2); b_diff = b_mean - ref_pt(1); % calculate the x- and y- offset to translate the image by
+        G = imtranslate(G,-[b_diff,a_diff]); % translate the image
+        H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4)); % re-extract the "global" area of interest
+        I_str = imadjust(H,fr); % re-stretch image
         
         if pltflag
-            figure;
-            imshow(I_str);
-            title('contrast strecthing');
+            subplot(1,2,1); hold on;
+            imshow(I_str_temp); % show original "gloabl" area            
+            plot(y_base,x_base,'.'); % plot critical points
+            plot(b_mean,a_mean,'*y','markersize',msize,'linewidth',lwd); % plot calculated helix base
+            plot(ref_pt(1),ref_pt(2),'or','markersize',msize,'linewidth',lwd); % plot desired reference point
+            title(ff);
+            
+            subplot(1,2,2); hold on;
+            imshow(I_str); % show translated "gloabl" area            
+            plot(ref_pt(1),ref_pt(2),'or','markersize',1,'linewidth',lwd); % plot desired reference point
         end
-        
+                
         %% sharpening (I_shp)
         I_shp = imsharpen(I_str,'radius',sharp_r,'amount',sharp_a); % (default radius = 1; default amount = 0.8)
         
