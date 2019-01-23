@@ -30,7 +30,7 @@ y_min = 510; % (pixels) vertical pixel location of the lowest interesting extrac
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
-for dd = 5%1:length(dname_arr)
+for dd = 1:length(dname_arr)
     
     dname = dname_arr{dd};
     cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
@@ -63,44 +63,43 @@ for dd = 5%1:length(dname_arr)
     
     for ff = ind_arr(1):ind_arr(end)
         
-        clear G H I_str_temp test test1 a b mat n ind *_avg *_diff ind_temp
-        % select frame
-        G = X3(:,:,ff);
+        clear G H I_str_temp test a b mat n ind *_avg *_diff ind_temp
+        G = X3(:,:,ff); % select frame
         
         %% Find the base of the helical marker (closed coils)
         H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4));
         fr = stretchlim(H); % default: [0.01,0.99]
         I_str_temp = imadjust(H,fr);
-        test2 = edge(I_str_temp);
+        test = edge(I_str_temp);
+        test = bwareaopen(test,3);
         
-        %         test = I_str_temp;
-        %         test1 = test(ref_range(1):ref_range(2),ref_range(3):ref_range(4));
-        test2 = test2(ref_range(1):ref_range(2),ref_range(3):ref_range(4));
-        test2 = double(test2);
+        test = test(ref_range(1):ref_range(2),ref_range(3):ref_range(4));
+        test = double(test);
         
-        [a,b] = find(test2==1);
-        temp = [a,b];
-        temp = sortrows(temp);
-        n = size(temp,1);
-        ind_temp = [1:5,n-4:n];
+        [xx_pk,yy_pk] = FindMaxHorzDist(ref_range,test);
+        xx_pk = xx_pk + ref_range(1);
+        yy_pk = yy_pk + ref_range(3);
+        a_mean = mean(xx_pk);
+        b_mean = mean(yy_pk);
         
-        a_mean = mean(a(ind_temp)) + ref_range(1); b_mean = mean(b(ind_temp)) + ref_range(3);
         a_diff = a_mean - ref_pt(2); b_diff = b_mean - ref_pt(1);
         
         G = imtranslate(G,-[b_diff,a_diff]);
         H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4));
         I_str = imadjust(H,fr);
         
-        % % % %         subplot(1,2,1);
-        % % %         imshow(I_str_temp);
-        % % %         hold on;
-        % % %         plot(b_mean,a_mean,'*y','markersize',msize,'linewidth',lwd);
-        % % %         plot(ref_pt(1),ref_pt(2),'or','markersize',msize,'linewidth',lwd);
-        
-        %         subplot(1,2,2);
-        imshow(I_str); hold on;
+        subplot(1,2,1);
+        imshow(I_str_temp);
+        hold on;
+        plot(yy_pk,xx_pk,'.');
+        plot(b_mean,a_mean,'*y','markersize',msize,'linewidth',lwd);
         plot(ref_pt(1),ref_pt(2),'or','markersize',msize,'linewidth',lwd);
-        %         set(gcf,'position',[1,41,2560,1327]);
+        title(ff);
+        
+        subplot(1,2,2);
+        imshow(I_str); hold on;
+        plot(ref_pt(1),ref_pt(2),'*y','markersize',1,'linewidth',lwd);        
+        set(gcf,'position',[1,41,1023,487]);
         
         %% contrast stretching (I_str)
         fr = stretchlim(H); % default: [0.01,0.99]
@@ -196,7 +195,6 @@ for dd = 5%1:length(dname_arr)
         
         %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% ConvexHull regionprops (for convex back)-- divide into sections
-        %% i don't think this works :((((((
         %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % % %         n_div = 5;
         % % %         BW = imcomplement(I_ctol);
@@ -239,7 +237,6 @@ for dd = 5%1:length(dname_arr)
         
         
         
-        
         %% ConvexHull regionprops (for convex back)
         % % %         BW = imcomplement(I_ctol);
         % % %         BW(y_min:end,:) = 0;
@@ -277,20 +274,6 @@ for dd = 5%1:length(dname_arr)
         % % %         Centroid(logical(tgl_exc),:) = [];
         % % %
         % % %         xx1 = Centroid(:,1); yy1 = Centroid(:,2);
-        
-        %% main plot
-        % figure sizing
-        % %         wd = size(I_str,2)*ht/size(I_str,1);
-        % %         set(gcf,'position',[1000,200,wd,ht]);
-        % %         set(gca,'position',[0.01,0.01,.99,.99]);
-        % %
-        % %         I_disp = imadjust(I_str,[0,level*2]);
-        % %         imshow(I_disp);
-        % %         hold on;
-        % %         %         plot(xx1,yy1,'*','linewidth',lwd,'color',c_lab_1,'markersize',msize);
-        % %         plot(xx2,yy2,'*-','linewidth',lwd,'color',c_lab_2,'markersize',msize);
-        % %
-        % %         text(txt_d,size(I_str,1)-txt_d,['\theta_{roll} = ' num2str(th1_arr(ff))],'fontsize',txt_s);
         
         %% save frame
         if vidflag
