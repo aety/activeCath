@@ -1,4 +1,4 @@
-function [x_base,y_base] = FindLowestHelix(ref_range,I,d) % [x_base,y_base] = FindMaxHorzDist(ref_range,I_ref_sch);
+function [a_base,b_base] = FindLowestHelix(ref_range,I,d) % [x_base,y_base] = FindMaxHorzDist(ref_range,I_ref_sch);
 
 n = diff(ref_range(1:2))+1; % all possible vertical pixels
 d_max = nan(1,n); y_max = d_max; y_min = d_max; % preallocate
@@ -17,6 +17,6 @@ end
 
 ind = find(d_max > d,1,'last'); % find the lowest pair of pixels (horizontally aligned) that are at least "d" pixels apart
 
-x_base = [ind,ind]; % x-coordinate of the lowest pair of pixels
-y_base = [y_min(tt_arr(ind)),y_max(tt_arr(ind))]; % y-coordinate of the lowest pair of pixels
+a_base = [ind,ind]; % x-coordinate of the lowest pair of pixels
+b_base = [y_min(tt_arr(ind)),y_max(tt_arr(ind))]; % y-coordinate of the lowest pair of pixels
 

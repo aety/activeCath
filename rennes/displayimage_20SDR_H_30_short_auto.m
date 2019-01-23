@@ -2,12 +2,12 @@ clear; ca; clc;
 
 % display toggle
 pltflag = 0; % plot (dianostics)
-vidflag = 0; % save video
+vidflag = 1; % save video
 vidrate = 20; % video frame rate
 
 % figure parameters
-c_arr = lines(5); c_lab_1 = c_arr(2,:); c_lab_2 = c_arr(1,:); % marker color label
-msize = 5; % markersize
+c_arr = lines(6); c_lab_y = c_arr(3,:); c_lab_b = c_arr(6,:); % marker color label
+msize = 8; % markersize
 lwd = 2; % linewidth
 ht = 800; % figure height (pixels)
 txt_d = 30; % distance of labeling text from the edge (pixels)
@@ -24,15 +24,15 @@ sharp_a = 10; % sharpening amount
 thrs_small = 100; % (pixels)^2 threshold for removing small objects (during arbitrary stage; helps remove tip positioning boxes)
 thrs_big = 50; % (pixels)^2 threshold for removing oversized identified area (catheter diameter is about 10 pixels)
 thrs_dev = 10; % (pixels) maximum deviation from the catheter (fitted curve) an identified point is allowed to be (wire envelopes are about 5 pixels outside of the catheter)
-y_min = 510; % (pixels) vertical pixel location of the lowest interesting extracted features (to avoid inclusion of the catheter base holder)
+y_min = ref_pt(2); % y_min = 510; % (pixels) vertical pixel location of the lowest interesting extracted features (to avoid inclusion of the catheter base holder)
 sch_rm_pxl = 3; % (pixels) threshold for removing small object during helix base identification process
-sch_d = 15; % (pixels) minimum number of pixels for two horizontally aligned points to be considered the helix base 
+sch_d = 15; % (pixels) minimum number of pixels for two horizontally aligned points to be considered the helix base
 
 %% load image
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
-for dd = 1%:length(dname_arr)
+for dd = 1:length(dname_arr)
     
     dname = dname_arr{dd};
     cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
@@ -63,11 +63,11 @@ for dd = 1%:length(dname_arr)
     
     %% show image (all frames)
     
-    for ff = ind_arr(1)%:ind_arr(end)
-                
+    for ff = ind_arr(1):ind_arr(end)
+        
         G = X3(:,:,ff); % load frame
         
-        %% Find the base of the helical marker (closed coils)
+        %% identify the base of helix and translate image (I_str)
         H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4)); % extract the "global" area of interest
         fr = stretchlim(H); % default: [0.01,0.99] % calculate stretch imits
         I_str_temp = imadjust(H,fr); % stretch image (contract adjusting)
@@ -77,9 +77,9 @@ for dd = 1%:length(dname_arr)
         I_ref_sch = I_ref_sch(ref_range(1):ref_range(2),ref_range(3):ref_range(4)); % focus on the "reference" area of interest
         I_ref_sch = double(I_ref_sch); % convert into doubles
         
-        [x_base,y_base] = FindLowestHelix(ref_range,I_ref_sch,sch_d); % identify the lowest pair of horizontal pixels that are at least "d" pixels apart
-        x_base = x_base + ref_range(1); y_base = y_base + ref_range(3); % offset critical pixels to the gloabl area of interest
-        a_mean = mean(x_base); b_mean = mean(y_base); % average critical pixels
+        [a_base,b_base] = FindLowestHelix(ref_range,I_ref_sch,sch_d); % identify the lowest pair of horizontal pixels that are at least "d" pixels apart
+        a_base = a_base + ref_range(1); b_base = b_base + ref_range(3); % offset critical pixels to the gloabl area of interest
+        a_mean = mean(a_base); b_mean = mean(b_base); % average critical pixels
         a_diff = a_mean - ref_pt(2); b_diff = b_mean - ref_pt(1); % calculate the x- and y- offset to translate the image by
         G = imtranslate(G,-[b_diff,a_diff]); % translate the image
         H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4)); % re-extract the "global" area of interest
@@ -87,22 +87,23 @@ for dd = 1%:length(dname_arr)
         
         if pltflag
             subplot(1,2,1); hold on;
-            imshow(I_str_temp); % show original "gloabl" area            
-            plot(y_base,x_base,'.'); % plot critical points
-            plot(b_mean,a_mean,'*y','markersize',msize,'linewidth',lwd); % plot calculated helix base
-            plot(ref_pt(1),ref_pt(2),'or','markersize',msize,'linewidth',lwd); % plot desired reference point
+            imshow(I_str_temp); % show original "gloabl" area
+            plot(b_base,a_base,'.r'); % plot critical points
+            plot(b_mean,a_mean,'.w','markersize',msize,'linewidth',lwd); % plot calculated helix base
+            plot(ref_pt(1),ref_pt(2),'.y','markersize',msize,'linewidth',lwd); % plot desired reference point
             title(ff);
             
             subplot(1,2,2); hold on;
-            imshow(I_str); % show translated "gloabl" area            
-            plot(ref_pt(1),ref_pt(2),'or','markersize',1,'linewidth',lwd); % plot desired reference point
+            imshow(I_str); % show translated "gloabl" area
+            plot(ref_pt(1),ref_pt(2),'.y','markersize',msize,'linewidth',lwd); % plot desired reference point
         end
-                
+        
         %% sharpening (I_shp)
         I_shp = imsharpen(I_str,'radius',sharp_r,'amount',sharp_a); % (default radius = 1; default amount = 0.8)
         
         if pltflag
             figure;
+            subplot(1,4,1);
             imshow(I_shp);
             title('sharpen');
         end
@@ -111,78 +112,120 @@ for dd = 1%:length(dname_arr)
         I_dtr = bwdist(I_shp);
         
         if pltflag
-            figure;
+            subplot(1,4,2);
             imshow(I_dtr);
             title('distance tranform');
         end
         
         %% remove smaller objects (I_rsm)
-        P = thrs_small;
-        I_rsm = bwareaopen(I_dtr,P);
+        I_rsm = bwareaopen(I_dtr,thrs_small);
+        
         if pltflag
-            figure;
+            subplot(1,4,3);
             imshow(I_rsm);
             title('remove small objects');
         end
         
-        %% identify catheter
-        % find the area with maximum height
+        %% identify catheter (BoundingBox)
         s = regionprops('table',I_rsm,'Area','BoundingBox','PixelIdxList','ConvexHull');
         BoundingBox = s.BoundingBox;
         PixelIdxList = s.PixelIdxList;
-        [~,ind] = max(BoundingBox(:,4));
+        [~,ind] = max(BoundingBox(:,4)); % find the tallest BoundingBox
         bbox_big = BoundingBox(ind,:);
-        bbox_big= floor(bbox_big); % round to the nearest pixel integer
+        bbox_big = floor(bbox_big); % round down to the nearest pixel integer
         
         if pltflag
-            figure;
+            subplot(1,4,4);
             imshow(I_rsm);
             hold on;
-            rectangle('Position',bbox_big,'edgecolor',c_lab_1,'linewidth',lwd);
+            rectangle('Position',bbox_big,'edgecolor',c_lab_y,'linewidth',lwd);
             title('tallest bounding box');
             
-            for ii = 1:size(BoundingBox,1)
-                hold on; rectangle('Position',BoundingBox(ii,:),'facecolor','none','edgecolor',c_lab_1,'linewidth',lwd);
-            end
         end
         
-        %% exclude smaller boxes (I_exsb)
-        %         bbox_rest = BoundingBox; bbox_rest(ind,:) = [];
-        %         tgl = zeros(size(I_rsm));
-        %         for bb = 1:size(bbox_rest,1)
-        %             temp = bbox_rest(bb,:);
-        %             bxlim = round(temp); % round to the nearest pixel integer
-        %             tgl(bxlim(2):bxlim(2)+bxlim(4),bxlim(1):bxlim(1)+bxlim(3)) = 1;
-        %         end
-        %         tgl = logical(tgl);
-        %         I_exsb = I_dtr;
-        %         I_exsb(tgl) = 0; % turn irrelevant area in original image black
-        %
-        %         if pltflag
-        %             figure;
-        %             imshow(I_exsb);
-        %             hold on;
-        %             title('exclude small boxes');
-        %         end
-        
-        %% retain bounding box of catheter only (I_ctol) and binarize
+        %% retain bounding box of catheter only and binarize (I_shp_ctol)
         tgl = zeros(size(I_dtr));
         tgl(bbox_big(2):bbox_big(2)+bbox_big(4),bbox_big(1):bbox_big(1)+bbox_big(3)) = 1;
         
-        L = I_shp;
-        level = graythresh(L(bbox_big(2):bbox_big(2)+bbox_big(4),bbox_big(1):bbox_big(1)+bbox_big(3)));
-        I_ctol = imbinarize(L,level);
+        level = graythresh(I_shp(bbox_big(2):bbox_big(2)+bbox_big(4),bbox_big(1):bbox_big(1)+bbox_big(3)));
+        I_ctol = imbinarize(I_shp,level);
         I_ctol(~tgl) = 1;
         
         if pltflag
             figure;
-            imshow(I_ctol,[]);
+            imshow(I_ctol,[]); hold on;
             title('exclude outside (from sharpen) and binarize');
         end
         
+        %% identify catheter main shape
+        I_ctol_inv = imcomplement(I_ctol);
+        I_ctol_inv(y_min:end,:) = 0;
+        
+        s = regionprops('table',I_ctol_inv,'BoundingBox');
+        BoundingBox = s.BoundingBox;
+        [~,ind] = max(BoundingBox(:,4)); % find the tallest BoundingBox
+        BoundingBox = BoundingBox(ind,:);
+        bbox_big = floor(BoundingBox); % round down to the nearest pixel integer
+        
+%         [fa,fb] = find(I_ctol_inv(bbox_big(2):bbox_big(2)+bbox_big(4),bbox_big(1):bbox_big(1)+bbox_big(3))==1);
+        [fa,fb] = find(I_ctol_inv==1);
+        n = 3;
+        [p,S,mu] = polyfit(fa,fb,n);
+        x = linspace(min(fa),max(fa),100);
+        [y,~] = polyval(p,x,S,mu);
+        
+        if pltflag
+            imshow(I_ctol,[]); hold on;
+            rectangle('position',BoundingBox,'edgecolor',c_lab_y,'linewidth',lwd);
+        end
+        
+        
+        %% BoundingBox regionprops(for convex front)
+        
+        % BoundingBox
+        cc = bwconncomp(I_ctol,4); %  returns the connected components CC found in the binary image BW % 4 is the specification of connectivity
+        s = regionprops('table',cc,'Centroid','BoundingBox','Area');
+        Centroid = s.Centroid;
+        Area = s.Area;
+        BoundingBox = s.BoundingBox;
+        
+        % Exclude big boxes, low centroids, and outliers from the catheter
+        tgl_exc = zeros(size(Centroid,1),1);
+        tgl_exc(Area > thrs_big) = 1; % remove much bigger than an "envelope" size
+        tgl_exc(Area < 1) = 1; % remove boxes negligibly small
+        tgl_exc(Centroid(:,2) > y_min - 10) = 1; % remove boxes below reference point
+        BoundingBox(logical(tgl_exc),:) = [];
+        Centroid(logical(tgl_exc),:) = [];        
+        
+        %%% left to the curve --> lower left corner / right to the curve --> upper right corner
+        x_c = Centroid(:,2); y_c = Centroid(:,1);
+        [y_p,delta] = polyval(p,x_c,S,mu);        
+        
+        tgl_corner = (y_p - y_c) > 0; 
+        bbox_plt = zeros(length(Centroid),2);
+        bbox_plt(tgl_corner,:) = BoundingBox(tgl_corner,1:2);
+        bbox_plt(tgl_corner,2) = bbox_plt(tgl_corner,2) + BoundingBox(tgl_corner,4);
+        bbox_plt(~tgl_corner,:) = BoundingBox(~tgl_corner,1:2);
+        bbox_plt(~tgl_corner,1) = BoundingBox(~tgl_corner,1) + BoundingBox(~tgl_corner,3);
+                
+        % plot
+        wd = size(I_str,2)*ht/size(I_str,1);
+        set(gcf,'position',[1000,200,wd,ht]);
+        set(gca,'position',[0.01,0.01,.99,.99]);
+        
+        I_disp = imsharpen(imadjust(I_str,[0,level*2]));
+        imshow(I_disp); hold on;            
+        
+        plot(y,x,'--','linewidth',lwd,'color',0.5*[1,1,1]);
+        plot(bbox_plt(tgl_corner,1),bbox_plt(tgl_corner,2),'.','color',c_lab_y,'markersize',msize*2);
+        plot(bbox_plt(~tgl_corner,1),bbox_plt(~tgl_corner,2),'.','color',c_lab_b,'markersize',msize*2);
+        plot(ref_pt(1),ref_pt(2),'.w','markersize',msize*2);
+        text(txt_d,size(I_str,1)-txt_d,['\theta_{roll} = ' num2str(th1_arr(ff))],'fontsize',txt_s);
+                
         %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% ConvexHull regionprops (for convex back)-- divide into sections
         %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % % %         y_min = ref_pt(2);
         % % %         n_div = 5;
         % % %         BW = imcomplement(I_ctol);
         % % %         BW(y_min:end,:) = 0;
@@ -190,17 +233,18 @@ for dd = 1%:length(dname_arr)
         % % %         wd = size(I_str,2)*ht/size(I_str,1);
         % % %         set(gcf,'position',[1000,200,wd,ht]);
         % % %         set(gca,'position',[0.01,0.01,.99,.99]);
-        % % % %         imshow(I_shp); hold on;
         % % %
-        % % %         for dd = 1:n_div
+        % % %         figure;imshow(I_shp); hold on;
+        % % %
+        % % %         for vv = 1:n_div
         % % %
         % % %             BW_temp = BW;
         % % %
         % % %             bbox = bbox_big;
         % % %             bbox(4) = (y_min-bbox(2))/n_div;
-        % % %             bbox(2) = bbox(2) + (dd-1)*bbox(4);
+        % % %             bbox(2) = bbox(2) + (vv-1)*bbox(4);
         % % %             bbox = floor(bbox);
-        % % % %             rectangle('position',bbox,'edgecolor',c_lab_1);
+        % % %             rectangle('position',bbox,'edgecolor',c_lab_1);
         % % %
         % % %             tgl = zeros(size(BW));
         % % %             tgl(bbox(2):bbox(2)+bbox(4),bbox(1):bbox(1)+bbox(3)) = 1;
@@ -214,15 +258,9 @@ for dd = 1%:length(dname_arr)
         % % %
         % % %             xx2 = ConvexHull(:,1); yy2 = ConvexHull(:,2);
         % % %
-        % % % %             plot(xx2,yy2,'*-','linewidth',lwd,'color',c_lab_2,'markersize',msize);
+        % % %             plot(xx2,yy2,'*-','color',c_lab_2,'markersize',msize);
         % % %             clear ConvexHull BW_temp
         % % %         end
-        % % %
-        % % % %         plot(a_avg,b_avg,'*','markersize',msize,'color','y','linewidth',lwd);
-        % % %
-        
-        
-        
         
         %% ConvexHull regionprops (for convex back)
         % % %         BW = imcomplement(I_ctol);
@@ -243,24 +281,6 @@ for dd = 1%:length(dname_arr)
         % % %         temp = sqrt(diff(xx2).^2+diff(yy2).^2);
         % % %         tgl_2(abs(temp)<1) = 2; % points that are too close to each other
         % % %         xx2(tgl_2) = []; yy2(tgl_2) = [];
-        
-        %% BoundingBox regionprops(for convex front)
-        
-        % % %         % BoundingBox
-        % % %         cc = bwconncomp(I_shp,4); %  returns the connected components CC found in the binary image BW % 4 is the specification of connectivity
-        % % %         s = regionprops('table',cc,'Centroid','BoundingBox','Area');
-        % % %         Centroid = s.Centroid;
-        % % %         Area = s.Area;
-        % % %         BoundingBox = s.BoundingBox;
-        % % %
-        % % %         % Exclude big boxes, low centroids, and outliers from the catheter
-        % % %         tgl_exc = zeros(size(Centroid,1),1);
-        % % %         tgl_exc(Area > thrs_big) = 1; % remove identified boxes that are much bigger than an "envelope" size
-        % % %         tgl_exc(Centroid(:,2) > y_min) = 1;
-        % % %         BoundingBox(logical(tgl_exc),:) = [];
-        % % %         Centroid(logical(tgl_exc),:) = [];
-        % % %
-        % % %         xx1 = Centroid(:,1); yy1 = Centroid(:,2);
         
         %% save frame
         if vidflag
