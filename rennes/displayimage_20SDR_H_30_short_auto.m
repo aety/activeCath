@@ -167,7 +167,6 @@ for dd = 1:length(dname_arr)
         BoundingBox = BoundingBox(ind,:);
         bbox_big = floor(BoundingBox); % round down to the nearest pixel integer
         
-%         [fa,fb] = find(I_ctol_inv(bbox_big(2):bbox_big(2)+bbox_big(4),bbox_big(1):bbox_big(1)+bbox_big(3))==1);
         [fa,fb] = find(I_ctol_inv==1);
         n = 3;
         [p,S,mu] = polyfit(fa,fb,n);
@@ -189,18 +188,23 @@ for dd = 1:length(dname_arr)
         Area = s.Area;
         BoundingBox = s.BoundingBox;
         
-        % Exclude big boxes, low centroids, and outliers from the catheter
+        % Exclude big boxes, small boxes, and low centroids
         tgl_exc = zeros(size(Centroid,1),1);
         tgl_exc(Area > thrs_big) = 1; % remove much bigger than an "envelope" size
-        tgl_exc(Area < 1) = 1; % remove boxes negligibly small
-        tgl_exc(Centroid(:,2) > y_min - 10) = 1; % remove boxes below reference point
+        tgl_exc(Area < 1) = 1; % remove boxes neglsigibly small
+        tgl_exc(Centroid(:,2) > y_min - thrs_dev) = 1; % remove boxes below reference point
         BoundingBox(logical(tgl_exc),:) = [];
         Centroid(logical(tgl_exc),:) = [];        
         
-        %%% left to the curve --> lower left corner / right to the curve --> upper right corner
+        % Evaluate distance between points and fitted curve
         x_c = Centroid(:,2); y_c = Centroid(:,1);
         [y_p,delta] = polyval(p,x_c,S,mu);        
         
+        % remove outliers (deviated from the curve)
+        tgl_outlier = abs(y_p - y_c) > thrs_dev;  
+        BoundingBox(tgl_outlier,:) = nan;
+        
+        % left to the curve --> lower left corner / right to the curve --> upper right corner
         tgl_corner = (y_p - y_c) > 0; 
         bbox_plt = zeros(length(Centroid),2);
         bbox_plt(tgl_corner,:) = BoundingBox(tgl_corner,1:2);
