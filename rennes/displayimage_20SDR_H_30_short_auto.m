@@ -27,6 +27,9 @@ thrs_dev = 10; % (pixels) maximum deviation from the catheter (fitted curve) an 
 y_min = ref_pt(2); % y_min = 510; % (pixels) vertical pixel location of the lowest interesting extracted features (to avoid inclusion of the catheter base holder)
 sch_rm_pxl = 3; % (pixels) threshold for removing small object during helix base identification process
 sch_d = 15; % (pixels) minimum number of pixels for two horizontally aligned points to be considered the helix base
+pf_n = 3; % polyfit-- the order of equation(to find a curve best describing the catheter shape)
+pf_rpt = 10; % polyfit-- the number of times to eliminate outliers (to eliminate noise)
+pf_exc = 0.1; % polyfit-- the percentage of catheter distal (vertical) distance to exclude before polyfit
 
 %% load image
 
@@ -167,9 +170,8 @@ for dd = 1:length(dname_arr)
         BoundingBox = BoundingBox(ind,:);
         bbox_big = floor(BoundingBox); % round down to the nearest pixel integer
         
-        [fa,fb] = find(I_ctol_inv==1);
-        n = 3;
-        [p,S,mu] = polyfit(fa,fb,n);
+        [fa,fb] = find(I_ctol_inv==1);        
+        [p,S,mu] = PolyfitCatheter(fa,fb,pf_n,pf_rpt,pf_exc); % find the best polynomial fit describing the catheter shape
         x = linspace(min(fa),max(fa),100);
         [y,~] = polyval(p,x,S,mu);
         
