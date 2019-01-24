@@ -24,6 +24,8 @@ sharp_a = 10; % sharpening amount
 thrs_small = 100; % (pixels)^2 threshold for removing small objects (during arbitrary stage; helps remove tip positioning boxes)
 thrs_big = 50; % (pixels)^2 threshold for removing oversized identified area (catheter diameter is about 10 pixels)
 thrs_dev = 10; % (pixels) maximum deviation from the catheter (fitted curve) an identified point is allowed to be (wire envelopes are about 5 pixels outside of the catheter)
+thrs_sm = 2; % (pixels)^2 threshold for removing identified bounding boxes that are too small
+thrs_near = 5; % (pixel) minimum distance consecutive peaks have to be spread out by 
 y_min = ref_pt(2); % y_min = 510; % (pixels) vertical pixel location of the lowest interesting extracted features (to avoid inclusion of the catheter base holder)
 sch_rm_pxl = 3; % (pixels) threshold for removing small object during helix base identification process
 sch_d = 15; % (pixels) minimum number of pixels for two horizontally aligned points to be considered the helix base
@@ -193,8 +195,10 @@ for dd = 1:length(dname_arr)
         % Exclude big boxes, small boxes, and low centroids
         tgl_exc = zeros(size(Centroid,1),1);
         tgl_exc(Area > thrs_big) = 1; % remove much bigger than an "envelope" size
-        tgl_exc(Area < 1) = 1; % remove boxes neglsigibly small
+        tgl_exc(Area < thrs_sm) = 1; % remove boxes smaller than a pixel
         tgl_exc(Centroid(:,2) > y_min - thrs_dev) = 1; % remove boxes below reference point
+        temp = diff(Centroid).^2; temp = sqrt(temp(:,1) + temp(:,2));
+        tgl_exc(temp < thrs_near) = 1;
         BoundingBox(logical(tgl_exc),:) = [];
         Centroid(logical(tgl_exc),:) = [];        
         
@@ -212,8 +216,8 @@ for dd = 1:length(dname_arr)
         bbox_plt(tgl_corner,:) = BoundingBox(tgl_corner,1:2);
         bbox_plt(tgl_corner,2) = bbox_plt(tgl_corner,2) + BoundingBox(tgl_corner,4);
         bbox_plt(~tgl_corner,:) = BoundingBox(~tgl_corner,1:2);
-        bbox_plt(~tgl_corner,1) = BoundingBox(~tgl_corner,1) + BoundingBox(~tgl_corner,3);
-                
+        bbox_plt(~tgl_corner,1) = BoundingBox(~tgl_corner,1) + BoundingBox(~tgl_corner,3);               
+        
         % plot
         wd = size(I_str,2)*ht/size(I_str,1);
         set(gcf,'position',[1000,200,wd,ht]);
