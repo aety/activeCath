@@ -2,8 +2,8 @@ clear; ca; clc;
 
 % display toggle
 dbgflag = 0; % plot (dianostics)
-pltflag = 0; % plot (for video)
-vidflag = 0; % save video
+pltflag = 1; % plot (for video)
+vidflag = 1; % save video
 vidrate = 20; % video frame rate
 
 % figure parameters
@@ -71,7 +71,7 @@ for dd = 1:length(dname_arr)
     %% preallocate
     X = nan(pf_npt,length(ind_arr)); Y = X;
     REF = nan(2,length(ind_arr));
-    I_disp_arr = cell(length(ind_arr));
+    I_disp_arr = cell(length(ind_arr),1);
     BBOX = I_disp_arr;
     TGL = I_disp_arr;
     
@@ -194,6 +194,14 @@ for dd = 1:length(dname_arr)
             rectangle('position',BoundingBox,'edgecolor',c_lab_y,'linewidth',lwd);
         end
         
+        %% translate image again (based on catheter polyfit results       
+        b_diff = y(end) - ref_pt(1); a_diff = x(end) - ref_pt(2);
+        I_ctol = imtranslate(I_ctol,-[b_diff,a_diff],'FillValues',1); % translate the image        
+        x = x - a_diff; y = y - b_diff;
+        
+        % change image parameters for display 
+        I_temp = imadjust(I_str,[0,level*2]);
+        I_disp = imtranslate(I_temp,-[b_diff,a_diff],'FillValues',max(max(I_temp)));
         
         %% BoundingBox regionprops(for convex front)
         
@@ -234,10 +242,7 @@ for dd = 1:length(dname_arr)
         % remove outliers (deviated from the curve)
         tgl_outlier = abs(y_p - y_c) > thrs_dev;
         bbox_plt(tgl_outlier,:) = nan;
-        
-        % change image parameters for display 
-        I_disp = imsharpen(imadjust(I_str,[0,level*2]));
-        
+                
         %% plot
         if pltflag
             wd = size(I_str,2)*ht/size(I_str,1);
@@ -309,7 +314,7 @@ for dd = 1:length(dname_arr)
     end
     
     %% save data
-    save(['proc_auto_data_' dname],'X','REF','BBOX','TGL','th1_arr');
+    save(['proc_auto_data_' dname],'X','Y','REF','BBOX','TGL','ind_arr','I_disp_arr');
     
     %% close video
     if vidflag
