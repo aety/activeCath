@@ -2,6 +2,7 @@ clear; ca; clc;
 
 % display toggle
 dbgflag = 0; % plot (dianostics)
+savflag = 1; % save data (mat file)
 pltflag = 1; % plot (for video)
 vidflag = 1; % save video
 vidrate = 20; % video frame rate
@@ -257,6 +258,7 @@ for dd = 1:length(dname_arr)
             plot(ref_pt(1),ref_pt(2),'.w','markersize',msize*2);
             text(txt_d,size(I_str,1)-txt_d,['\theta_{roll} = ' num2str(th1_arr(ff))],'fontsize',txt_s);
         end
+        
         %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% ConvexHull regionprops (for convex back)-- divide into sections
         %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -314,7 +316,9 @@ for dd = 1:length(dname_arr)
     end
     
     %% save data
+    if savflag
     save(['proc_auto_data_' dname],'X','Y','REF','BBOX','TGL','ind_arr','I_disp_arr');
+    end
     
     %% close video
     if vidflag
