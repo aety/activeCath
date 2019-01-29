@@ -317,7 +317,7 @@ for dd = 1:length(dname_arr)
     
     %% save data
     if savflag
-    save(['proc_auto_data_' dname],'X','Y','REF','BBOX','TGL','ind_arr','I_disp_arr');
+    save(['proc_auto_data_' dname],'X','Y','REF','BBOX','TGL','ind_arr','I_disp_arr','th1_arr');
     end
     
     %% close video
