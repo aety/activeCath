@@ -2,7 +2,7 @@ clear; ca; clc;
 
 % display toggle
 pltflag = 0; % plot (dianostics)
-vidflag = 0; % save video
+vidflag = 1; % save video
 vidrate = 20; % video frame rate
 
 % figure parameters
@@ -37,7 +37,7 @@ pf_exc = 0.1; % polyfit-- the percentage of catheter distal (vertical) distance 
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
-for dd = 1%:length(dname_arr)
+for dd = 1:length(dname_arr)
     
     dname = dname_arr{dd};
     cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
@@ -68,7 +68,7 @@ for dd = 1%:length(dname_arr)
     
     %% show image (all frames)
     
-    for ff = ind_arr(1)%:ind_arr(end)
+    for ff = ind_arr(1):ind_arr(end)
         
         G = X3(:,:,ff); % load frame
         
