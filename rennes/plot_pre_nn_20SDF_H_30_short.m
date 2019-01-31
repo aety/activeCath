@@ -33,7 +33,7 @@ for dd = 1:length(dname_arr)
         bbox1 = bbox(tgl,:);
         if tgl_slpk
             n = min([n_pks,size(bbox1,1)]); % pick the smaller between the actual number of peaks and defined threshold
-            plt = nan(n,2);
+            plt = nan(n_pks,2);
             plt(1:n,:) = bbox1((size(bbox1,1)+1-n):end,:); % find the last n peaks
         else
             plt = bbox1;
@@ -47,7 +47,7 @@ for dd = 1:length(dname_arr)
         bbox2 = bbox(~tgl,:);
         if tgl_slpk
             n = min([n_pks,size(bbox2,1)]); % pick the smaller between the actual number of peaks and defined threshold
-            plt = nan(n,2);
+            plt = nan(n_pks,2);
             plt(1:n,:) = bbox2((size(bbox2,1)+1-n):end,:); % find the last n peaks
         else
             plt = bbox2;
