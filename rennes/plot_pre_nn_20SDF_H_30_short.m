@@ -3,12 +3,16 @@ clear; ca; clc;
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 cmap1 = RdBu;
 cmap2 = BrBG;
-
 n_pts = nan(5,375);
 
-for dd = 1%:length(dname_arr)
-    
-    clearvars -except dd dname_arr n_pts cmap*
+tgl_slpk = 1; % select only a certain number of peaks to plot
+n_pks = 10;
+tgl_cbar = 0;
+tgl_save = 1;
+
+
+
+for dd = 1:length(dname_arr)
     
     dname = dname_arr{dd};
     
@@ -20,17 +24,36 @@ for dd = 1%:length(dname_arr)
     NN = length(TGL);
     
     for ii = 1:length(TGL)
-        bbox = BBOX{ii};
         tgl = TGL{ii};
+        bbox = BBOX{ii};
+        tgl(isnan(bbox(:,1))) = [];
+        bbox(isnan(bbox(:,1)),:) = [];
+        
         
         yyaxis left;
-        f = scatter(bbox(tgl,1),bbox(tgl,2),10,ii*ones(size(bbox(tgl,1))),'filled');
+        bbox1 = bbox(tgl,:);
+        if tgl_slpk
+            n = min([n_pks,size(bbox1,1)]); % pick the smaller between the actual number of peaks and defined threshold
+            plt = nan(n,2);
+            plt(1:n,:) = bbox1((size(bbox1,1)+1-n):end,:); % find the last n peaks
+        else
+            plt = bbox1;
+        end
+        f = scatter(plt(:,1),plt(:,2),10,ii*ones(size(plt,1),1),'filled');
         alpha(f,0.8);
         fig = gcf;
         fig.Colormap = cmap1;
         
         yyaxis right;
-        f = scatter(bbox(~tgl,1),bbox(~tgl,2),10,ii*ones(size(bbox(~tgl,1))),'filled');
+        bbox2 = bbox(~tgl,:);
+        if tgl_slpk
+            n = min([n_pks,size(bbox2,1)]); % pick the smaller between the actual number of peaks and defined threshold
+            plt = nan(n,2);
+            plt(1:n,:) = bbox2((size(bbox2,1)+1-n):end,:); % find the last n peaks
+        else
+            plt = bbox2;
+        end
+        f = scatter(plt(:,1),plt(:,2),10,ii*ones(size(plt,1),1),'filled');
         alpha(f,0.8);
         b = gca;
         b.Colormap = cmap2;
@@ -52,12 +75,15 @@ for dd = 1%:length(dname_arr)
     set(gcf,'position',[1000,100,ht*w_ratio,ht]);
     ht = 6;
     set(gcf,'paperposition',[0,0,ht*w_ratio+1,ht]);
-    print('-dtiff','-r300',['plot_pre_nn_' dname]);
-    savefig(['plot_pre_nn_' dname]);
-    close;
-    
-    %%
-    
+    if tgl_save
+        print('-dtiff','-r300',['plot_pre_nn_' num2str(tgl_slpk*n_pks) '_' dname]);
+        %         savefig(['plot_pre_nn_' dname]);
+        close;
+    end
+end
+
+%%
+if tgl_cbar
     carr = {cmap,cmap2};
     for cc = 1:2
         figure;
@@ -74,7 +100,5 @@ for dd = 1%:length(dname_arr)
         set(gcf,'paperposition',[0,0,6/3.5,6]);
         print('-dtiff','-r300',['plot_pre_nn_cb' num2str(cc)]);
         close;
-    end   
-    
-    
+    end
 end
