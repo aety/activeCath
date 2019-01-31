@@ -20,8 +20,7 @@ for dd = 1:length(dname_arr)
     load th1_arr
     
     %%
-    figure; hold on;
-    NN = length(TGL);
+    figure; hold on;    
     
     for ii = 1:length(TGL)
         tgl = TGL{ii};
@@ -56,9 +55,8 @@ for dd = 1:length(dname_arr)
         f = scatter(plt(:,1),plt(:,2),10,ii*ones(size(plt,1),1),'filled');
         alpha(f,0.8);
         b = gca;
-        b.Colormap = cmap2;
+        b.Colormap = cmap2;       
         
-        NN(dd,ii) = length(bbox);
     end
     
     yyaxis left;
