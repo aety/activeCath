@@ -24,10 +24,12 @@ for dd = 1:length(dname_arr)
     
     for ii = 1:length(TGL)
         tgl = TGL{ii};
+        ref = REF(:,ii);
         bbox = BBOX{ii};
         tgl(isnan(bbox(:,1))) = [];
         bbox(isnan(bbox(:,1)),:) = [];
         
+        bbox = repmat(ref',length(bbox),1) - bbox; %%%%%%%%%%%% plot points in relation to the reference
         
         yyaxis left;
         bbox1 = bbox(tgl,:);
@@ -65,7 +67,7 @@ for dd = 1:length(dname_arr)
     axr = axis;
     temp = [min([axl(1),axr(1)]),max([axl(2),axr(2)]),min([axl(3),axr(3)]),max([axl(4),axr(4)])];
     yyaxis left; axis(temp); yyaxis right; axis (temp);
-    axis off;
+%     axis off;
     
     %%
     w_ratio = diff(temp(1:2))/diff(temp(3:4));
