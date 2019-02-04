@@ -7,7 +7,7 @@ n_pts = nan(5,375);
 
 tgl_slpk = 1; % select only a certain number of peaks to plot
 n_pks = 20;
-tgl_cbar = 0;
+tgl_cbar = 1;
 tgl_save = 1;
 
 
@@ -71,6 +71,7 @@ for dd = 1:length(dname_arr)
     %     axis off;
     
     %%
+    set(gca,'fontsize',12);
     w_ratio = diff(temp(1:2))/diff(temp(3:4));
     ht = 800;
     set(gcf,'position',[1000,100,ht*w_ratio,ht]);
@@ -91,12 +92,11 @@ if tgl_cbar
         cb = colorbar;
         th1 = th1_arr(ind_arr(1)); the = th1_arr(ind_arr(end));
         temp = interp1([0,1],[th1,the],cb.Ticks);
-        cb.TickLabels = round(temp,1);
+        cb.TickLabels = round(temp,1);        
         cb.Box = 'off';
-        cb.Position = [0.4, 0.1, 0.2, 0.8];
+        cb.Position = [0.4, 0.1, 0.1, 0.8];
         axis off;
-        ylabel(cb,'\theta_{rot}');
-        
+        ylabel(cb,'\theta_{rot}','fontsize',15);                
         set(gcf,'paperposition',[0,0,6/3.5,6]);
         print('-dtiff','-r300',['proc_auto_cb_' num2str(cc)]);
         close;
