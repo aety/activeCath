@@ -28,12 +28,8 @@ idx1 = 1; idx2 = n_roll;            % plot all
 %% preallocate
 n_pts = nan(5,n_roll);
 XY = nan(n_pks*4,n_roll*n_bend);
-% ROLL = nan(1,n_roll*n_bend);
-% BEND = ROLL;
-% Y0 = nan(1,n_roll*n_bend); % distance between proximal point to reference
-% DSLP = Y0;
-% MSLP = Y0; 
-PDT = nan(3,n_roll*n_bend);
+
+PDT = nan(7,n_roll*n_bend);
 RSP = nan(2,n_roll*n_bend);
 
 nn = 0 ;
@@ -81,9 +77,17 @@ for dd = 1:n_bend
         temp2 = plt2; temp2(isnan(plt2(:,1)),:) = []; temp2 = temp2([1,end],:); temp2 = diff(temp2);
         mslpend = max([temp1(2)/temp1(1),temp2(2)/temp2(1)]);
         
+        dlat1 = sqrt(diff(plt1(:,2)).^2 + diff(plt1(:,1)).^2);
+        dlat2 = sqrt(diff(plt2(:,2)).^2 + diff(plt2(:,1)).^2);
+        dlat = [dlat1;dlat2];
+        
         PDT(1,nn) = temp(slc+1);                            % predictor 1 -- Y0
         PDT(2,nn) = nanmax(abs([diff(slp1);diff(slp2)]));   % predictor 2 -- maximum local slope change
         PDT(3,nn) = mslpend;                                % predictor 3 -- slope between the first and last points
+        PDT(4,nn) = nanmean([diff(slp1);diff(slp2)]);       % predictor 4 -- average of local slope change
+        PDT(5,nn) = nanstd([diff(slp1);diff(slp2)]);        % predictor 5 -- standard deviation of local slope change
+        PDT(6,nn) = nanstd([slp1;slp2]);                    % predictor 6 -- standard deviation of local slope 
+        PDT(7,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 7 -- coefficient of variation of lateral distances
         
         RSP(1,nn) = th1_arr(ind_arr(ii));   % response 1 -- roll angle
         RSP(2,nn) = bend_arr(dd);           % response 2 -- bend angle
@@ -93,7 +97,7 @@ for dd = 1:n_bend
     end
 end
 
-PDT_txt = {'Y_0','max(\Delta\alpha)','max(\alpha_{end})'};
+PDT_txt = {'Y_0','max(\Delta\alpha)','max(\alpha_{end})','mean(\Delta\alpha)','std(\Delta\alpha)','std(\alpha)','CV(d_{lat})'};
 RSP_txt = {'\theta_{roll}','\theta_{bend}'};
 
 save pre_nn_20SDF_H_30_short XY PDT* RSP*
