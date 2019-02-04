@@ -1,4 +1,4 @@
-clear; ca; clc;
+clear; clc; ca;
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 cmap1 = RdBu;
@@ -6,8 +6,8 @@ cmap2 = BrBG;
 n_pts = nan(5,375);
 
 tgl_slpk = 1; % select only a certain number of peaks to plot
-n_pks = 10;
-tgl_cbar = 0;
+n_pks = 20;
+tgl_cbar = 1;
 tgl_save = 1;
 
 
@@ -74,15 +74,14 @@ for dd = 1:length(dname_arr)
     ht = 6;
     set(gcf,'paperposition',[0,0,ht*w_ratio+1,ht]);
     if tgl_save
-        print('-dtiff','-r300',['plot_pre_nn_' num2str(tgl_slpk*n_pks) '_' dname]);
-        %         savefig(['plot_pre_nn_' dname]);
+        print('-dtiff','-r300',['proc_auto_' num2str(tgl_slpk*n_pks) '_' dname]);        
         close;
     end
 end
 
 %%
 if tgl_cbar
-    carr = {cmap,cmap2};
+    carr = {cmap1,cmap2};
     for cc = 1:2
         figure;
         colormap(carr{cc});
@@ -96,7 +95,7 @@ if tgl_cbar
         ylabel(cb,'\theta_{rot}');
         
         set(gcf,'paperposition',[0,0,6/3.5,6]);
-        print('-dtiff','-r300',['plot_pre_nn_cb' num2str(cc)]);
+        print('-dtiff','-r300',['proc_auto_cb_' num2str(cc)]);
         close;
     end
 end
