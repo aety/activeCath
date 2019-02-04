@@ -7,7 +7,7 @@ n_pts = nan(5,375);
 
 tgl_slpk = 1; % select only a certain number of peaks to plot
 n_pks = 20;
-tgl_cbar = 1;
+tgl_cbar = 0;
 tgl_save = 1;
 
 
@@ -20,7 +20,7 @@ for dd = 1:length(dname_arr)
     load th1_arr
     
     %%
-    figure; hold on;    
+    figure; hold on;
     
     for ii = 1:length(TGL)
         tgl = TGL{ii};
@@ -57,7 +57,7 @@ for dd = 1:length(dname_arr)
         f = scatter(plt(:,1),plt(:,2),10,ii*ones(size(plt,1),1),'filled');
         alpha(f,0.8);
         b = gca;
-        b.Colormap = cmap2;       
+        b.Colormap = cmap2;
         
     end
     
@@ -65,9 +65,10 @@ for dd = 1:length(dname_arr)
     axl = axis;
     yyaxis right;
     axr = axis;
-    temp = [min([axl(1),axr(1)]),max([axl(2),axr(2)]),min([axl(3),axr(3)]),max([axl(4),axr(4)])];
+    temp = [min([axl(1),axr(1)]),max([axl(2),axr(2)]),0,500];
+    %     temp = [min([axl(1),axr(1)]),max([axl(2),axr(2)]),min([axl(3),axr(3)]),max([axl(4),axr(4)])];
     yyaxis left; axis(temp); yyaxis right; axis (temp);
-%     axis off;
+    %     axis off;
     
     %%
     w_ratio = diff(temp(1:2))/diff(temp(3:4));
@@ -76,7 +77,7 @@ for dd = 1:length(dname_arr)
     ht = 6;
     set(gcf,'paperposition',[0,0,ht*w_ratio+1,ht]);
     if tgl_save
-        print('-dtiff','-r300',['proc_auto_' num2str(tgl_slpk*n_pks) '_' dname]);        
+        print('-dtiff','-r300',['proc_auto_' num2str(tgl_slpk*n_pks) '_' dname]);
         close;
     end
 end

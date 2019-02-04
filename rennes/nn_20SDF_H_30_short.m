@@ -30,8 +30,7 @@ for ii = 1:length(pdt_arr)
     % 'trainlm' is usually fastest.
     % 'trainbr' takes longer but may be better for challenging problems. %%%%%% SUPPORTS REGULARIZATION %%%%%%
     % 'trainscg' uses less memory. Suitable in low memory situations.
-    trainFcn = 'trainlm';  % Levenberg-Marquardt backpropagation.
-    
+    trainFcn = 'trainlm';  % Levenberg-Marquardt backpropagation.    
     
     %% repeatedly train the network and find the best
     p_arr = nan(1,n_tr);
