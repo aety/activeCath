@@ -1,13 +1,21 @@
 clear; ca; clc;
 
 load pre_nn_20SDF_H_30_short
+cmap = {flipud(parula),RdYlGn};
+n_tr = 10;
 
 %% load predictors
+pdt_arr = 2:7;
 
-for ii = 2:7
+P_ARR = nan(length(pdt_arr),n_tr);
+E_ARR = P_ARR;
+TR_ARR = cell(length(pdt_arr),1);
+Y_ARR = TR_ARR;
+
+for ii = 1:length(pdt_arr)
     
-    nn = [1,ii];
-    predictor = PDT(nn,:);
+    pp = [1,pdt_arr(ii)];
+    predictor = PDT(pp,:);
     response = RSP;
     
     %% Solve an Input-Output Fitting problem with a Neural Network
@@ -24,39 +32,78 @@ for ii = 2:7
     % 'trainscg' uses less memory. Suitable in low memory situations.
     trainFcn = 'trainlm';  % Levenberg-Marquardt backpropagation.
     
-    % Create a Fitting Network
-    hiddenLayerSize = 10;
-    net = fitnet(hiddenLayerSize,trainFcn);
-    
-    % Setup Division of Data for Training, Validation, Testing
-    net.divideParam.trainRatio = 80/100;
-    net.divideParam.valRatio = 15/100;
-    net.divideParam.testRatio = 5/100;
     
     %% repeatedly train the network and find the best
-    % Train the Network
-    [net,tr] = train(net,x,t);
+    p_arr = nan(1,n_tr);
+    e_arr = p_arr;
+    tr_arr = cell(1,n_tr);
+    y_arr = tr_arr;
     
-    % Test the Network
-    y = net(x);
-    e = gsubtract(t,y);
-    p = perform(net,t,y);
-    [r,~,~] = regression(t,y);
-    
-    %%
-    ind = tr.testInd;
-    figure;
-    for rr = 1:size(nn,2)
-        subplot(1,2,rr);
-        h = scatter(t(rr,ind),y(rr,ind),'k','filled');
-        r = regression(t(rr,ind),y(rr,ind));
-        alpha(h, 0.3);
-        axis equal
-        xlabel(['actual ' RSP_txt{rr}]);
-        ylabel(['predicted ' RSP_txt{rr}]);
-        title(['R = ' num2str(r)]);
-        axis equal
+    for nn = 1:n_tr
+        
+        % Create a Fitting Network
+        hiddenLayerSize = 10;
+        net = fitnet(hiddenLayerSize,trainFcn);
+        
+        % Setup Division of Data for Training, Validation, Testing
+        net.divideParam.trainRatio = 50/100;
+        net.divideParam.valRatio = 20/100;
+        net.divideParam.testRatio = 30/100;
+        
+        
+        % Train the Network
+        [net,tr] = train(net,x,t);
+        
+        % Test the Network
+        y = net(x);
+        e = gsubtract(t,y);
+        p = perform(net,t,y);
+        %     [r,~,~] = regression(t,y);
+        
+        p_arr(nn) = p;
+        e_arr(nn) = norm(e);
+        tr_arr{nn} = tr;
+        y_arr{nn} = y;
     end
-    text(0,0,['Predictors: ' PDT_txt{1} ', ' PDT_txt{nn(size(nn,2))}]);
     
+    P_ARR(ii,:) = p_arr;
+    E_ARR(ii,:) = e_arr;
+    TR_ARR{ii} = tr_arr;
+    Y_ARR{ii} = y_arr;
+    
+end
+
+%% plot
+[a,b] = find(P_ARR==min(min(P_ARR)));
+
+tr = TR_ARR{a}{b};
+y = Y_ARR{a}{b};
+
+ind = tr.testInd;
+c_plt = [2,1];
+
+for rr = 1:size(pp,2)
+    figure;
+    colormap(cmap{rr});
+    h = scatter(t(rr,ind),y(rr,ind),10,RSP(c_plt(rr),ind),'filled');
+    
+    r = regression(t(rr,ind),y(rr,ind));
+    disp(r);
+    
+    title(['Predictors: ' PDT_txt{1} ', ' PDT_txt{pp(size(pp,2))} ', R = ' num2str(r)],'fontweight','normal');
+    xlabel(['actual ' RSP_txt{rr}]);
+    ylabel(['predicted ' RSP_txt{rr}]);
+    
+    axis equal
+    temp2 = max([max(max(t(rr,:))),max(max(y(rr,:)))]);
+    temp1 = min([min(min(t(rr,:))),min(min(t(rr,:)))]);
+    axis([temp1,temp2,temp1,temp2]);
+    
+    c = colorbar;
+    c.Label.String = RSP_txt{c_plt(rr)};
+    c.Box = 'off';
+    
+    set(gca,'fontsize',8);
+    set(gcf,'paperposition',[0,0,4,3]);
+    print('-dtiff','-r300',['nn_20SDR_H_30_short_' num2str(rr)]);
 end
