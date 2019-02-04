@@ -45,3 +45,9 @@ net.divideParam.testRatio = 5/100;
     
     
 % end
+
+%% 
+plot(t,y,'*k');
+axis equal
+xlabel('actual \theta_{roll}');
+ylabel('predicted \theta_{roll}');
