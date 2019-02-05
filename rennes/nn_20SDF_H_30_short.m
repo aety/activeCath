@@ -5,7 +5,7 @@ cmap = {flipud(parula),RdYlGn};
 n_tr = 10;
 
 %% load predictors
-pdt_arr = 2:7;
+pdt_arr = 2:8;
 
 P_ARR = nan(length(pdt_arr),n_tr);
 E_ARR = P_ARR;
@@ -76,10 +76,10 @@ save nn_20SDF_H_30_short
 
 %% plot
 load nn_20SDF_H_30_short;
-[a,b] = find(P_ARR==min(min(P_ARR)));
+[ind_a,ind_b] = find(P_ARR==min(min(P_ARR)));
 
-tr = TR_ARR{a}{b};
-y = Y_ARR{a}{b};
+tr = TR_ARR{ind_a}{ind_b};
+y = Y_ARR{ind_a}{ind_b};
 
 ind = tr.testInd;
 c_plt = [2,1];
@@ -113,4 +113,5 @@ for rr = 1:size(pp,2)
     set(gca,'fontsize',8);
     set(gcf,'paperposition',[0,0,4,3]);
     print('-dtiff','-r300',['nn_20SDR_H_30_short_' num2str(rr)]);
+    close;
 end

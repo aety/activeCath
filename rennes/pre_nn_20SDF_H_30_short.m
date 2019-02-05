@@ -1,15 +1,10 @@
 clear; clc; ca;
 
-tgl_cbar = 0;
-tgl_save = 0;
-
 bend_arr = 0:20:80;
 n_bend = length(bend_arr);
 n_pks = 20;
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
-cmap1 = RdBu;
-cmap2 = BrBG;
 
 load(['proc_auto_data_' dname_arr{1}],'ind_arr');
 load th1_arr
@@ -29,7 +24,7 @@ idx1 = 1; idx2 = n_roll;            % plot all
 n_pts = nan(5,n_roll);
 XY = nan(n_pks*4,n_roll*n_bend);
 
-PDT = nan(7,n_roll*n_bend);
+PDT = nan(8,n_roll*n_bend);
 RSP = nan(2,n_roll*n_bend);
 
 nn = 0 ;
@@ -70,24 +65,26 @@ for dd = 1:n_bend
         slc = plt2(1,2) < plt1(1,2);    % pick a point at the lowest y-position 
         temp = [plt1(1,2),plt2(1,2)];   % pick a point at the lowest y-position 
         
-        slp1 = diff(plt1(:,2))./diff(plt1(:,1));
-        slp2 = diff(plt2(:,2))./diff(plt2(:,1));
+        slp1 = diff(plt1(:,2))./diff(plt1(:,1)); % local slope between adjacent points (set 1)
+        slp2 = diff(plt2(:,2))./diff(plt2(:,1)); % local slope between adjacent points (set 2)
         
-        temp1 = plt1; temp1(isnan(plt1(:,1)),:) = []; temp1 = temp1([1,end],:); temp1 = diff(temp1);
-        temp2 = plt2; temp2(isnan(plt2(:,1)),:) = []; temp2 = temp2([1,end],:); temp2 = diff(temp2);
-        mslpend = max([temp1(2)/temp1(1),temp2(2)/temp2(1)]);
+        temp1 = plt1; temp1(isnan(plt1(:,1)),:) = []; temp1 = temp1([1,end],:); temp1 = diff(temp1); % x and y distances bewteen the first and last points (set 1)
+        temp2 = plt2; temp2(isnan(plt2(:,1)),:) = []; temp2 = temp2([1,end],:); temp2 = diff(temp2); % x and y distances bewteen the first and last points (set 2)
+        mslpend = max(abs([temp1(2)/temp1(1),temp2(2)/temp2(1)])); % take the (absolute) slope between the first and last points and pick the greater one out of the two
         
-        dlat1 = sqrt(diff(plt1(:,2)).^2 + diff(plt1(:,1)).^2);
-        dlat2 = sqrt(diff(plt2(:,2)).^2 + diff(plt2(:,1)).^2);
-        dlat = [dlat1;dlat2];
+        dlat1 = sqrt(diff(plt1(:,2)).^2 + diff(plt1(:,1)).^2); % local lateral distance (set 1)
+        dlat2 = sqrt(diff(plt2(:,2)).^2 + diff(plt2(:,1)).^2); % local lateral distance (set 2)
+        dlat = [dlat1;dlat2]; % all local distances (both sets)
+        diffdlat = abs(diff([nanmean(dlat1),nanmean(dlat2)]));
         
         PDT(1,nn) = temp(slc+1);                            % predictor 1 -- Y0
         PDT(2,nn) = nanmax(abs([diff(slp1);diff(slp2)]));   % predictor 2 -- maximum local slope change
-        PDT(3,nn) = mslpend;                                % predictor 3 -- slope between the first and last points
+        PDT(3,nn) = mslpend;                                % predictor 3 -- absolute slope between the first and last points
         PDT(4,nn) = nanmean([diff(slp1);diff(slp2)]);       % predictor 4 -- average of local slope change
-        PDT(5,nn) = nanstd([diff(slp1);diff(slp2)]);        % predictor 5 -- standard deviation of local slope change
-        PDT(6,nn) = nanstd([slp1;slp2]);                    % predictor 6 -- standard deviation of local slope 
-        PDT(7,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 7 -- coefficient of variation of lateral distances
+        PDT(5,nn) = nanstd([diff(slp1);diff(slp2)]);        % predictor 5 -- standard deviation of ALL local slope change
+        PDT(6,nn) = nanstd([slp1;slp2]);                    % predictor 6 -- standard deviation of ALL local slope 
+        PDT(7,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 7 -- coefficient of variation of ALL lateral distances
+        PDT(8,nn) = diffdlat;                               % predictor 8 -- absolute difference between average lateral distances of set 1 and set 2
         
         RSP(1,nn) = th1_arr(ind_arr(ii));   % response 1 -- roll angle
         RSP(2,nn) = bend_arr(dd);           % response 2 -- bend angle
@@ -97,7 +94,7 @@ for dd = 1:n_bend
     end
 end
 
-PDT_txt = {'Y_0','max(\Delta\alpha)','max(\alpha_{end})','mean(\Delta\alpha)','std(\Delta\alpha)','std(\alpha)','CV(d_{lat})'};
+PDT_txt = {'Y_0','max(\Delta\alpha)','max(\alpha_{end})','mean(\Delta\alpha)','std(\Delta\alpha)','std(\alpha)','CV(d_{lat})','diff(mean(d_{lat}))'};
 RSP_txt = {'\theta_{roll}','\theta_{bend}'};
 
 save pre_nn_20SDF_H_30_short XY PDT* RSP*
