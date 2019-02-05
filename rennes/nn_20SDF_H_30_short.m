@@ -72,7 +72,10 @@ for ii = 1:length(pdt_arr)
     
 end
 
+save nn_20SDF_H_30_short
+
 %% plot
+load nn_20SDF_H_30_short;
 [a,b] = find(P_ARR==min(min(P_ARR)));
 
 tr = TR_ARR{a}{b};
@@ -83,20 +86,25 @@ c_plt = [2,1];
 
 for rr = 1:size(pp,2)
     figure;
+    hold on;    
+    
+    temp2 = max([max(max(t(rr,:))),max(max(y(rr,:)))]);
+    temp1 = min([min(min(t(rr,:))),min(min(t(rr,:)))]);
+    axis([temp1,temp2,temp1,temp2]);
+    plot([temp1,temp2],[temp1,temp2],'color',0.75*[1,1,1],'linewidth',2);
+    
+    
     colormap(cmap{rr});
     h = scatter(t(rr,ind),y(rr,ind),10,RSP(c_plt(rr),ind),'filled');
+    alpha(h,0.5);
     
-    r = regression(t(rr,ind),y(rr,ind));
-    disp(r);
+    [r,m,b] = regression(t(rr,ind),y(rr,ind));    
     
     title(['Predictors: ' PDT_txt{1} ', ' PDT_txt{pp(size(pp,2))} ', R = ' num2str(r)],'fontweight','normal');
     xlabel(['actual ' RSP_txt{rr}]);
     ylabel(['predicted ' RSP_txt{rr}]);
     
     axis equal
-    temp2 = max([max(max(t(rr,:))),max(max(y(rr,:)))]);
-    temp1 = min([min(min(t(rr,:))),min(min(t(rr,:)))]);
-    axis([temp1,temp2,temp1,temp2]);
     
     c = colorbar;
     c.Label.String = RSP_txt{c_plt(rr)};
