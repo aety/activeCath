@@ -11,7 +11,7 @@ cmap1 = RdBu;
 cmap2 = BrBG;
 
 tgl_cbar = 0;
-tgl_plot = 0;
+tgl_plot = 1;
 
 load(['proc_auto_data_' dname_arr{1}],'ind_arr');
 load th1_arr
@@ -144,6 +144,7 @@ for dd = 1:n_bend
         ht = 800;
         set(gcf,'position',[1000,100,ht*w_ratio,ht]);
         ht = 6;
+        set(gca,'position',[0,0,1,1]);
         set(gcf,'paperposition',[0,0,ht*w_ratio+1,ht]);
         print('-dtiff','-r300',['pre_nn_' dname]);
         close;
