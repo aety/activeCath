@@ -10,8 +10,8 @@ dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0
 cmap1 = RdBu;
 cmap2 = BrBG;
 
-tgl_cbar = 1;
-tgl_plot = 1;
+tgl_cbar = 0;
+tgl_plot = 0;
 
 load(['proc_auto_data_' dname_arr{1}],'ind_arr');
 load th1_arr
@@ -152,3 +152,23 @@ for dd = 1:n_bend
 end
 
 save pre_nn_20SDF_H_30_short XY PDT* RSP*
+
+%% colorbar
+if tgl_cbar
+    carr = {cmap1,cmap2};
+    for cc = 1:2
+        figure;
+        colormap(carr{cc});
+        cb = colorbar;
+        th1 = th1_arr(ind_arr(1)); the = th1_arr(ind_arr(end));
+        temp = interp1([0,1],[th1,the],cb.Ticks);
+        cb.TickLabels = round(temp,1);
+        cb.Box = 'off';
+        cb.Position = [0.4, 0.1, 0.1, 0.8];
+        axis off;
+        ylabel(cb,'\theta_{rot}','fontsize',15);
+        set(gcf,'paperposition',[0,0,6/3.5,6]);
+        print('-dtiff','-r300',['pre_nn_cb_' num2str(cc)]);
+        close;
+    end
+end
