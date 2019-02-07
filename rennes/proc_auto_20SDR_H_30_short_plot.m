@@ -7,18 +7,18 @@ n_pts = nan(5,375);
 
 tgl_slpk = 1; % select only a certain number of peaks to plot
 n_pks = 20;
-tgl_cbar = 1;
-tgl_save = 1;
+tgl_cbar = 0;
+tgl_save = 0;
 
 
 
-for dd = 1:length(dname_arr)
+for dd = 5%1:length(dname_arr)
     
     dname = dname_arr{dd};
     
     load(['proc_auto_data_' dname]);
     load th1_arr
-    
+            
     %%
     figure; hold on;
     
