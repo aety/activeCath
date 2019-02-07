@@ -57,7 +57,6 @@ for ii = 1:length(pdt_arr)
         y = net(x);
         e = gsubtract(t,y);
         p = perform(net,t,y);
-        %     [r,~,~] = regression(t,y);
         
         p_arr(nn) = p;
         e_arr(nn) = norm(e);

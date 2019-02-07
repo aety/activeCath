@@ -3,7 +3,8 @@ clear; clc; ca;
 bend_arr = 0:20:80;
 n_bend = length(bend_arr);
 n_pks = 20;
-m_dist = 5;
+m_dist = 5; % minimal distance required to keep points (when removing overlaps)
+cath_len = 440; % catheter length (pixels)
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
@@ -12,6 +13,8 @@ cmap2 = BrBG;
 
 tgl_cbar = 0;
 tgl_plot = 1;
+tgl_svpl = 1;
+tgl_save = 1;
 
 load(['proc_auto_data_' dname_arr{1}],'ind_arr');
 load th1_arr
@@ -49,11 +52,17 @@ for dd = 1:n_bend
         tgl = TGL{ii};
         ref = REF(:,ii);
         PXY = BBOX{ii};
-        tgl(isnan(PXY(:,1))) = [];
-        PXY(isnan(PXY(:,1)),:) = [];
         
         % subtract reference points to get relative positions
         PXY = repmat(ref',length(PXY),1) - PXY;
+        
+        % remove distal points
+        tgl_dis = rssq(PXY') > cath_len;
+        PXY(tgl_dis,:) = nan;
+        
+        % remove NaN's
+        tgl(isnan(PXY(:,1))) = [];
+        PXY(isnan(PXY(:,1)),:) = [];
         
         % separate-- set 1
         pxy1 = PXY(tgl,:);
@@ -134,7 +143,7 @@ for dd = 1:n_bend
         axl = axis;
         yyaxis right;
         axr = axis;
-        temp = [min([axl(1),axr(1)]),max([axl(2),axr(2)]),0,500];
+        temp = [min([axl(1),axr(1)]),max([axl(2),axr(2)]),0,cath_len];
         yyaxis left; axis(temp); yyaxis right; axis (temp);
         axis off;
         
@@ -146,13 +155,17 @@ for dd = 1:n_bend
         ht = 6;
         set(gca,'position',[0,0,1,1]);
         set(gcf,'paperposition',[0,0,ht*w_ratio+1,ht]);
-        print('-dtiff','-r300',['pre_nn_' dname]);
-        close;
+        if tgl_svpl
+            print('-dtiff','-r300',['pre_nn_' dname]);
+            close;
+        end
     end
     
 end
 
-save pre_nn_20SDF_H_30_short XY PDT* RSP*
+if tgl_save
+    save pre_nn_20SDF_H_30_short XY PDT* RSP*
+end
 
 %% colorbar
 if tgl_cbar
