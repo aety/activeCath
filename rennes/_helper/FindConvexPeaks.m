@@ -1,8 +1,10 @@
 function [x,y] = FindConvexPeaks(BW,n_div,bbox_big,y_min)
 
 % figure;imshow(BW); hold on;
+x = [];
+y = [];
 
-for vv = 1:n_div
+for vv = 1:n_div % need to adapt it so it can account for multiple divisions
     
     BW_temp = BW;
     
@@ -23,8 +25,10 @@ for vv = 1:n_div
     [~,ind] = max(ConvexArea);
     ConvexHull = ConvexHull{ind};
     
-    x = ConvexHull(:,1); y = ConvexHull(:,2);
+    xi = ConvexHull(:,1); yi = ConvexHull(:,2);
     
-%     plot(x,y,'.','color','m','markersize',10);    
+%     plot(xi,yi,'.','color','m','markersize',10);    
     
+    x = [x;xi];
+    y = [y;yi];
 end
