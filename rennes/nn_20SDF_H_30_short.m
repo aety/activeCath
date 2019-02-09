@@ -30,7 +30,7 @@ for ii = 1:length(pdt_arr)
     % 'trainlm' is usually fastest.
     % 'trainbr' takes longer but may be better for challenging problems. %%%%%% SUPPORTS REGULARIZATION %%%%%%
     % 'trainscg' uses less memory. Suitable in low memory situations.
-    trainFcn = 'trainlm';  % Levenberg-Marquardt backpropagation.    
+    trainFcn = 'trainlm';  % Levenberg-Marquardt backpropagation.
     
     %% repeatedly train the network and find the best
     p_arr = nan(1,n_tr);
@@ -85,7 +85,7 @@ c_plt = [2,1];
 
 for rr = 1:size(pp,2)
     figure;
-    hold on;    
+    hold on;
     
     temp2 = max([max(max(t(rr,:))),max(max(y(rr,:)))]);
     temp1 = min([min(min(t(rr,:))),min(min(t(rr,:)))]);
@@ -97,7 +97,7 @@ for rr = 1:size(pp,2)
     h = scatter(t(rr,ind),y(rr,ind),10,RSP(c_plt(rr),ind),'filled');
     alpha(h,0.5);
     
-    [r,m,b] = regression(t(rr,ind),y(rr,ind));    
+    [r,m,b] = regression(t(rr,ind),y(rr,ind));
     
     title(['Predictors: ' PDT_txt{1} ', ' PDT_txt{pp(size(pp,2))} ', R = ' num2str(r)],'fontweight','normal');
     xlabel(['actual ' RSP_txt{rr}]);

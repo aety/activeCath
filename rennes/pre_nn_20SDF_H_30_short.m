@@ -4,7 +4,7 @@ bend_arr = 0:20:80;
 n_bend = length(bend_arr);
 n_pks = 20;
 m_dist = 5; % minimal distance required to keep points (when removing overlaps)
-cath_len = 440; % catheter length (pixels)
+y_lim = 440; % catheter length (pixels)
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
@@ -56,9 +56,9 @@ for dd = 1:n_bend
         % subtract reference points to get relative positions
         PXY = repmat(ref',length(PXY),1) - PXY;
         
-        % remove distal points
-        tgl_dis = rssq(PXY') > cath_len;
-        PXY(tgl_dis,:) = nan;
+%         % remove distal points
+%         tgl_dis = rssq(PXY') > cath_len;
+%         PXY(tgl_dis,:) = nan;
         
         % remove NaN's
         tgl(isnan(PXY(:,1))) = [];
@@ -67,8 +67,8 @@ for dd = 1:n_bend
         % separate-- set 1
         pxy1 = PXY(tgl,:);
         pxy1 = sortrows(pxy1,2);
-        tgl_near = RemoveOverlap(pxy1,m_dist);  % remove points that are too close
-        pxy1(~tgl_near,:) = [];                 % remove points that are too close
+%         tgl_near = RemoveOverlap(pxy1,m_dist);  % remove points that are too close
+%         pxy1(~tgl_near,:) = [];                 % remove points that are too close
         n = min([n_pks,size(pxy1,1)]);  % pick the smaller between the actual and defined number of peaks
         plt1 = nan(n_pks,2);            % preallocate
         plt1(1:n,:) = pxy1(1:n,:);      % find the first n peaks
@@ -76,8 +76,8 @@ for dd = 1:n_bend
         % separate-- set 2
         pxy2 = PXY(~tgl,:);
         pxy2 = sortrows(pxy2);
-        tgl_near = RemoveOverlap(pxy2,m_dist);  % remove points that are too close
-        pxy2(~tgl_near,:) = [];                 % remove points that are too close
+%         tgl_near = RemoveOverlap(pxy2,m_dist);  % remove points that are too close
+%         pxy2(~tgl_near,:) = [];                 % remove points that are too close
         n = min([n_pks,size(pxy2,1)]);  % pick the smaller between the actual number of peaks and defined threshold
         plt2 = nan(n_pks,2);            % preallocate
         plt2(1:n,:) = pxy2(1:n,:);      % find the first n peaks
@@ -143,7 +143,7 @@ for dd = 1:n_bend
         axl = axis;
         yyaxis right;
         axr = axis;
-        temp = [min([axl(1),axr(1)]),max([axl(2),axr(2)]),0,cath_len];
+        temp = [min([axl(1),axr(1)]),max([axl(2),axr(2)]),0,y_lim];
         yyaxis left; axis(temp); yyaxis right; axis (temp);
         axis off;
         
