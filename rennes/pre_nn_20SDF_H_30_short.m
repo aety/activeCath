@@ -4,7 +4,7 @@ bend_arr = 0:20:80;
 n_bend = length(bend_arr);
 n_pks = 20;
 m_dist = 5; % minimal distance required to keep points (when removing overlaps)
-y_lim = 440; % catheter length (pixels)
+y_lim = 440; % figure y-limin (pixels)
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
@@ -36,16 +36,24 @@ RSP = nan(2,n_roll*n_bend);
 
 nn = 0 ;
 
-%% loop
+%% loop through bending angles
 for dd = 1:n_bend
     
+    % load data
     dname = dname_arr{dd};
-    
     load(['proc_auto_data_' dname]);
     
-    %%
+    % preallocate
     PKS1 = nan(n_pks,2,length(TGL)); PKS2 = PKS1;
     
+    %% find bending angles(ground truth)
+    ind_0 = find(th1_arr==min(abs(th1_arr)));
+    x0 = X(1:2,ind_0);
+    y0 = Y(1:2,ind_0);
+    th_bend_act_arr = atan2(diff(y0),diff(x0));
+    th_bend_act = th_bend_act_arr*180/pi;
+    
+    %% loop through frames
     for ii = idx1:idx2
         
         % load data
@@ -56,9 +64,9 @@ for dd = 1:n_bend
         % subtract reference points to get relative positions
         PXY = repmat(ref',length(PXY),1) - PXY;
         
-%         % remove distal points
-%         tgl_dis = rssq(PXY') > cath_len;
-%         PXY(tgl_dis,:) = nan;
+        %         % remove distal points
+        %         tgl_dis = rssq(PXY') > cath_len;
+        %         PXY(tgl_dis,:) = nan;
         
         % remove NaN's
         tgl(isnan(PXY(:,1))) = [];
@@ -67,8 +75,8 @@ for dd = 1:n_bend
         % separate-- set 1
         pxy1 = PXY(tgl,:);
         pxy1 = sortrows(pxy1,2);
-%         tgl_near = RemoveOverlap(pxy1,m_dist);  % remove points that are too close
-%         pxy1(~tgl_near,:) = [];                 % remove points that are too close
+        %         tgl_near = RemoveOverlap(pxy1,m_dist);  % remove points that are too close
+        %         pxy1(~tgl_near,:) = [];                 % remove points that are too close
         n = min([n_pks,size(pxy1,1)]);  % pick the smaller between the actual and defined number of peaks
         plt1 = nan(n_pks,2);            % preallocate
         plt1(1:n,:) = pxy1(1:n,:);      % find the first n peaks
@@ -76,8 +84,8 @@ for dd = 1:n_bend
         % separate-- set 2
         pxy2 = PXY(~tgl,:);
         pxy2 = sortrows(pxy2);
-%         tgl_near = RemoveOverlap(pxy2,m_dist);  % remove points that are too close
-%         pxy2(~tgl_near,:) = [];                 % remove points that are too close
+        %         tgl_near = RemoveOverlap(pxy2,m_dist);  % remove points that are too close
+        %         pxy2(~tgl_near,:) = [];                 % remove points that are too close
         n = min([n_pks,size(pxy2,1)]);  % pick the smaller between the actual number of peaks and defined threshold
         plt2 = nan(n_pks,2);            % preallocate
         plt2(1:n,:) = pxy2(1:n,:);      % find the first n peaks
@@ -131,7 +139,7 @@ for dd = 1:n_bend
         PDT(8,nn) = diffdlat;                               % predictor 8 -- absolute difference between average lateral distances of set 1 and set 2
         
         RSP(1,nn) = th1_arr(ind_arr(ii));   % response 1 -- roll angle
-        RSP(2,nn) = bend_arr(dd);           % response 2 -- bend angle
+        RSP(2,nn) = th_bend_act;           % response 2 -- bend angle
         
         XY(:,nn) = [plt1(:,1);plt1(:,2);plt2(:,1);plt2(:,2)]; % master storage for all all x-y points
         

@@ -2,7 +2,7 @@ clear; ca; clc;
 
 load pre_nn_20SDF_H_30_short
 cmap = {flipud(parula),RdYlGn};
-n_tr = 10;
+n_tr = 5;
 
 %% load predictors
 pdt_arr = 2:8;
