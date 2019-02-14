@@ -29,13 +29,13 @@ thrs_near = 5; % (pixel) minimal distance required to keep points (when removing
 y_min = ref_pt(2); % y_min = 510; % (pixels) vertical pixel location of the lowest interesting extracted features (to avoid inclusion of the catheter base holder)
 pf_npt = 100; % polyfit-- the of points (parallel to the base of the catheter)
 
-cath_len_pc = 0.9; % percentage of catheter length to include in ConvexHull search
+cath_len_pc = 0.85; % percentage of catheter length to include in ConvexHull search
 
 %% load image
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'};
 
-for dd = 1:length(dname_arr)
+for dd = length(dname_arr)
     
     dname = dname_arr{dd};
     cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
@@ -101,10 +101,8 @@ for dd = 1:length(dname_arr)
         I_ctol = imtranslate(I_ctol,-[b_diff,a_diff],'FillValues',1); % translate the image
         x = x - a_diff; y = y - b_diff;
         
-        % change image parameters for display
-        level = graythresh(I_str);
-        I_temp = imadjust(I_str,[0,level]);
-        I_disp = imtranslate(I_temp,-[b_diff,a_diff],'FillValues',max(max(I_temp)));
+        % change image parameters for display                
+        I_disp = imtranslate(I_str,-[b_diff,a_diff],'FillValues',max(max(I_str)));
         
         %% BoundingBox regionprops(for convex front)
         
