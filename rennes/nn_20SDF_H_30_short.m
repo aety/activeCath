@@ -5,7 +5,7 @@ cmap = {flipud(parula),RdYlGn};
 n_tr = 5;
 
 %% load predictors
-pdt_arr = 2:6;
+pdt_arr = 2:8;
 
 P_ARR = nan(length(pdt_arr),n_tr);
 E_ARR = P_ARR;
