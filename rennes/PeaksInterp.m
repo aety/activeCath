@@ -17,7 +17,7 @@ end
 indi = find(diff(d)>thrs);
 while ~isempty(indi)    
     ind = [ind,indi(1)];
-    d(indi(1)+1) = d(indi(1)+1)/ceil(d(indi(1)+1)/d(indi(1)));    
+    d(indi(1)+1) = d(indi(1)+1)/round(d(indi(1)+1)/d(indi(1)));    
     indi = find(diff(d)>thrs);    
 end
 
@@ -25,6 +25,7 @@ if flg_plt
     hold on;
     plot(p(:,1),p(:,2),'*');
     axis equal
+    ylim([0,400]);
 end
 
 x = cell(1,length(ind)); y = x;
