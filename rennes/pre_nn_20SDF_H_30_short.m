@@ -8,13 +8,14 @@ y_lim = 440; % figure y-limin (pixels)
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
-cmap1 = RdBu;
-cmap2 = BrBG;
+
+r_range = [-60,60]; cmap1 = RdBu; cmap2 = BrBG; % for "both"
+% r_range = [0,75]; % cmap1 = PuBu; cmap2 = YlOrBr; % for "positive"
 
 tgl_cbar = 1;
 tgl_plot = 1;
 tgl_svpl = 1;
-tgl_save = 0;
+tgl_save = 1;
 
 load(['proc_auto_data_' dname_arr{1}],'ind_arr');
 load th1_arr
@@ -25,11 +26,9 @@ PDT_txt = {'Y_0','max(\Delta\alpha)','max(\alpha_{end})','mean(\Delta\alpha)','s
 RSP_txt = {'\theta_{roll}','\theta_{bend}'};
 
 %% select only a certain range
-% n_roll = ind_arr(end) - ind_arr(1); % plot all
-% idx1 = 1; idx2 = n_roll;            % plot all
-idx1 = find(th1_arr(ind_arr)<60,1);     % plot part
-idx2 = find(th1_arr(ind_arr)<-60,1);    % plot part
-n_roll = idx2-idx1;                     % plot part
+idx1 = find(th1_arr(ind_arr) < r_range(2),1);   % plot part
+idx2 = find(th1_arr(ind_arr) < r_range(1),1);   % plot part
+n_roll = idx2-idx1;                             % plot part
 
 %% preallocate
 XY = nan(n_pks*4,n_roll*n_bend);
@@ -95,14 +94,14 @@ for dd = 1:n_bend
             yyaxis left;
             plt = pxy1;
             f = scatter(plt(:,1),plt(:,2),10,ii*ones(size(plt,1),1),'filled');
-            alpha(f,0.8);
+%             alpha(f,0.8);
             fig = gcf;
             fig.Colormap = cmap1;
             
             yyaxis right;
             plt = pxy2;
             f = scatter(plt(:,1),plt(:,2),10,ii*ones(size(plt,1),1),'filled');
-            alpha(f,0.8);
+%             alpha(f,0.8);
             b = gca;
             b.Colormap = cmap2;
             
@@ -187,7 +186,7 @@ if tgl_cbar
         cb = colorbar;
         th1 = th1_arr(ind_arr(idx1)); the = th1_arr(ind_arr(idx2));
         temp = interp1([0,1],[th1,the],cb.Ticks);
-        cb.TickLabels = round(temp,1);
+        cb.TickLabels = round(temp,0);
         cb.Box = 'off';
         cb.Position = [0.4, 0.1, 0.1, 0.8];
         axis off;

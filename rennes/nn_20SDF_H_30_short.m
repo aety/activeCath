@@ -1,7 +1,8 @@
 clear; ca; clc;
 
 load pre_nn_20SDF_H_30_short
-cmap = {flipud(parula),RdYlGn};
+% cmap = {flipud(parula),PuBu}; % for "positive" (sequential, sequential)
+cmap = {flipud(parula),RdYlGn}; % for "both" (sequential, diverging)
 n_tr = 5;
 
 %% load predictors
