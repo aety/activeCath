@@ -1,7 +1,6 @@
 % cmap = {flipud(parula),flipud(parula)}; % for "positive" (sequential, sequential)
 cmap = {flipud(parula),RdYlGn}; % for "both" (sequential, diverging)
 
-
 %% plot separate
 load nn_20SDF_H_30_short;
 [ind_a,ind_b] = find(P_ARR==min(min(P_ARR)));
@@ -84,3 +83,35 @@ set(gca,'fontsize',8);
 set(gcf,'paperposition',[0,0,4,3]);
 print('-djpeg','-r300','nn_20SDR_H_30_short_cmb');
 close;
+
+%% plot error
+load nn_20SDF_H_30_short;
+[ind_a,ind_b] = find(P_ARR==min(min(P_ARR)));
+
+tr = TR_ARR{ind_a}{ind_b};
+y = Y_ARR{ind_a}{ind_b};
+
+ind = tr.testInd;
+c_plt = [2,1];
+
+for rr = 1:size(y,1)
+    figure;
+    hold on;
+        
+%     colormap(cmap{rr});
+    h = scatter(t(rr,ind),abs(y(rr,ind) - t(rr,ind)),10,'k','filled');    
+    alpha(h,0.5);
+    
+    xlabel(['actual ' RSP_txt{rr}]);
+    ylabel(['|' RSP_txt{rr} ' error|']);
+    axis tight;
+    
+%     c = colorbar;
+%     c.Label.String = RSP_txt{c_plt(rr)};
+%     c.Box = 'off';
+    
+    set(gca,'fontsize',8);
+    set(gcf,'paperposition',[0,0,4,1.5]);
+    print('-dtiff','-r300',['nn_20SDR_H_30_short_err_' num2str(rr)]);
+    close;
+end
