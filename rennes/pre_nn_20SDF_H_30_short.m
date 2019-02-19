@@ -9,8 +9,8 @@ y_lim = [0,450]; % figure y-limin (pixels)
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
 
-r_range = [-60,60]; cmap1 = RdBu; cmap2 = BrBG; % for "both"
-% r_range = [0,75]; cmap1 = PuBu; cmap2 = YlOrBr; % for "positive"
+% r_range = [-60,60]; cmap1 = RdBu; cmap2 = BrBG; % for "both"
+r_range = [0,75]; cmap1 = PuBu; cmap2 = YlOrBr; % for "positive"
 
 tgl_cbar = 1;
 tgl_plot = 1;
@@ -20,15 +20,16 @@ tgl_save = 1;
 load(['proc_auto_data_' dname_arr{1}],'ind_arr');
 load th1_arr
 
+% select only a certain range
+idx1 = find(th1_arr(ind_arr) < r_range(2),1);   % plot part
+idx2 = find(th1_arr(ind_arr) < r_range(1),1)-1; % plot part
+n_roll = idx2-idx1;                             % plot part
+
 %% name predictors and responses
 PDT_txt = {'Y_0','max(\Delta\alpha)','max(\alpha_{end})','mean(\Delta\alpha)','std(\Delta\alpha)','std(\alpha)','CV(d_{lat})','diff(mean(d_{lat}))'};
 % PDT_txt = {'Y_0','max(\Delta\alpha)','mean(\Delta\alpha)','std(\Delta\alpha)','std(\alpha)','CV(d_{lat})'};
 RSP_txt = {'\theta_{roll}','\theta_{bend}'};
 
-%% select only a certain range
-idx1 = find(th1_arr(ind_arr) < r_range(2),1);   % plot part
-idx2 = find(th1_arr(ind_arr) < r_range(1),1)-1; % plot part
-n_roll = idx2-idx1;                             % plot part
 
 %% preallocate
 XY = nan(n_pks*4,n_roll*n_bend);
@@ -63,8 +64,8 @@ for dd = 1:n_bend
         ref = REF(:,ii);
         PXY = BBOX{ii};
         
-        % subtract reference points AND MIRROR Y-coordinates to get relative positions 
-        PXY = PXY - repmat(ref',length(PXY),1); PXY(:,2) = -PXY(:,2); 
+        % subtract reference points AND MIRROR Y-coordinates to get relative positions
+        PXY = PXY - repmat(ref',length(PXY),1); PXY(:,2) = -PXY(:,2);
         
         % remove NaN's
         tgl(isnan(PXY(:,1))) = [];
@@ -94,14 +95,14 @@ for dd = 1:n_bend
             yyaxis left;
             plt = pxy1;
             f = scatter(plt(:,1),plt(:,2),10,ii*ones(size(plt,1),1),'filled');
-%             alpha(f,0.8);
+            %             alpha(f,0.8);
             fig = gcf;
             fig.Colormap = cmap1;
             
             yyaxis right;
             plt = pxy2;
             f = scatter(plt(:,1),plt(:,2),10,ii*ones(size(plt,1),1),'filled');
-%             alpha(f,0.8);
+            %             alpha(f,0.8);
             b = gca;
             b.Colormap = cmap2;
             
@@ -185,19 +186,19 @@ if tgl_cbar
     for cc = 1:2
         figure;
         colormap(carr{cc});
-%         cb = colorbar;            % vertical
-        cb = colorbar('southoutside'); % horizontal
+                cb = colorbar;            % vertical
+%         cb = colorbar('southoutside'); % horizontal
+        set(gca,'fontsize',15);
         th1 = th1_arr(ind_arr(idx1)); the = th1_arr(ind_arr(idx2));
         temp = interp1([0,1],[th1,the],cb.Ticks);
         cb.TickLabels = round(temp,0);
         cb.Box = 'off';
-%         cb.Position = [0.5, 0.1, 0.1, 0.8]; % vertical
-        cb.Position = [0.1, 0.5, 0.8, 0.1]; % horizontal
+                cb.Position = [0.5, 0.1, 0.1, 0.8]; % vertical
+%         cb.Position = [0.1, 0.5, 0.8, 0.1]; % horizontal
         axis off;
         ylabel(cb,['\theta_{roll}, ' txt_arr{cc}],'fontsize',15);
-        set(gca,'fontsize',15);
-%         set(gcf,'paperposition',[0,0,6/4.5,6]); % vertical
-        set(gcf,'paperposition',[0,0,6,6/4.5]); % horizontal
+                set(gcf,'paperposition',[0,0,6/4.5,6]); % vertical
+%         set(gcf,'paperposition',[0,0,6,6/4.5]); % horizontal
         print('-dtiff','-r300',['pre_nn_cb_' num2str(cc)]);
         close;
     end
