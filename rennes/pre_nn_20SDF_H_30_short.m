@@ -9,12 +9,12 @@ y_lim = [0,450]; % figure y-limin (pixels)
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
 
-% r_range = [-60,60]; cmap1 = RdBu; cmap2 = BrBG; % for "both"
-r_range = [0,75]; cmap1 = PuBu; cmap2 = YlOrBr; % for "positive"
+r_range = [-60,60]; cmap1 = RdBu; cmap2 = BrBG; % for "both"
+% r_range = [0,75]; cmap1 = PuBu; cmap2 = YlOrBr; % for "positive"
 
-tgl_cbar = 1;
-tgl_plot = 1;
-tgl_svpl = 1;
+tgl_cbar = 0;
+tgl_plot = 0;
+tgl_svpl = 0;
 tgl_save = 1;
 
 load(['proc_auto_data_' dname_arr{1}],'ind_arr');
@@ -27,7 +27,7 @@ n_roll = idx2-idx1;                             % plot part
 
 %% name predictors and responses
 PDT_txt = {'Y_0','max(\Delta\alpha)','max(\alpha_{end})','mean(\Delta\alpha)','std(\Delta\alpha)','std(\alpha)','CV(d_{lat})','diff(mean(d_{lat}))'};
-% PDT_txt = {'Y_0','max(\Delta\alpha)','mean(\Delta\alpha)','std(\Delta\alpha)','std(\alpha)','CV(d_{lat})'};
+% PDT_txt = {'Y_0','diff(mean(d_{lat}))','CV(d_{lat})','std(\alpha)','max(\alpha)','max(abs(\Delta(\alpha)))'};
 RSP_txt = {'\theta_{roll}','\theta_{bend}'};
 
 
@@ -129,17 +129,20 @@ for dd = 1:n_bend
         diffdlat = abs(diff([nanmean(dlat1),nanmean(dlat2)]));
         
         PDT(1,nn) = temp(slc+1);                            % predictor 1 -- Y0
-        %         PDT(2,nn) = nanmax(abs(diff(slp2)));   % predictor 2 -- maximum local slope change
         PDT(2,nn) = nanmax(abs([diff(slp1);diff(slp2)]));   % predictor 2 -- maximum local slope change
         PDT(3,nn) = mslpend;                                % predictor 3 -- absolute slope between the first and last points
         PDT(4,nn) = nanmean([diff(slp1);diff(slp2)]);       % predictor 4 -- average of local slope change
-        %         PDT(3,nn) = nanmean(diff(slp2));                  % predictor 4 -- average of local slope change
         PDT(5,nn) = nanstd([diff(slp1);diff(slp2)]);        % predictor 5 -- standard deviation of ALL local slope change
-        %         PDT(4,nn) = nanstd(diff(slp2));                   % predictor 5 -- standard deviation of ALL local slope change
         PDT(6,nn) = nanstd([slp1;slp2]);                    % predictor 6 -- standard deviation of ALL local slope
-        %         PDT(5,nn) = nanstd(slp2);                           % predictor 6 -- standard deviation of ALL local slope
-        %         PDT(6,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 7 -- coefficient of variation of ALL lateral distances
-        PDT(7,nn) = diffdlat;                               % predictor 8 -- absolute difference between average lateral distances of set 1 and set 2
+        PDT(7,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 7 -- coefficient of variation of ALL lateral distances
+        PDT(8,nn) = diffdlat;                               % predictor 8 -- absolute difference between average lateral distances of set 1 and set 2
+        
+        %         PDT(1,nn) = temp(slc+1);                            % predictor 1 -- Y0
+        %         PDT(2,nn) = diffdlat;                               % predictor 2 -- absolute difference between average lateral distances of set 1 and set 2
+        %         PDT(3,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 3 -- coefficient of variation of ALL lateral distances
+        %         PDT(4,nn) = nanstd([slp1;slp2]);                    % predictor 4 -- standard deviation of ALL local slope
+        %         PDT(5,nn) = nanmax([slp1;slp2]);                    % predictor 5 -- max of ALL local slope
+        %         PDT(6,nn) = nanmax(abs([diff(slp1);diff(slp2)]));   % predictor 6 -- maximum absolute local slope change
         
         RSP(1,nn) = th1_arr(ind_arr(ii));   % response 1 -- roll angle
         RSP(2,nn) = th_bend_act;            % response 2 -- bend angle
@@ -186,19 +189,19 @@ if tgl_cbar
     for cc = 1:2
         figure;
         colormap(carr{cc});
-                cb = colorbar;            % vertical
-%         cb = colorbar('southoutside'); % horizontal
+        %                 cb = colorbar;            % vertical
+        cb = colorbar('southoutside'); % horizontal
         set(gca,'fontsize',15);
         th1 = th1_arr(ind_arr(idx1)); the = th1_arr(ind_arr(idx2));
         temp = interp1([0,1],[th1,the],cb.Ticks);
         cb.TickLabels = round(temp,0);
         cb.Box = 'off';
-                cb.Position = [0.5, 0.1, 0.1, 0.8]; % vertical
-%         cb.Position = [0.1, 0.5, 0.8, 0.1]; % horizontal
+        %                 cb.Position = [0.5, 0.1, 0.1, 0.8]; % vertical
+        cb.Position = [0.1, 0.5, 0.8, 0.1]; % horizontal
         axis off;
         ylabel(cb,['\theta_{roll}, ' txt_arr{cc}],'fontsize',15);
-                set(gcf,'paperposition',[0,0,6/4.5,6]); % vertical
-%         set(gcf,'paperposition',[0,0,6,6/4.5]); % horizontal
+        %                 set(gcf,'paperposition',[0,0,6/4.5,6]); % vertical
+        set(gcf,'paperposition',[0,0,6,6/4.5]); % horizontal
         print('-dtiff','-r300',['pre_nn_cb_' num2str(cc)]);
         close;
     end

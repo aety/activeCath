@@ -3,7 +3,7 @@ clear; ca; clc;
 load pre_nn_20SDF_H_30_short
 % cmap = {flipud(parula),flipud(parula)}; % for "positive" (sequential, sequential)
 cmap = {flipud(parula),RdYlGn}; % for "both" (sequential, diverging)
-n_tr = 5;
+n_tr = 10;
 
 %% load predictors
 pdt_arr = 2:8;
@@ -46,9 +46,9 @@ for ii = 1:length(pdt_arr)
         net = fitnet(hiddenLayerSize,trainFcn);
         
         % Setup Division of Data for Training, Validation, Testing
-        net.divideParam.trainRatio = 50/100;
-        net.divideParam.valRatio = 20/100;
-        net.divideParam.testRatio = 30/100;
+        net.divideParam.trainRatio = 70/100;
+        net.divideParam.valRatio = 15/100;
+        net.divideParam.testRatio = 15/100;
         
         
         % Train the Network
@@ -63,6 +63,9 @@ for ii = 1:length(pdt_arr)
         e_arr(nn) = norm(e);
         tr_arr{nn} = tr;
         y_arr{nn} = y;
+        
+        clear net
+        
     end
     
     P_ARR(ii,:) = p_arr;
@@ -84,12 +87,12 @@ y = Y_ARR{ind_a}{ind_b};
 ind = tr.testInd;
 c_plt = [2,1];
 
-for rr = 1:size(pp,2)
+for rr = 1:size(y,1)
     figure;
     hold on;
     
     temp2 = max([max(max(t(rr,:))),max(max(y(rr,:)))]);
-    temp1 = min([min(min(t(rr,:))),min(min(t(rr,:)))]);
+    temp1 = min([min(min(t(rr,:))),min(min(y(rr,:)))]);
     axis([temp1,temp2,temp1,temp2]);
     plot([temp1,temp2],[temp1,temp2],'color',0.75*[1,1,1],'linewidth',2);
     
@@ -100,7 +103,7 @@ for rr = 1:size(pp,2)
     
     [r,m,b] = regression(t(rr,ind),y(rr,ind));
     
-    title(['Predictors: ' PDT_txt{1} ', ' PDT_txt{pp(size(pp,2))} ', R = ' num2str(r)],'fontweight','normal');
+    title(['Predictors: ' PDT_txt{1} ', ' PDT_txt{ind_a} ', R = ' num2str(r)],'fontweight','normal');
     xlabel(['actual ' RSP_txt{rr}]);
     ylabel(['predicted ' RSP_txt{rr}]);
     
@@ -128,7 +131,7 @@ c_plt = [2,1];
 
 c_map = [118,42,131;27,120,55]/255;
 
-for rr = 1:size(pp,2)
+for rr = 1:size(y,1)
     
     hold on;
     
@@ -146,7 +149,7 @@ for rr = 1:size(pp,2)
     
 end
 
-title(['Predictors: ' PDT_txt{1} ', ' PDT_txt{pp(size(pp,2))}],'fontweight','normal');
+title(['Predictors: ' PDT_txt{1} ', ' PDT_txt{ind_a}],'fontweight','normal');
 xlabel('actual');
 ylabel('predicted');
 
