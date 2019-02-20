@@ -1,5 +1,5 @@
-% cmap = {flipud(parula),flipud(parula)}; % for "positive" (sequential, sequential)
-cmap = {flipud(parula),RdYlGn}; % for "both" (sequential, diverging)
+cmap = {flipud(parula),flipud(parula)}; % for "positive" (sequential, sequential)
+% cmap = {flipud(parula),RdYlGn}; % for "both" (sequential, diverging)
 
 %% plot separate
 load nn_20SDF_H_30_short;

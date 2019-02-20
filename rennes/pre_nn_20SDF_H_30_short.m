@@ -9,8 +9,8 @@ y_lim = [0,450]; % figure y-limin (pixels)
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
 
-r_range = [-60,60]; cmap1 = RdBu; cmap2 = BrBG; % for "both"
-% r_range = [0,75]; cmap1 = PuBu; cmap2 = YlOrBr; % for "positive"
+% r_range = [-60,60]; cmap1 = RdBu; cmap2 = BrBG; % for "both"
+r_range = [0,75]; cmap1 = PuBu; cmap2 = YlOrBr; % for "positive"
 
 tgl_cbar = 0;
 tgl_plot = 0;
@@ -115,8 +115,8 @@ for dd = 1:n_bend
         slc = plt2(1,2) < plt1(1,2);    % pick a point at the lowest y-position
         temp = [plt1(1,2),plt2(1,2)];   % pick a point at the lowest y-position
         
-        slp1 = diff(plt1(:,2))./diff(plt1(:,1)); % local slope between adjacent points (set 1)
-        slp2 = diff(plt2(:,2))./diff(plt2(:,1)); % local slope between adjacent points (set 2)
+        slp1 = diff(plt1(:,1))./diff(plt1(:,2)); % local slope between adjacent points (set 1)  % x-over-y to avoid inf
+        slp2 = diff(plt2(:,1))./diff(plt2(:,2)); % local slope between adjacent points (set 2)  % x-over-y to avoid inf
         
         temp1 = plt1; temp1(isnan(plt1(:,1)),:) = []; temp1 = temp1([1,end],:); temp1 = diff(temp1); % x and y distances bewteen the first and last points (set 1)
         temp2 = plt2; temp2(isnan(plt2(:,1)),:) = []; temp2 = temp2([1,end],:); temp2 = diff(temp2); % x and y distances bewteen the first and last points (set 2)
@@ -136,7 +136,7 @@ for dd = 1:n_bend
         PDT(6,nn) = nanstd([slp1;slp2]);                    % predictor 6 -- standard deviation of ALL local slope
         PDT(7,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 7 -- coefficient of variation of ALL lateral distances
         PDT(8,nn) = diffdlat;                               % predictor 8 -- absolute difference between average lateral distances of set 1 and set 2
-        
+                
         %         PDT(1,nn) = temp(slc+1);                            % predictor 1 -- Y0
         %         PDT(2,nn) = diffdlat;                               % predictor 2 -- absolute difference between average lateral distances of set 1 and set 2
         %         PDT(3,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 3 -- coefficient of variation of ALL lateral distances
@@ -148,7 +148,7 @@ for dd = 1:n_bend
         RSP(2,nn) = th_bend_act;            % response 2 -- bend angle
         
         XY(:,nn) = [plt1(:,1);plt1(:,2);plt2(:,1);plt2(:,2)]; % master storage for all all x-y points
-        
+               
     end
     
     %% format plot
