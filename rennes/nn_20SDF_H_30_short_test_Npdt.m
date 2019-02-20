@@ -1,10 +1,13 @@
 clear; ca; clc;
 
 load pre_nn_20SDF_H_30_short
-n_tr = 1;
+n_tr = 5;
 
 best_p = nan(1,8);
+best_e = best_p;
 best_pdt = cell(1,8);
+best_tr = best_pdt;
+best_y = best_pdt;
 all_p = best_pdt;
 
 pdt_arr = 1:8; % possible predictors
@@ -88,9 +91,13 @@ for zz = 1:length(n_pdt_arr)
     end
     
     [ind_a,ind_b] = find(P_ARR==min(min(P_ARR)));
-    all_p{zz} = P_ARR;
     best_p(zz) = P_ARR(ind_a,ind_b);
-    best_pdt{zz} = PDT_txt{C(ind_a,:)};
+    best_e(zz) = E_ARR(ind_a,ind_b);
+    best_tr{zz} = TR_ARR{ind_a}{ind_b};
+    best_y{zz} = Y_ARR{ind_a}{ind_b};
+    
+    best_pdt{zz} = C(ind_a,:);
+    all_p{zz} = P_ARR;
     
 end
 
@@ -98,7 +105,47 @@ save('nn_20SDF_H_30_short_test_Npdt');
 
 
 %%
-
 load nn_20SDF_H_30_short_test_Npdt
+plot(best_p/max(best_p),'*-k');
+xlabel('number of predictors');
+ylabel('normalized performance');
+set(gca,'fontsize',10);
+set(gcf,'paperposition',[0,0,4,2],'unit','inches');
+print('-dtiff','-r300','test_Npdt_p');
+close;
 
-plot(best_p,'*-');
+%%
+figure;
+cmap = colormap(lines(2));
+for zz = 1:length(n_pdt_arr)
+    hold on;
+    plot([0,75],[0,75],'k');
+    
+    ind = best_tr{zz}.testInd;
+    
+    for ff = 1:2        
+        x = RSP(ff,ind);
+        y = best_y{zz}(ff,ind);
+        h(ff) = scatter(x,y,[],cmap(ff,:),'filled');
+        alpha(h(ff),0.5);
+        r = regression(x,y);
+        text(10,70-10*ff,['R = ' num2str(r,3)],'color',cmap(ff,:));                
+    end
+    xlabel('actual');
+    ylabel('predicted');
+    axis equal
+    title(strjoin(PDT_txt(best_pdt{zz}),','),'fontweight','normal');
+    
+    if zz==8
+        legend(h,RSP_txt{1},RSP_txt{2},'location','southeast');
+    end
+    set(gca,'fontsize',10);
+    set(gca,'position',[0.1,0,0.9,1]);
+    set(gcf,'paperposition',[0,0,4,4],'unit','inches');
+    print('-dtiff','-r300',['test_Npdt_p_' num2str(zz)]);    
+    close;
+
+end
+
+
+
