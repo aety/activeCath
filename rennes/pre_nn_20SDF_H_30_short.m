@@ -12,7 +12,7 @@ dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0
 % r_range = [-60,60]; cmap1 = RdBu; cmap2 = BrBG; % for "both"
 r_range = [0,75]; cmap1 = PuBu; cmap2 = YlOrBr; % for "positive"
 
-tgl_cbar = 0;
+tgl_cbar = 1;
 tgl_plot = 0;
 tgl_svpl = 0;
 tgl_save = 1;
@@ -183,7 +183,7 @@ if tgl_save
 end
 
 %% colorbar
-txt_arr = {'outer','inner'};
+txt_arr = {'convex','concave'};
 if tgl_cbar
     carr = {cmap1,cmap2};
     for cc = 1:2
@@ -191,7 +191,7 @@ if tgl_cbar
         colormap(carr{cc});
         %                 cb = colorbar;            % vertical
         cb = colorbar('southoutside'); % horizontal
-        set(gca,'fontsize',15);
+        set(gca,'fontsize',10);
         th1 = th1_arr(ind_arr(idx1)); the = th1_arr(ind_arr(idx2));
         temp = interp1([0,1],[th1,the],cb.Ticks);
         cb.TickLabels = round(temp,0);
@@ -199,9 +199,9 @@ if tgl_cbar
         %                 cb.Position = [0.5, 0.1, 0.1, 0.8]; % vertical
         cb.Position = [0.1, 0.5, 0.8, 0.1]; % horizontal
         axis off;
-        ylabel(cb,['\theta_{roll}, ' txt_arr{cc}],'fontsize',15);
+        ylabel(cb,['\theta_{roll} ' txt_arr{cc}],'fontsize',10);
         %                 set(gcf,'paperposition',[0,0,6/4.5,6]); % vertical
-        set(gcf,'paperposition',[0,0,6,6/4.5]); % horizontal
+        set(gcf,'paperposition',[0,0,3.5,1]); % horizontal
         print('-dtiff','-r300',['pre_nn_cb_' num2str(cc)]);
         close;
     end
