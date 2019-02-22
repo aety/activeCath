@@ -60,7 +60,7 @@ for rr = 1:size(y,1)
     hold on;
     
     temp2 = max([max(max(t)),max(max(y))]);
-    temp1 = min([min(min(t)),min(min(t))]);
+    temp1 = min([min(min(t)),min(min(y))]);
     axis([temp1,temp2,temp1,temp2]);
     plot([temp1,temp2],[temp1,temp2],'color',0.75*[1,1,1],'linewidth',2);
     
@@ -69,19 +69,18 @@ for rr = 1:size(y,1)
     
     [r,m,b] = regression(t(rr,ind),y(rr,ind));
     
-    text(temp1,temp2-10*rr,[RSP_txt{rr} ', R = ' num2str(r,3)],'color',c_map(rr,:));
+    text(temp1+10,temp2-10*rr,[RSP_txt{rr} ', R = ' num2str(r,3)],'color',c_map(rr,:));
     
 end
 
-title(['Predictors: ' PDT_txt{1} ', ' PDT_txt{ind_a}],'fontweight','normal');
+% title(['Predictors: ' PDT_txt{1} ', ' PDT_txt{ind_a}],'fontweight','normal');
 xlabel('actual');
 ylabel('predicted');
-
-axis equal
-
+axis tight;
+axis equal;
 set(gca,'fontsize',8);
-set(gcf,'paperposition',[0,0,4,3]);
-print('-djpeg','-r300','nn_20SDR_H_30_short_cmb');
+set(gcf,'paperposition',[0,0,3,3]);
+print('-dtiff','-r300','nn_20SDR_H_30_short_cmb');
 close;
 
 %% plot error
@@ -111,7 +110,7 @@ for rr = 1:size(y,1)
 %     c.Box = 'off';
     
     set(gca,'fontsize',8);
-    set(gcf,'paperposition',[0,0,4,1.5]);
+    set(gcf,'paperposition',[0,0,3,1.5]);
     print('-dtiff','-r300',['nn_20SDR_H_30_short_err_' num2str(rr)]);
     close;
 end
