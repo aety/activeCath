@@ -2,14 +2,14 @@ clear; ca; clc;
 
 % display toggle
 dbgflag = 0; % plot (dianostics)
-savflag = 1; % save data (mat file)
+savflag = 0; % save data (mat file)
 pltflag = 1; % plot (for video)
-vidflag = 1; % save video
+vidflag = 0; % save video
 vidrate = 10; % video frame rate
 
 % figure parameters
 c_arr = lines(6); c_lab_y = c_arr(3,:); c_lab_b = c_arr(6,:); % marker color label
-msize = 8; % markersize
+msize = 12; % markersize
 lwd = 2; % linewidth
 ht = 800; % figure height (pixels)
 txt_d = 30; % distance of labeling text from the edge (pixels)
@@ -35,7 +35,7 @@ cath_len_pc = 0.85; % percentage of catheter length to include in ConvexHull sea
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'};
 
-for dd = length(dname_arr)
+for dd = 1:length(dname_arr)
     
     dname = dname_arr{dd};
     cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
@@ -175,13 +175,14 @@ for dd = length(dname_arr)
             set(gcf,'position',[1000,200,wd,ht]);
             set(gca,'position',[0.01,0.01,.99,.99]);
             
-            imshow(I_disp); hold on;
+            imshow(I_disp); 
+            hold on;
             
-            plot(y,x,'--','linewidth',lwd,'color',0.5*[1,1,1]);
-            plot(xx(tgl_side),yy(tgl_side),'.','color',c_lab_y,'markersize',msize*2);
-            plot(xx(~tgl_side),yy(~tgl_side),'.','color',c_lab_b,'markersize',msize*2);
-            plot(ref_pt(1),ref_pt(2),'.w','markersize',msize*2);
-            text(txt_d,size(I_str,1)-txt_d,['\theta_{roll} = ' num2str(th1_arr(fn))],'fontsize',txt_s); % th1_arr : roll angle of this frame (deg)
+            hc = plot(y,x,'--','linewidth',lwd,'color',0.5*[1,1,1]);
+            h1 = plot(xx(tgl_side),yy(tgl_side),'.','color',c_lab_y,'markersize',msize*2);
+            h2 = plot(xx(~tgl_side),yy(~tgl_side),'.','color',c_lab_b,'markersize',msize*2);
+            hr = plot(ref_pt(1),ref_pt(2),'ok','markerfacecolor','w','markersize',msize/2);
+            text(txt_d,size(I_str,1)-txt_d,['\theta_{roll} = ' num2str(th1_arr(fn))],'fontsize',txt_s); % th1_arr : roll angle of this frame (deg)            
         end
         
         %% ConvexHull regionprops (for convex front)-- divide into sections
@@ -226,3 +227,4 @@ for dd = length(dname_arr)
     end
     
 end
+% legend([hc,h1,h2,hr],'catheter','concave peaks','convex peaks','reference','fontsize',18,'location','northwest'); % for legend

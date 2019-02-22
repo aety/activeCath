@@ -105,10 +105,13 @@ save('nn_20SDF_H_30_short_test_Npdt');
 
 
 %%
+clear;clc;ca;
 load nn_20SDF_H_30_short_test_Npdt
-plot(best_p/max(best_p),'*-k');
+plt = best_p/max(best_p);
+disp(diff(plt)*100);
+plot(plt,'*-k');
 xlabel('number of predictors');
-ylabel('normalized performance');
+ylabel('normalized error');
 set(gca,'fontsize',10);
 set(gcf,'paperposition',[0,0,4,2],'unit','inches');
 print('-dtiff','-r300','test_Npdt_p');

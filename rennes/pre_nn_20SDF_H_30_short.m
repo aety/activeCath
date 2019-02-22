@@ -189,18 +189,18 @@ if tgl_cbar
     for cc = 1:2
         figure;
         colormap(carr{cc});
+        axis off;
         %                 cb = colorbar;            % vertical
-        cb = colorbar('southoutside'); % horizontal
-        set(gca,'fontsize',10);
-        th1 = th1_arr(ind_arr(idx1)); the = th1_arr(ind_arr(idx2));
-        temp = interp1([0,1],[th1,the],cb.Ticks);
-        cb.TickLabels = round(temp,0);
+        cb = colorbar('southoutside'); % horizontal        
         cb.Box = 'off';
         %                 cb.Position = [0.5, 0.1, 0.1, 0.8]; % vertical
-        cb.Position = [0.1, 0.5, 0.8, 0.1]; % horizontal
-        axis off;
+        cb.Position = [0.1, 0.5, 0.8, 0.1]; % horizontal        
         ylabel(cb,['\theta_{roll} ' txt_arr{cc}],'fontsize',10);
-        %                 set(gcf,'paperposition',[0,0,6/4.5,6]); % vertical
+        th1 = th1_arr(ind_arr(idx1)); the = th1_arr(ind_arr(idx2));
+        cb.Ticks = 0:0.2:1; 
+        temp = interp1([0,1],[th1,the],cb.Ticks);
+        cb.TickLabels = round(temp);
+        %                 set(gcf,'paperposition',[0,0,6/4.5,6]); % vertical        
         set(gcf,'paperposition',[0,0,3.5,1]); % horizontal
         print('-dtiff','-r300',['pre_nn_cb_' num2str(cc)]);
         close;
