@@ -12,7 +12,7 @@ dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0
 % r_range = [-60,60]; cmap1 = RdBu; cmap2 = BrBG; % for "both"
 r_range = [0,75]; cmap1 = PuBu; cmap2 = YlOrBr; % for "positive"
 
-tgl_cbar = 1;
+tgl_cbar = 0;
 tgl_plot = 0;
 tgl_svpl = 0;
 tgl_save = 1;
@@ -27,7 +27,6 @@ n_roll = idx2-idx1;                             % plot part
 
 %% name predictors and responses
 PDT_txt = {'Y_0','max(\Delta\alpha)','max(\alpha_{end})','mean(\Delta\alpha)','std(\Delta\alpha)','std(\alpha)','CV(d_{lat})','diff(mean(d_{lat}))'};
-% PDT_txt = {'Y_0','diff(mean(d_{lat}))','CV(d_{lat})','std(\alpha)','max(\alpha)','max(abs(\Delta(\alpha)))'};
 RSP_txt = {'\theta_{roll}','\theta_{bend}'};
 
 
@@ -36,6 +35,8 @@ XY = nan(n_pks*4,n_roll*n_bend);
 
 PDT = nan(length(PDT_txt),n_roll*n_bend);
 RSP = nan(length(RSP_txt),n_roll*n_bend);
+TIPx = nan(1,n_roll*n_bend);
+TIPy = TIPx;
 
 nn = 0 ;
 
@@ -95,14 +96,12 @@ for dd = 1:n_bend
             yyaxis left;
             plt = pxy1;
             f = scatter(plt(:,1),plt(:,2),10,ii*ones(size(plt,1),1),'filled');
-            %             alpha(f,0.8);
             fig = gcf;
             fig.Colormap = cmap1;
             
             yyaxis right;
             plt = pxy2;
             f = scatter(plt(:,1),plt(:,2),10,ii*ones(size(plt,1),1),'filled');
-            %             alpha(f,0.8);
             b = gca;
             b.Colormap = cmap2;
             
@@ -135,19 +134,15 @@ for dd = 1:n_bend
         PDT(5,nn) = nanstd([diff(slp1);diff(slp2)]);        % predictor 5 -- standard deviation of ALL local slope change
         PDT(6,nn) = nanstd([slp1;slp2]);                    % predictor 6 -- standard deviation of ALL local slope
         PDT(7,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 7 -- coefficient of variation of ALL lateral distances
-        PDT(8,nn) = diffdlat;                               % predictor 8 -- absolute difference between average lateral distances of set 1 and set 2
-                
-        %         PDT(1,nn) = temp(slc+1);                            % predictor 1 -- Y0
-        %         PDT(2,nn) = diffdlat;                               % predictor 2 -- absolute difference between average lateral distances of set 1 and set 2
-        %         PDT(3,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 3 -- coefficient of variation of ALL lateral distances
-        %         PDT(4,nn) = nanstd([slp1;slp2]);                    % predictor 4 -- standard deviation of ALL local slope
-        %         PDT(5,nn) = nanmax([slp1;slp2]);                    % predictor 5 -- max of ALL local slope
-        %         PDT(6,nn) = nanmax(abs([diff(slp1);diff(slp2)]));   % predictor 6 -- maximum absolute local slope change
+        PDT(8,nn) = diffdlat;                               % predictor 8 -- absolute difference between average lateral distances of set 1 and set 2                
         
         RSP(1,nn) = th1_arr(ind_arr(ii));   % response 1 -- roll angle
         RSP(2,nn) = th_bend_act;            % response 2 -- bend angle
         
         XY(:,nn) = [plt1(:,1);plt1(:,2);plt2(:,1);plt2(:,2)]; % master storage for all all x-y points
+        
+        TIPx(:,nn) = X(1,ii) - X(end,ii); % catheter tip X-location
+        TIPy(:,nn) = Y(1,ii) - Y(end,ii); % catheter tip Y-location
                
     end
     
@@ -179,7 +174,7 @@ for dd = 1:n_bend
 end
 
 if tgl_save
-    save pre_nn_20SDF_H_30_short XY PDT* RSP*
+    save pre_nn_20SDF_H_30_short XY PDT* RSP* TIPx TIPy
 end
 
 %% colorbar
