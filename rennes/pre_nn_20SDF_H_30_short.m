@@ -37,18 +37,15 @@ PDT = nan(length(PDT_txt),n_roll*n_bend);
 RSP = nan(length(RSP_txt),n_roll*n_bend);
 TIPx = nan(1,n_roll*n_bend);
 TIPy = TIPx;
-
-nn = 0 ;
-
+PKS1 = nan(n_pks,2,n_roll,n_bend); PKS2 = PKS1;
+    
 %% loop through bending angles
+nn = 0 ;
 for dd = 1:n_bend
     
     % load data
     dname = dname_arr{dd};
     load(['proc_auto_data_' dname]);
-    
-    % preallocate
-    PKS1 = nan(n_pks,2,length(TGL)); PKS2 = PKS1;
     
     %% find bending angles(ground truth)
     ind_0 = find(th1_arr==min(abs(th1_arr)));
@@ -88,6 +85,9 @@ for dd = 1:n_bend
         
         plt2 = nan(n_pks,2);            % preallocate
         plt2(1:n,:) = pxy2(1:n,:);      % find the first n peaks
+        
+        PKS1(:,:,ii,dd) = plt1;
+        PKS2(:,:,ii,dd) = plt2;
         
         %% plot
         if tgl_plot
@@ -174,7 +174,7 @@ for dd = 1:n_bend
 end
 
 if tgl_save
-    save pre_nn_20SDF_H_30_short XY PDT* RSP* TIPx TIPy
+    save pre_nn_20SDF_H_30_short XY PDT* RSP* TIPx TIPy PKS*
 end
 
 %% colorbar
