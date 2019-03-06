@@ -101,54 +101,63 @@ for zz = 1:length(n_pdt_arr)
     
 end
 
-save('nn_20SDF_H_30_short_test_Npdt');
-
+save nn_20SDF_H_30_short_test_Npdt best_* ind_* all_p RSP n_pdt_arr *_txt
 
 %%
 clear;clc;ca;
 load nn_20SDF_H_30_short_test_Npdt
 plt = best_p/max(best_p);
 disp(diff(plt)*100);
-plot(plt,'*-k');
+plot(plt,'o-k','markerfacecolor','k');
 xlabel('number of predictors');
 ylabel('normalized error');
+box off;
 set(gca,'fontsize',10);
 set(gcf,'paperposition',[0,0,4,2],'unit','inches');
 print('-dtiff','-r300','test_Npdt_p');
 close;
 
 %%
-figure;
-cmap = colormap(lines(2));
-for zz = 1:length(n_pdt_arr)
-    hold on;
-    plot([0,75],[0,75],'k');
+load nn_20SDF_H_30_short_test_Npdt
+n = length(n_pdt_arr);
+figure(1);
+cmap = colormap(classSet3(n));
+hold on;
+plot([0,75],[0,75],'k');
+
+figure(2);
+hold on;
+plot([0,75],[0,75],'k');
+
+for zz = 1:n
     
     ind = best_tr{zz}.testInd;
     
-    for ff = 1:2        
+    for ff = 1:2
         x = RSP(ff,ind);
         y = best_y{zz}(ff,ind);
-        h(ff) = scatter(x,y,[],cmap(ff,:),'filled');
-        alpha(h(ff),0.5);
+        
+        figure(ff);
+        h(ff) = scatter(x,y,10,cmap(zz,:),'filled');
+        %         alpha(h(ff),0.5);
         r = regression(x,y);
-        text(10,70-10*ff,['R = ' num2str(r,3)],'color',cmap(ff,:));                
+        text(0,90-5*zz,['n = ' num2str(zz) ', R = ' num2str(r,3)],'color',cmap(zz,:),'fontsize',6);
     end
-    xlabel('actual');
-    ylabel('predicted');
-    axis equal
-    title(strjoin(PDT_txt(best_pdt{zz}),','),'fontweight','normal');
-    
-    if zz==8
-        legend(h,RSP_txt{1},RSP_txt{2},'location','southeast');
-    end
-    set(gca,'fontsize',10);
-    set(gca,'position',[0.1,0,0.9,1]);
-    set(gcf,'paperposition',[0,0,4,4],'unit','inches');
-    print('-dtiff','-r300',['test_Npdt_p_' num2str(zz)]);    
-    close;
-
 end
 
-
-
+for ff = 1:2
+    figure(ff);
+    set(gca,'fontsize',10);
+    xlabel('actual');
+    ylabel('predicted');
+    title(RSP_txt{ff},'fontweight','normal');
+    axis equal
+    axis tight
+    temp = [get(gca,'xlim');get(gca,'ylim')];
+    temp = [min(temp(:,1)),max(temp(:,2))];
+    axis([temp,temp]);
+    set(gcf,'paperposition',[0,0,3,3],'unit','inches');
+%     set(gca,'position',[0.1,0,0.9,1]);
+    print('-dtiff','-r300',['test_Npdt_' num2str(ff)]);
+    close;
+end
