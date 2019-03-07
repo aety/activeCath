@@ -158,7 +158,6 @@ for ff = 1:2
     temp = [min(temp(:,1)),max(temp(:,2))];
     axis([temp,temp]);
     set(gcf,'paperposition',[0,0,3,3],'unit','inches');
-%     set(gca,'position',[0.1,0,0.9,1]);
     print('-dtiff','-r300',['test_Npdt_' num2str(ff)]);
     close;
 end
