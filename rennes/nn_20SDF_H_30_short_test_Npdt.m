@@ -3,15 +3,16 @@ clear; ca; clc;
 load pre_nn_20SDF_H_30_short
 n_tr = 5;
 
-best_p = nan(1,8);
+pdt_arr = 1:10; % possible predictors
+n_pdt_arr = 1:6; % number of predictors to include each time
+
+best_p = nan(1,length(n_pdt_arr));
 best_e = best_p;
-best_pdt = cell(1,8);
+best_pdt = cell(1,length(n_pdt_arr));
 best_tr = best_pdt;
 best_y = best_pdt;
 all_p = best_pdt;
 
-pdt_arr = 1:8; % possible predictors
-n_pdt_arr = 1:8; % number of predictors to include each time
 
 for zz = 1:length(n_pdt_arr)
     
@@ -121,7 +122,7 @@ close;
 load nn_20SDF_H_30_short_test_Npdt
 n = length(n_pdt_arr);
 figure(1);
-cmap = colormap(classSet3(n));
+cmap = colormap(lines(n));
 hold on;
 plot([0,75],[0,75],'k');
 
@@ -139,9 +140,9 @@ for zz = 1:n
         
         figure(ff);
         h(ff) = scatter(x,y,10,cmap(zz,:),'filled');
-        %         alpha(h(ff),0.5);
+                alpha(h(ff),0.5);
         r = regression(x,y);
-        text(0,90-5*zz,['n = ' num2str(zz) ', R = ' num2str(r,3)],'color',cmap(zz,:),'fontsize',6);
+        text(5,80-5*zz,['n = ' num2str(zz) ', R = ' num2str(r,3)],'color',cmap(zz,:),'fontsize',6);
     end
 end
 

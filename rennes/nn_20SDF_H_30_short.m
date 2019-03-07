@@ -1,10 +1,10 @@
 clear; ca; clc;
 
 load pre_nn_20SDF_H_30_short
-n_tr = 10;
+n_tr = 5;
 
 %% load predictors
-pdt_arr = 2:8;
+pdt_arr = 2:10;
 
 P_ARR = nan(length(pdt_arr),n_tr);
 E_ARR = P_ARR;
