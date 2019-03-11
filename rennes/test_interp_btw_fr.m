@@ -113,7 +113,7 @@ M_idx = M_idx_sort;
 
 save test_interp_btw_fr_sort M_* n_*
 
-%% smoothing
+%% curve fitting
 clear; clc; ca;
 load test_interp_btw_fr_sort
 n_order = 2; % order of polyfit
@@ -142,10 +142,10 @@ for dd = 1:n_bd
             p1 = polyfit(B_pk(tgl,1),B_pk(tgl,2),n_order);
             x = B_pk(tgl,1);
             y = polyval(p1,x);
-            
+                        
             c = cmap(cc,:);
             h = scatter(B_pk(tgl,1),B_pk(tgl,2),2,c,'filled');
-            alpha(h,0.5);
+            alpha(h,0.2);            
             plot(x,y,'color','k','linewidth',0.1);
             %             text(-10+x(end),y(end),num2str(cc));
         end
@@ -163,6 +163,8 @@ for dd = 1:n_bd
     temp = range(temp');
     ht = 3;
     set(gcf,'paperposition',[0,0,ht*temp(1)/temp(2),ht],'unit','inches');
-    print('-dtiff','-r300',['test_interp_byNode_smooth_' num2str(dd)]);
+    print('-dtiff','-r300',['test_interp_byNode_fit_' num2str(dd)]);
     close;
 end
+
+%% interpolate
