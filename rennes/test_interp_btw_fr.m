@@ -49,7 +49,7 @@
 % % %
 % % %         hold on;
 % % %         plot(pk1(:,1),pk1(:,2),'.','color',cmap(xx,:),'markersize',10); % plot peaks
-% % %
+% % %   
 % % %         %         pkm = nanmean(pk1); pkstd = nanstd(pk1);
 % % %         %         plot(pkm(1),pkm(2),'*','color',cmap(xx,:)); % plot mean
 % % %         %         plot(pkm(1)*ones(1,3),pkm(2)+[-pkstd(2),0,pkstd(2)],'*-','color',cmap(xx,:)); % plot mean and std
@@ -142,11 +142,10 @@ if plt
     end
 end
 
-
-
-%% smoothing attempy 1
+%% smoothing 
 clear; clc; ca;
 load test_interp_btw_fr
+n_order = 2; % order of polyfit
 
 % -----------------------------------------------------------
 % manually correct false cluster
@@ -156,10 +155,9 @@ M_idx(test,1,5) = 4;
 tt_txt = {'concave','concave'};
 
 for dd = 1:n_bd
-    
+    figure;
     for pp = 1:2
         
-        %         subplot(1,2,pp);
         hold on;
         
         n_cl = n_cl_arr(pp);
@@ -175,7 +173,7 @@ for dd = 1:n_bd
         for cc = 1:n_cl
             tgl = idx==cc;
             
-            p1 = polyfit(B_pk(tgl,1),B_pk(tgl,2),2);
+            p1 = polyfit(B_pk(tgl,1),B_pk(tgl,2),n_order);
             x = B_pk(tgl,1);
             y = polyval(p1,x);
             
@@ -183,22 +181,24 @@ for dd = 1:n_bd
             h = scatter(B_pk(tgl,1),B_pk(tgl,2),2,c,'filled');
             alpha(h,0.1);
             plot(x,y,'color',c);
-            %             text(-10+x(end),y(end),num2str(cc));
+            % text(-10+x(end),y(end),num2str(cc));
         end
-        %         title(tt_txt{pp},'fontweight','normal');
+        % title(tt_txt{pp},'fontweight','normal');
         
     end
     set(gca,'position',[0,0,1,1]);
-    set(gca,'fontsize',6);
-    axis equal
+    set(gca,'fontsize',6);    
+    axis tight;
+    axis equal;    
     ylim([0,450]);
     axis off
     
-    set(gcf,'paperposition',[0,0,2.5,3],'unit','inches');
+    temp = [get(gca,'xlim');get(gca,'ylim')];
+    temp = range(temp');
+    ht = 3;
+    set(gcf,'paperposition',[0,0,ht*temp(1)/temp(2),ht],'unit','inches');
     print('-dtiff','-r300',['test_interp_byNode_smooth_' num2str(dd)]);
-    close;
-    %     pause;
-    %     clf;
+    close;    
 end
 
 
