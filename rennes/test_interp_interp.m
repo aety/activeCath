@@ -2,6 +2,9 @@
 clear; clc; ca;
 load test_interp_btw_fr_sort
 
+M_itp_pk = cell(2,n_bd);
+F_itp_pk = M_itp_pk;
+
 for dd = 1:n_bd
     
     for pp = 1:2
@@ -48,13 +51,15 @@ for dd = 1:n_bd
                     lab_itp(ii:end) = lab_itp(ii:end) + length(itp_x) - 2;
                     
                 end
-                disp([min(temp_x),max(temp_x)]);
+%                 disp([min(temp_x),max(temp_x)]);
                 new_vars{jj} = temp_y;
             end
             plot(new_vars{1},new_vars{2},'.-','color',c);
             text(20+new_vars{1}(1),new_vars{2}(1),num2str(min(temp_x)),'color',c,'fontsize',8);
             text(-50+new_vars{1}(end),new_vars{2}(end),num2str(max(temp_x)),'color',c,'fontsize',8);
             
+            F_itp_pk{pp,dd} = temp_x;
+            M_itp_pk{pp,dd} = [new_vars{1},new_vars{2}];
         end
         
         axis equal; axis tight;
@@ -66,7 +71,9 @@ for dd = 1:n_bd
         ht = 3;
         set(gca,'position',[0,0,1,1]);
         set(gcf,'paperposition',[0,0,ht*temp(1)/temp(2),ht],'unit','inches');
-        print('-dtiff','-r300',['test_interp_interp_' num2str(dd) '_' num2str(pp)]);
+%         print('-dtiff','-r300',['test_interp_interp_' num2str(dd) '_' num2str(pp)]);
         close;
     end
 end
+
+save test_interp_interp *_itp_pk
