@@ -113,12 +113,14 @@ M_idx = M_idx_sort;
 
 save test_interp_btw_fr_sort M_* n_*
 
-%% curve fitting
+%% curve fitting (smoothing) and plotting 
 clear; clc; ca;
 load test_interp_btw_fr_sort
 n_order = 2; % order of polyfit
 
 tt_txt = {'concave','concave'};
+
+pf_arr = nan(n_order+1,max(n_cl_arr),2,n_bd);
 
 for dd = 1:n_bd
     
@@ -130,7 +132,7 @@ for dd = 1:n_bd
         n_cl = n_cl_arr(pp);
         
         B_pk = M_pk(:,:,pp,dd);
-        idx = M_idx(:,pp,dd);        
+        idx = M_idx(:,pp,dd);
         B_node = M_node(:,dd);
         B_fr = M_fr(:,dd);
         
@@ -139,14 +141,17 @@ for dd = 1:n_bd
         for cc = 1:n_cl
             tgl = idx==cc;
             
-            p1 = polyfit(B_pk(tgl,1),B_pk(tgl,2),n_order);
+            pf = polyfit(B_pk(tgl,1),B_pk(tgl,2),n_order);
             x = B_pk(tgl,1);
-            y = polyval(p1,x);
-                        
+            y = polyval(pf,x);
+            
             c = cmap(cc,:);
             h = scatter(B_pk(tgl,1),B_pk(tgl,2),2,c,'filled');
-            alpha(h,0.2);            
-            plot(x,y,'color','k','linewidth',0.1);            
+            alpha(h,0.2);
+            plot(x,y,'color','k','linewidth',0.1);
+            
+            pf_arr(:,cc,pp,dd) = pf;
+            
         end
     end
     
@@ -164,5 +169,3 @@ for dd = 1:n_bd
     print('-dtiff','-r300',['test_interp_byNode_fit_' num2str(dd)]);
     close;
 end
-
-%% interpolate
