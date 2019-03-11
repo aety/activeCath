@@ -121,16 +121,16 @@ n_order = 2; % order of polyfit
 tt_txt = {'concave','concave'};
 
 for dd = 1:n_bd
+    
     figure;
+    hold on;
+    
     for pp = 1:2
-        
-        hold on;
         
         n_cl = n_cl_arr(pp);
         
         B_pk = M_pk(:,:,pp,dd);
-        idx = M_idx(:,pp,dd);
-        
+        idx = M_idx(:,pp,dd);        
         B_node = M_node(:,dd);
         B_fr = M_fr(:,dd);
         
@@ -146,12 +146,10 @@ for dd = 1:n_bd
             c = cmap(cc,:);
             h = scatter(B_pk(tgl,1),B_pk(tgl,2),2,c,'filled');
             alpha(h,0.2);            
-            plot(x,y,'color','k','linewidth',0.1);
-            %             text(-10+x(end),y(end),num2str(cc));
+            plot(x,y,'color','k','linewidth',0.1);            
         end
-        % title(tt_txt{pp},'fontweight','normal');
-        
     end
+    
     set(gca,'position',[0,0,1,1]);
     set(gca,'fontsize',6);
     axis tight;
