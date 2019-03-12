@@ -24,12 +24,15 @@ RSP = nan(length(RSP_txt),n_roll*n_bend);
 
 nn = 0;
 
+roll_range = 13:154; % 1:n_roll
+pks_range = 1:14; 
+
 for dd = 1:n_bend
     
-    for ii = 1:n_roll
+    for ii = roll_range 
         
-        plt1 = PKS1(1:15,:,ii,dd);
-        plt2 = PKS2(1:15,:,ii,dd);
+        plt1 = PKS1(pks_range,:,ii,dd);
+        plt2 = PKS2(pks_range,:,ii,dd);
         
         nn = nn + 1; % counter
         
@@ -58,10 +61,26 @@ for dd = 1:n_bend
         PDT(10,nn) = nanmean(dlat1)/nanmean(dlat2);         % predictor 10 -- mean(di)_left / mean(di)_right
         
         RSP(1,nn) = th_roll_act_arr(ii);   % response 1 -- roll angle
-        RSP(2,nn) = th_bend_act_arr(dd);   % response 2 -- bend angle
+        RSP(2,nn) = th_bend_act_arr(dd);   % response 2 -- bend angle        
         
     end
 end
 
+tgl = isnan(RSP(1,:));
+PDT(:,tgl) = [];
+RSP(:,tgl) = [];
 
-save pre_nn_interp_btw_fr_res PDT* RSP* TIPx TIPy PKS* n_roll n_bend *_act_arr
+save pre_nn_interp_btw_fr_res PDT* RSP* TIPx TIPy n_roll n_bend *_act_arr *_range
+
+%% plot predictors 
+for dd = 1:size(PDT,1)
+    figure;
+    plot(PDT(dd,:),'.-k');
+    
+    title(PDT_txt{dd},'fontweight','normal');
+    box off;
+    axis tight;
+    set(gcf,'paperposition',[0,0,2,1]);
+    print('-dtiff','-r300',['pre_nn_interp_btw_fr_res_' num2str(dd)]);
+    close;
+end

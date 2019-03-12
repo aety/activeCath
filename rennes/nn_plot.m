@@ -1,20 +1,27 @@
+%% load data
+clear; clc; ca;
+fname = '20SDF_H_30_short';
+% fname = 'interp_btw_fr_res';
+
 cmap = {flipud(parula),flipud(parula)}; % for "positive" (sequential, sequential)
 % cmap = {flipud(parula),RdYlGn}; % for "both" (sequential, diverging)
 
-%% plot separate
-% fname = '20SDF_H_30_short';
-fname = 'interp_btw_fr_res'; 
 load(['nn_' fname]);
 
 [ind_a,ind_b] = find(P_ARR==min(min(P_ARR)));
 
 tr = TR_ARR{ind_a}{ind_b};
 y = Y_ARR{ind_a}{ind_b};
+best_pdt = pdt_arr(ind_a,:);
 
 ind = tr.testInd;
-c_plt = [2,1];
 
+
+%% plot separate
+
+c_plt = [2,1];
 for rr = 1:size(y,1)
+    
     figure;
     hold on;
     
@@ -30,7 +37,7 @@ for rr = 1:size(y,1)
     
     [r,m,b] = regression(t(rr,ind),y(rr,ind));
     
-    title(['Predictors: ' PDT_txt{1} ', ' PDT_txt{ind_a} ', R = ' num2str(r)],'fontweight','normal');
+    title(['Predictors: ' PDT_txt{best_pdt(1)} ', ' PDT_txt{best_pdt(2)} ', R = ' num2str(r)],'fontweight','normal');
     xlabel(['actual ' RSP_txt{rr}]);
     ylabel(['predicted ' RSP_txt{rr}]);
     
@@ -67,7 +74,7 @@ for rr = 1:size(y,1)
     
 end
 
-% title(['Predictors: ' PDT_txt{1} ', ' PDT_txt{ind_a}],'fontweight','normal');
+title(['Predictors: ' PDT_txt{best_pdt(1)} ', ' PDT_txt{best_pdt(2)} ', R = ' num2str(r)],'fontweight','normal');
 xlabel('actual');
 ylabel('predicted');
 axis tight;
@@ -81,21 +88,45 @@ close;
 for rr = 1:size(y,1)
     figure;
     hold on;
-        
-%     colormap(cmap{rr});
-    h = scatter(t(rr,ind),abs(y(rr,ind) - t(rr,ind)),10,'k','filled');    
+    
+    h = scatter(t(rr,ind),abs(y(rr,ind) - t(rr,ind)),10,'k','filled');
     alpha(h,0.5);
     
     xlabel(['actual ' RSP_txt{rr}]);
     ylabel(['|' RSP_txt{rr} ' error|']);
     axis tight;
     
-%     c = colorbar;
-%     c.Label.String = RSP_txt{c_plt(rr)};
-%     c.Box = 'off';
+    %     c = colorbar;
+    %     c.Label.String = RSP_txt{c_plt(rr)};
+    %     c.Box = 'off';
     
     set(gca,'fontsize',8);
     set(gcf,'paperposition',[0,0,3,1.5]);
     print('-dtiff','-r300',['nn_' fname '_err_' num2str(rr)]);
     close;
 end
+
+%% plot error for all
+
+P_avg = mean(P_ARR,2);
+
+figure;
+hold on;
+
+scatter(pdt_arr(:,1),pdt_arr(:,2),P_avg/5,'k','filled');
+
+set(gca,'xtick',1:length(PDT_txt),'xticklabel',PDT_txt);
+set(gca,'ytick',1:length(PDT_txt),'yticklabel',PDT_txt);
+
+xlabel('predictor #1');
+ylabel('predictor #2');
+text(3,3,'marker sizes \propto error');
+
+xtickangle(30);
+ytickangle(30);
+
+axis equal;
+set(gca,'fontsize',8);
+set(gcf,'paperposition',[0,0,4,3]);
+print('-dtiff','-r300',['nn_' fname '_err_all']);
+close;
