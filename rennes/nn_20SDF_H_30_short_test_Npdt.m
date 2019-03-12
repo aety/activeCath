@@ -104,21 +104,43 @@ end
 
 save nn_20SDF_H_30_short_test_Npdt best_* ind_* all_p RSP n_pdt_arr *_txt
 
-%%
+%% plot summary
 clear;clc;ca;
 load nn_20SDF_H_30_short_test_Npdt
-plt = best_p/max(best_p);
-disp(diff(plt)*100);
-plot(plt,'o-k','markerfacecolor','k');
+plt = nan(length(all_p),2);
+pmin = nan(length(all_p),1);
+
+for pp = 1:length(all_p)
+    temp = mean(all_p{pp},2);
+    pmin(pp) = min(temp);
+    %     temp = temp/pmin(1);
+    plt(pp,1) = mean(temp);
+    plt(pp,2) = std(temp);
+end
+% pmin = pmin/min(pmin);
+
+%%
+hold on;
+x = 1:length(all_p);
+y = plt(:,1);
+err = plt(:,2);
+
+h1 = errorbar(x,y,err,'color','k');
+h2 = plot(x,pmin,'*k');
+
+axis tight;
+xlim([0.5,length(all_p)+0.5]);
+legend([h1,h2],'mean\pm std','min.');
 xlabel('number of predictors');
 ylabel('normalized error');
+set(gca,'ytick',[]);
 box off;
 set(gca,'fontsize',10);
 set(gcf,'paperposition',[0,0,4,2],'unit','inches');
 print('-dtiff','-r300','test_Npdt_p');
 close;
 
-%%
+%% plot best correlation (overlay)
 load nn_20SDF_H_30_short_test_Npdt
 n = length(n_pdt_arr);
 figure(1);
@@ -140,7 +162,7 @@ for zz = 1:n
         
         figure(ff);
         h(ff) = scatter(x,y,10,cmap(zz,:),'filled');
-                alpha(h(ff),0.5);
+        alpha(h(ff),0.5);
         r = regression(x,y);
         text(5,80-5*zz,['n = ' num2str(zz) ', R = ' num2str(r,3)],'color',cmap(zz,:),'fontsize',6);
     end
