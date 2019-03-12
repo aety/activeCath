@@ -1,6 +1,13 @@
+fname = '20SDF_H_30_short';
+% fname = 'interp_btw_fr_res';
+
+clearvars -except fname;
+ca;
+clc;
 
 %% nn results
-load nn_20SDF_H_30_short;
+load(['nn_' fname]);
+
 [ind_a,ind_b] = find(P_ARR==min(min(P_ARR)));
 
 tr = TR_ARR{ind_a}{ind_b};  % struct from nn results
@@ -9,7 +16,8 @@ y = Y_ARR{ind_a}{ind_b};    % output response from NN
 ind_te = tr.testInd;        % testing indices
 ind_tr = tr.trainInd;       % training indices
 
-pdt = PDT([1,ind_a],:);     % best predictors
+best_pdt = pdt_arr(ind_a,:);
+pdt = PDT(best_pdt,:);     % best predictors
 rsp_o = t;                  % original response
 rsp_nn = y;                 % NN response
 
@@ -47,7 +55,7 @@ for ii = 1:2
     
     set(gca,'fontsize',8);
     set(gcf,'paperposition',[0,0,3,3.5],'unit','inches');
-    print('-dtiff','-r300',['compare_nlfit_' num2str(ii)]);
+    print('-dtiff','-r300',['nn_' fname '_nlfit_' num2str(ii)]);
     close;
     
 end

@@ -1,10 +1,12 @@
 clear; ca; clc;
+fname = '20SDF_H_30_short';
+% fname = 'interp_btw_fr_res';
 
-load pre_nn_20SDF_H_30_short
+load(['pre_nn_' fname]);
 n_tr = 5;
 
 pdt_arr = 1:10; % possible predictors
-n_pdt_arr = 1:6; % number of predictors to include each time
+n_pdt_arr = 1:3; % number of predictors to include each time
 
 best_p = nan(1,length(n_pdt_arr));
 best_e = best_p;
@@ -102,11 +104,12 @@ for zz = 1:length(n_pdt_arr)
     
 end
 
-save nn_20SDF_H_30_short_test_Npdt best_* ind_* all_p RSP n_pdt_arr *_txt
+save(['nn_' fname '_Npdt'],'best_*','ind_*','all_p','RSP','n_pdt_arr','*_txt');
 
 %% plot summary
-clear;clc;ca;
-load nn_20SDF_H_30_short_test_Npdt
+
+load(['nn_' fname '_Npdt']);
+
 plt = nan(length(all_p),2);
 pmin = nan(length(all_p),1);
 
@@ -117,9 +120,7 @@ for pp = 1:length(all_p)
     plt(pp,1) = mean(temp);
     plt(pp,2) = std(temp);
 end
-% pmin = pmin/min(pmin);
 
-%%
 hold on;
 x = 1:length(all_p);
 y = plt(:,1);
@@ -137,11 +138,10 @@ set(gca,'ytick',[]);
 box off;
 set(gca,'fontsize',10);
 set(gcf,'paperposition',[0,0,4,2],'unit','inches');
-print('-dtiff','-r300','test_Npdt_p');
+print('-dtiff','-r300',['test_Npdt_' fname '_p']);
 close;
 
 %% plot best correlation (overlay)
-load nn_20SDF_H_30_short_test_Npdt
 n = length(n_pdt_arr);
 figure(1);
 cmap = colormap(lines(n));
@@ -180,6 +180,6 @@ for ff = 1:2
     temp = [min(temp(:,1)),max(temp(:,2))];
     axis([temp,temp]);
     set(gcf,'paperposition',[0,0,3,3],'unit','inches');
-    print('-dtiff','-r300',['test_Npdt_' num2str(ff)]);
+    print('-dtiff','-r300',['test_Npdt_' fname '_' num2str(ff)]);
     close;
 end

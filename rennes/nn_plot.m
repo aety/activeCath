@@ -16,7 +16,6 @@ best_pdt = pdt_arr(ind_a,:);
 
 ind = tr.testInd;
 
-
 %% plot separate
 
 c_plt = [2,1];
@@ -96,18 +95,13 @@ for rr = 1:size(y,1)
     ylabel(['|' RSP_txt{rr} ' error|']);
     axis tight;
     
-    %     c = colorbar;
-    %     c.Label.String = RSP_txt{c_plt(rr)};
-    %     c.Box = 'off';
-    
     set(gca,'fontsize',8);
     set(gcf,'paperposition',[0,0,3,1.5]);
     print('-dtiff','-r300',['nn_' fname '_err_' num2str(rr)]);
     close;
 end
 
-%% plot error for all
-
+%% plot average error for all predictors
 P_avg = mean(P_ARR,2);
 
 figure;
