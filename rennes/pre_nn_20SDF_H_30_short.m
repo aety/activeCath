@@ -13,8 +13,8 @@ dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0
 r_range = [0,75]; cmap1 = PuBu; cmap2 = YlOrBr; % for "positive"
 
 tgl_cbar = 0;
-tgl_plot = 1;
-tgl_svpl = 1;
+tgl_plot = 0;
+tgl_svpl = 0;
 tgl_save = 1;
 
 load(['proc_auto_data_' dname_arr{1}],'ind_arr');
@@ -43,6 +43,9 @@ PKS1 = nan(n_pks,2,n_roll,n_bend); PKS2 = PKS1;
 
 %% loop through bending angles
 nn = 0 ;
+th_bend_act_arr = nan(1,n_bend);
+th_roll_act_arr = th1_arr(ind_arr(idx1:idx2));
+
 for dd = 1:n_bend
     
     % load data
@@ -52,9 +55,9 @@ for dd = 1:n_bend
     %% find bending angles(ground truth)
     ind_0 = find(th1_arr==min(abs(th1_arr)));
     x0 = X(1:2,ind_0);
-    y0 = Y(1:2,ind_0);
-    th_bend_act_arr = atan2(diff(y0),diff(x0));
-    th_bend_act = th_bend_act_arr*180/pi;
+    y0 = Y(1:2,ind_0);    
+    th_bend_act = atan2(diff(y0),diff(x0))*180/pi;
+    th_bend_act_arr(dd) = th_bend_act;
     
     %% loop through frames
     for ii = idx1:idx2
@@ -173,7 +176,7 @@ for dd = 1:n_bend
 end
 
 if tgl_save
-    save pre_nn_20SDF_H_30_short XY PDT* RSP* TIPx TIPy PKS* n_roll n_bend
+    save pre_nn_20SDF_H_30_short XY PDT* RSP* TIPx TIPy PKS* n_roll n_bend *_act_arr
 end
 
 %% colorbar

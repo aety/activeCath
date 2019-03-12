@@ -2,7 +2,10 @@ cmap = {flipud(parula),flipud(parula)}; % for "positive" (sequential, sequential
 % cmap = {flipud(parula),RdYlGn}; % for "both" (sequential, diverging)
 
 %% plot separate
-load nn_20SDF_H_30_short;
+% fname = '20SDF_H_30_short';
+fname = 'interp_btw_fr_res'; 
+load(['nn_' fname]);
+
 [ind_a,ind_b] = find(P_ARR==min(min(P_ARR)));
 
 tr = TR_ARR{ind_a}{ind_b};
@@ -39,20 +42,11 @@ for rr = 1:size(y,1)
     
     set(gca,'fontsize',8);
     set(gcf,'paperposition',[0,0,4,3]);
-    print('-dtiff','-r300',['nn_20SDR_H_30_short_' num2str(rr)]);
+    print('-dtiff','-r300',['nn_' fname '_' num2str(rr)]);
     close;
 end
 
 %% plot combined
-load nn_20SDF_H_30_short;
-[ind_a,ind_b] = find(P_ARR==min(min(P_ARR)));
-
-tr = TR_ARR{ind_a}{ind_b};
-y = Y_ARR{ind_a}{ind_b};
-
-ind = tr.testInd;
-c_plt = [2,1];
-
 c_map = [118,42,131;27,120,55]/255;
 
 for rr = 1:size(y,1)
@@ -80,19 +74,10 @@ axis tight;
 axis equal;
 set(gca,'fontsize',8);
 set(gcf,'paperposition',[0,0,3,3]);
-print('-dtiff','-r300','nn_20SDR_H_30_short_cmb');
+print('-dtiff','-r300',['nn_' fname '_cmb']);
 close;
 
 %% plot error
-load nn_20SDF_H_30_short;
-[ind_a,ind_b] = find(P_ARR==min(min(P_ARR)));
-
-tr = TR_ARR{ind_a}{ind_b};
-y = Y_ARR{ind_a}{ind_b};
-
-ind = tr.testInd;
-c_plt = [2,1];
-
 for rr = 1:size(y,1)
     figure;
     hold on;
@@ -111,6 +96,6 @@ for rr = 1:size(y,1)
     
     set(gca,'fontsize',8);
     set(gcf,'paperposition',[0,0,3,1.5]);
-    print('-dtiff','-r300',['nn_20SDR_H_30_short_err_' num2str(rr)]);
+    print('-dtiff','-r300',['nn_' fname '_err_' num2str(rr)]);
     close;
 end

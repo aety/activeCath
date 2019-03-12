@@ -1,6 +1,7 @@
 clear; ca; clc;
-
-load pre_nn_20SDF_H_30_short
+% fname = '20SDF_H_30_short';
+fname = 'interp_btw_fr_res'; 
+load(['pre_nn_' fname]);
 n_tr = 5;
 
 %% load predictors
@@ -73,4 +74,4 @@ for ii = 1:length(pdt_arr)
     
 end
 
-save nn_20SDF_H_30_short
+save(['nn_' fname]);
