@@ -1,13 +1,14 @@
 %% interpolate
 clear; clc; ca;
-load test_interp_btw_fr_sort
+load interp_btw_fr_proc
 
-M_itp_pk = cell(2,n_bd);
-F_itp_pk = M_itp_pk;
+PKS = cell(1,2);
+PKS{1} = nan(max(n_cl_arr),2,n_fr,n_bd); % 16 (pks) x 2 (dim) x 188 (frame) x 5 (bend)
+PKS{2} = PKS{1};
 
 for dd = 1:n_bd
     
-    for pp = 1:2
+    for pp = 1:2 % concave / convex
         
         figure;
         hold on;
@@ -26,16 +27,16 @@ for dd = 1:n_bd
             tgl = idx==cc;          % select one cluster
             lab = find(idx==cc);    % label points in selected cluster
             
-            vars_arr = {B_pk(tgl,1),B_pk(tgl,2)};
-            new_vars = cell(1,2);
+            old_pks = [B_pk(tgl,1),B_pk(tgl,2)];
+            new_pks_arr = cell(1,2);
             
             c = cmap(cc,:);
-            %             plot(vars_arr{1},vars_arr{2},'.-','color',c);
+            %             plot(old_pks(:,1),old_pks(:,2),'*','color',c);
             
-            for jj = 1:length(vars_arr)
+            for jj = 1:size(old_pks,2) % x and y
                 
                 temp_x = B_fr(lab)';     % pre-interp X (frame number)
-                temp_y = vars_arr{jj}';   % pre-interp Y (x-coordinate)
+                temp_y = old_pks(:,jj)';   % pre-interp Y (x-coordinate)
                 
                 
                 lab_itp = find(diff(temp_x)>1); % identify places where peaks are missing
@@ -51,15 +52,14 @@ for dd = 1:n_bd
                     lab_itp(ii:end) = lab_itp(ii:end) + length(itp_x) - 2;
                     
                 end
-%                 disp([min(temp_x),max(temp_x)]);
-                new_vars{jj} = temp_y;
+                new_pks_arr{jj} = temp_y;
             end
-            plot(new_vars{1},new_vars{2},'.-','color',c);
-            text(20+new_vars{1}(1),new_vars{2}(1),num2str(min(temp_x)),'color',c,'fontsize',8);
-            text(-50+new_vars{1}(end),new_vars{2}(end),num2str(max(temp_x)),'color',c,'fontsize',8);
+            new_pks = cell2mat(new_pks_arr')';
+            plot(new_pks(:,1),new_pks(:,2),'.-','color',c);
+            text(20+new_pks(1,1),new_pks(1,2),num2str(min(temp_x)),'color',c,'fontsize',8);
+            text(-50+new_pks(end,1),new_pks(end,2),num2str(max(temp_x)),'color',c,'fontsize',8);
             
-            F_itp_pk{pp,dd} = temp_x;
-            M_itp_pk{pp,dd} = [new_vars{1},new_vars{2}];
+            PKS{pp}(cc,:,temp_x,dd) = new_pks';
         end
         
         axis equal; axis tight;
@@ -71,9 +71,12 @@ for dd = 1:n_bd
         ht = 3;
         set(gca,'position',[0,0,1,1]);
         set(gcf,'paperposition',[0,0,ht*temp(1)/temp(2),ht],'unit','inches');
-%         print('-dtiff','-r300',['test_interp_interp_' num2str(dd) '_' num2str(pp)]);
+        print('-dtiff','-r300',['interp_btw_fr_res_' num2str(dd) '_' num2str(pp)]);
         close;
     end
 end
 
-save test_interp_interp *_itp_pk
+PKS1 = PKS{1};
+PKS2 = PKS{2};
+
+save interp_btw_fr_res PKS1 PKS2

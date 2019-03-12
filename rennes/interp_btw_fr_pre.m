@@ -43,7 +43,7 @@
 % %
 % % end
 % %
-% % save test_interp_btw_fr M_* n_*
+% % save interp_btw_fr M_* n_*
 
 %% diagnose clustering
 % % % plt = 1;
@@ -72,16 +72,52 @@
 % % % end
 
 %% manually correct false cluster
-% % % clear; clc; ca;
-% % % load test_interp_btw_fr
-% % %
-% % % test = M_pk(:,1,1,5)> - 61 & M_pk(:,2,1,5)>288;
-% % % M_idx(test,1,5) = 4;
-% % %
-% % % save test_interp_btw_fr_correct M_* n_*
+clear; clc; ca;
+load interp_btw_fr_pre
+
+test = M_pk(:,1,1,5)> - 61 & M_pk(:,2,1,5)>288;
+M_idx(test,1,5) = 4;
+
+%% automatically exclude outliers along y
+f_outliers = 3; % number of standard deviations as a threshold for outliers
+
+for dd = 1:size(M_pk,4) % bend
+    
+    for pp = 1:size(M_pk,3) % concave / convex
+        
+        idx = M_idx(:,pp,dd);
+        B_pk = M_pk(:,:,pp,dd);
+        
+        cl_arr = unique(idx(~isnan(idx)));
+        c_arr = colormap(lines(length(cl_arr)));
+        
+        for cc = 1:length(cl_arr)
+            
+            tgl = idx==cc;
+            y = B_pk(tgl,2);
+            y_avg = mean(y);
+            y_std = std(y);
+            
+            %             plot(y,'b*'); % diagnostic
+            %             hold on;      % diagnostic
+            
+            idx_outlier = find(abs(y - y_avg) > f_outliers*y_std);
+            temp = length(idx_outlier);
+            if  temp > 0
+                disp(['Outlier: ' num2str([dd,pp,cc,temp])]);
+                idx_all = find(idx==cc);
+                M_idx(idx_all(idx_outlier),pp,dd) = nan;
+                M_pk(idx_all(idx_outlier),:,pp,dd) = nan;
+                %                 B_pk = M_pk(:,:,pp,dd);   % diagnostic
+                %                 y = B_pk(tgl,2);          % diagnostic
+                %                 plot(y,'r*');             % diagnostic
+            end
+        end
+    end
+end
 
 %% rearrange clusters by average y
-load test_interp_btw_fr_correct
+
 M_idx_sort = nan(size(M_idx));
 
 for dd = 1:n_bd
@@ -111,11 +147,8 @@ end
 
 M_idx = M_idx_sort;
 
-save test_interp_btw_fr_sort M_* n_*
+%% curve fitting (smoothing) and plotting
 
-%% curve fitting (smoothing) and plotting 
-clear; clc; ca;
-load test_interp_btw_fr_sort
 n_order = 2; % order of polyfit
 
 tt_txt = {'concave','concave'};
@@ -166,6 +199,8 @@ for dd = 1:n_bd
     temp = range(temp');
     ht = 3;
     set(gcf,'paperposition',[0,0,ht*temp(1)/temp(2),ht],'unit','inches');
-    print('-dtiff','-r300',['test_interp_byNode_fit_' num2str(dd)]);
+    print('-dtiff','-r300',['interp_btw_fr_' num2str(dd)]);
     close;
 end
+
+save interp_btw_fr_proc M_* n_*

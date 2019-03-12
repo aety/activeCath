@@ -173,7 +173,7 @@ for dd = 1:n_bend
 end
 
 if tgl_save
-    save pre_nn_20SDF_H_30_short XY PDT* RSP* TIPx TIPy PKS*
+    save pre_nn_20SDF_H_30_short XY PDT* RSP* TIPx TIPy PKS* n_roll n_bend
 end
 
 %% colorbar
