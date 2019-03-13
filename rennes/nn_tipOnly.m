@@ -1,8 +1,13 @@
 clear; clc; ca;
 
 %% tip X- and Y-location NN
+% fname = '20SDF_H_30_short';
+fname = 'interp_btw_fr_res';
+
+load(['pre_nn_' fname]);
+
 n_tr = 5;
-load pre_nn_20SDF_H_30_short;
+
 predictor = [TIPx;TIPy];
 response = RSP;
 
@@ -55,10 +60,10 @@ for nn = 1:n_tr
     
 end
 
-save nn_20SDF_H_30_short_test_tipOnly
+save(['nn_' fname '_tipOnly']);
 
 %% nn results
-load nn_20SDF_H_30_short;
+load(['nn_' fname]);
 [ind_a,ind_b] = find(P_ARR==min(min(P_ARR)));
 
 tr = TR_ARR{ind_a}{ind_b};  % struct from nn results
@@ -67,12 +72,11 @@ y = Y_ARR{ind_a}{ind_b};    % output response from NN
 ind_te = tr.testInd;        % testing indices
 ind_tr = tr.trainInd;       % training indices
 
-pdt = PDT([1,ind_a],:);     % best predictors
+pdt = PDT(pdt_arr(ind_a,:),:);     % best predictors
 rsp_o = t;                  % original response
 rsp_nn = y;                 % NN response
 
 %% non-linear fit
-load nn_20SDF_H_30_short_test_tipOnly
 ind_n = find(p_arr==min(p_arr));
 rsp_xy = y_arr{ind_n};
 
@@ -81,13 +85,13 @@ b_arr = {rsp_nn,rsp_xy};
 c_arr = colormap(lines(2));
 
 for ii = 1:2
-
+    
     R = nan(1,2);
     figure(ii);
     hold on;
     temp = [0,max(rsp_o(ii,:))];
     plot(temp,temp,'color',0.5*[1,1,1]);
-
+    
     for bb = 1:length(b_arr)
         a = rsp_o(ii,ind_te);
         b = b_arr{bb}(ii,ind_te);
@@ -100,10 +104,10 @@ for ii = 1:2
     ylabel(['predicted ' RSP_txt{ii}]);
     axis equal;
     axis tight;
-
+    
     set(gca,'fontsize',8);
     set(gcf,'paperposition',[0,0,3,3.5],'unit','inches');
     print('-dtiff','-r300',['test_tipOnly_' num2str(ii)]);
     close;
-
+    
 end

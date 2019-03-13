@@ -6,7 +6,7 @@ load(['pre_nn_' fname]);
 n_tr = 5;
 
 pdt_arr = 1:10; % possible predictors
-n_pdt_arr = 1:3; % number of predictors to include each time
+n_pdt_arr = 1:10; % number of predictors to include each time
 
 best_p = nan(1,length(n_pdt_arr));
 best_e = best_p;
@@ -116,7 +116,7 @@ pmin = nan(length(all_p),1);
 for pp = 1:length(all_p)
     temp = mean(all_p{pp},2);
     pmin(pp) = min(temp);
-    %     temp = temp/pmin(1);
+    
     plt(pp,1) = mean(temp);
     plt(pp,2) = std(temp);
 end
@@ -134,7 +134,7 @@ xlim([0.5,length(all_p)+0.5]);
 legend([h1,h2],'mean\pm std','min.');
 xlabel('number of predictors');
 ylabel('normalized error');
-set(gca,'ytick',[]);
+% set(gca,'ytick',[]);
 box off;
 set(gca,'fontsize',10);
 set(gcf,'paperposition',[0,0,4,2],'unit','inches');
@@ -144,7 +144,7 @@ close;
 %% plot best correlation (overlay)
 n = length(n_pdt_arr);
 figure(1);
-cmap = colormap(lines(n));
+cmap = colormap(parula(n));
 hold on;
 plot([0,75],[0,75],'k');
 

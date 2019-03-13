@@ -69,18 +69,20 @@ end
 tgl = isnan(RSP(1,:));
 PDT(:,tgl) = [];
 RSP(:,tgl) = [];
+TIPx(tgl) = [];
+TIPy(tgl) = [];
 
 save pre_nn_interp_btw_fr_res PDT* RSP* TIPx TIPy n_roll n_bend *_act_arr *_range
 
 %% plot predictors 
-for dd = 1:size(PDT,1)
-    figure;
-    plot(PDT(dd,:),'.-k');
-    
-    title(PDT_txt{dd},'fontweight','normal');
-    box off;
-    axis tight;
-    set(gcf,'paperposition',[0,0,2,1]);
-    print('-dtiff','-r300',['pre_nn_interp_btw_fr_res_' num2str(dd)]);
-    close;
-end
+% for dd = 1:size(PDT,1)
+%     figure;
+%     plot(PDT(dd,:),'.-k');
+%     
+%     title(PDT_txt{dd},'fontweight','normal');
+%     box off;
+%     axis tight;
+%     set(gcf,'paperposition',[0,0,2,1]);
+%     print('-dtiff','-r300',['pre_nn_interp_btw_fr_res_' num2str(dd)]);
+%     close;
+% end

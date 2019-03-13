@@ -23,7 +23,7 @@ load th1_arr
 % select only a certain range
 idx1 = find(th1_arr(ind_arr) < r_range(2),1);   % plot part
 idx2 = find(th1_arr(ind_arr) < r_range(1),1)-1; % plot part
-n_roll = idx2-idx1;                             % plot part
+n_roll = idx2 - idx1 + 1 ;                      % plot part
 
 %% name predictors and responses
 
