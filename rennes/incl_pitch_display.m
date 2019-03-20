@@ -11,7 +11,7 @@ vidrate = 3; % video frame rate
 %%
 if vidflag
     opengl('software');
-    anim = VideoWriter('proc_incl_pitch_pre','Motion JPEG AVI');
+    anim = VideoWriter('incl_pitch_display','Motion JPEG AVI');
     anim.FrameRate = vidrate;
     open(anim);
 end
@@ -41,10 +41,7 @@ for bb = 1:length(bd_arr)
         X3 = X3(alim(1):alim(2),alim(3):alim(4),ii);
         I_str = imadjust(X3);
         I_shp = imsharpen(I_str);
-        
-        %% Identify catheter shape and bounding box
-        % [I_ctol,x,y,p,S,mu,bbox_big] = IdentifyCatheter(I_str,y_min,pf_npt,dbgflag); %%%%%%%%%%%%%%%%%
-        
+                
         %% display
         imshow(I_shp);
         set(gca,'position',[0,0,1,1]);
@@ -53,8 +50,6 @@ for bb = 1:length(bd_arr)
             frame = getframe(gcf);
             writeVideo(anim,frame);
             clf;
-        else
-%             pause;
         end
                 
     end
@@ -65,6 +60,4 @@ if vidflag
     close(anim);
     close;
 end
-
-
 cd C:\Users\yang\ownCloud\MATLAB\rennes
