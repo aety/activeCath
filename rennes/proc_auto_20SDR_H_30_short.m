@@ -128,10 +128,6 @@ for dd = 1:length(dname_arr)
         MinorAxisLength(logical(tgl_exc)) = [];
         Orientation(logical(tgl_exc)) = [];
         
-        %         tgl_exc = zeros(size(Centroid,1),1); % remove boxes that are too close together
-        %         temp = diff(Centroid).^2; temp = sqrt(temp(:,1) + temp(:,2)); % remove boxes that are too close together
-        %         tgl_exc(temp < thrs_near) = 1; % remove boxes that are too close together
-        
         bbox_plt = FindBoundingBoxPeaks(BoundingBox,Centroid,MajorAxisLength,MinorAxisLength,Orientation,x,y);
         xx0 = bbox_plt(:,1); yy0 = bbox_plt(:,2);
         
