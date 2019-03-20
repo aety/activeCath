@@ -5,7 +5,7 @@ dbgflag = 0; % plot (dianostics)
 savflag = 0; % save data (mat file)
 pltflag = 1; % plot (for video)
 vidflag = 0; % save video
-vidrate = 10; % video frame rate
+vidrate = 2; % video frame rate
 
 % figure parameters
 c_arr = lines(6); c_lab_y = c_arr(3,:); c_lab_b = c_arr(6,:); % marker color label
@@ -26,7 +26,9 @@ thrs_big = 50; % (pixels)^2 threshold for removing oversized identified area (ca
 thrs_dev = 25; % (pixels) maximum deviation from the catheter (fitted curve) an identified point is allowed to be (wire envelopes are about 5 pixels outside of the catheter)
 thrs_sm = 2; % (pixels)^2 threshold for removing identified bounding boxes that are too small
 thrs_near = 5; % (pixel) minimal distance required to keep points (when removing overlaps)
-y_min = ref_pt(2); % y_min = 510; % (pixels) vertical pixel location of the lowest interesting extracted features (to avoid inclusion of the catheter base holder)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% y_min = ref_pt(2); % y_min = 510; % (pixels) vertical pixel location of the lowest interesting extracted features (to avoid inclusion of the catheter base holder) %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 pf_npt = 100; % polyfit-- the of points (parallel to the base of the catheter)
 
 cath_len_pc = 0.85; % percentage of catheter length to include in ConvexHull search
@@ -34,68 +36,20 @@ cath_len_pc = 0.85; % percentage of catheter length to include in ConvexHull sea
 %% pitch variation associated variables
 bd_arr = [1.6564, 20.2525, 35.3308, 52.8649, 65.4128]; %  [64.4128];
 fn_arr = {37:51,52:66,68:82,84:98,100:114}; % {115:134}; % 15 frames for each bending angle. The last 20 frames are with a phantom;
-ii = 2; % index to pitch from the third dimension of the .ima file
+ii = 1; % index to pitch from the third dimension of the .ima file
 
-%% load image
-
-% dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'};
-
-% % % for dd = 1:length(dname_arr)
-% % %
-% % %     dname = dname_arr{dd};
-% % %     cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
-% % %     cd(dname);
-% % %
-% % %     fname = dir('*.ima');
-% % %     filename = fname.name;
-% % %
-% % %     info = dicominfo(filename);
-% % %     [X0,cmap,alpha,overlays] = dicomread(filename);
-% % %
-% % %     cd C:\Users\yang\ownCloud\MATLAB\rennes
-% % %
-% % %     %% initialize video
-% % %     if vidflag
-% % %         opengl('software');
-% % %         anim = VideoWriter(['proc_auto_' dname],'Motion JPEG AVI');
-% % %         anim.FrameRate = vidrate;
-% % %         open(anim);
-% % %     end
-% % %
-% % %     %% permute image array
-% % %     X3 = permute(X0,[1,2,4,3]); % 4D images information usually comprises of Height, Width, Color Plane, Frame Number (Color Plane is in the order Red, Green, Blue)
-% % %
-% % %     %% find interesting frames
-% % %     th1_arr = info.PositionerPrimaryAngleIncrement;
-% % %     ind_arr = find(th1_arr > th1_range(1) & th1_arr < th1_range(2));
-% % %
-% % %     %% preallocate
-% % %     X = nan(pf_npt,length(ind_arr)); Y = X;
-% % %     REF = nan(2,length(ind_arr));
-% % %     I_disp_arr = cell(length(ind_arr),1);
-% % %     BBOX = I_disp_arr;
-% % %     TGL = I_disp_arr;
-% % %
-% % %     %% show image (all frames)
-% % %     for ff = 1:length(ind_arr)
-% % %
-% % %         fn = ind_arr(ff); % frame number
-% % %
-% % %         disp([dd,ff]);
-% % %
-% % %         G = X3(:,:,fn); % load frame
-
-%%
+%% prepare video
 if vidflag
     opengl('software');
-    anim = VideoWriter('proc_incl_pitch_pre','Motion JPEG AVI');
+    anim = VideoWriter('incl_pitch_pre','Motion JPEG AVI');
     anim.FrameRate = vidrate;
     open(anim);
 end
 
 cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
 
-for dd = 1%1:length(bd_arr)
+%% load image
+for dd = 1%:length(bd_arr)
     
     fn = fn_arr{dd};
     bd = dd;
@@ -107,7 +61,7 @@ for dd = 1%1:length(bd_arr)
     BBOX = I_disp_arr;
     TGL = I_disp_arr;
     
-    for ff = 1%:length(fn)
+    for ff = 5%:length(fn)
         
         %% load image and data
         dname = ['DSA_2_0' num2str(fn(ff),'%03.f')];
@@ -134,6 +88,29 @@ for dd = 1%1:length(bd_arr)
         H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4)); % re-extract the "global" area of interest
         
         fr = stretchlim(H); I_str = imadjust(H,fr); % re-stretch image
+        
+        
+        %% Decide a reasonable y_min based on the three boxes at the bottom
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        I = imbinarize(I_str); I = imcomplement(I);
+        %         imshow(I_str); hold on;
+        
+        s = regionprops('table',I,'Centroid','BoundingBox','Area');
+        [~,b] = sort(s.Area,'ascend');
+        b = b(1:2);
+        BoundingBox = s.BoundingBox(b,:);
+        %         for bb = 1:2
+        %             rectangle('position',BoundingBox(bb,:),'edgecolor',c_lab_y,'linewidth',2);
+        %         end
+        y_min_test = mean(BoundingBox(:,2));
+        %         plot([0,550],y_min_test*ones(1,2),'color',c_lab_b,'linewidth',2);
+        
+        %         text(10,10,[num2str(dd) ', ' num2str(ff)]);
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        y_min = y_min_test;
         
         %% Identify catheter shape and bounding box
         [I_ctol,x,y,p,S,mu,bbox_big] = IdentifyCatheter(I_str,y_min,pf_npt,dbgflag);
