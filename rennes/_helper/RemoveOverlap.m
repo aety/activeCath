@@ -3,7 +3,7 @@ function tgl_near = RemoveOverlap(PXY,m_dist)
 PXY_sch = PXY; % presearch original array 
 tgl_near = true(1,length(PXY)); % preallocate
 
-for pp = 1:length(PXY_sch)
+for pp = 1:size(PXY_sch,1)
     
     X = PXY_sch; X(pp,:) = nan; % original array minus the point of interest 
     Y = PXY_sch(pp,:); % point of interest

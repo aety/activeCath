@@ -3,7 +3,7 @@ clear; clc; ca;
 bd_arr = [1.6564, 20.2525, 35.3308, 52.8649, 65.4128, 64.4128];
 fn_arr = {37:51,52:66,68:82,84:98,100:114,115:134}; % 15 frames for each bending angle. The last 20 frames are with a phantom;
 alim = [201,850,251,800];
-ii = 2;
+ii = 1;
 
 vidflag = 1; % save video
 vidrate = 3; % video frame rate
@@ -56,10 +56,7 @@ for bb = 1:length(bd_arr)
         else
 %             pause;
         end
-        
-        roll_arr{bb}(ff) = roll;
-        pitch_arr{bb}(ff) = pitch;
-        
+                
     end
 end
 %%

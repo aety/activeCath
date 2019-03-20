@@ -9,7 +9,7 @@ P = nan(bb_n,2);
 x = interp1(1:100,x,1:0.1:100);
 y = interp1(1:100,y,1:0.1:100);
 
-for ii = 1:length(BoundingBox)
+for ii = 1:size(BoundingBox,1)
         
     %% ellipse
     t = linspace(0,2*pi,el_npt);    % array of angular variations
