@@ -1,6 +1,6 @@
 function [I_ctol,x,y,p,S,mu,bbox_big] = IdentifyCatheter(I_str,y_min,pf_npt,dbgflag)
 
-sharp_r = 1; % sharpening radius
+sharp_r = 2; % sharpening radius
 sharp_a = 10;  % sharpening amount 
 thrs_small = 100; % (pixels)^2 threshold for removing small objects (during arbitrary stage; helps remove tip positioning boxes)
 pf_n = 3; % polyfit-- the order of equation(to find a curve best describing the catheter shape)
@@ -18,7 +18,7 @@ if dbgflag
 end
 
 %% distance transform (I_dtr)
-I_dtr = bwdist(I_shp);
+I_dtr = bwdist(I_shp,'cityblock');
 
 if dbgflag
     subplot(1,4,2);

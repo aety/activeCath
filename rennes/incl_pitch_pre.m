@@ -4,7 +4,7 @@ clear; ca; clc;
 dbgflag = 0; % plot (dianostics)
 savflag = 0; % save data (mat file)
 pltflag = 1; % plot (for video)
-vidflag = 0; % save video
+vidflag = 1; % save video
 vidrate = 4; % video frame rate
 
 % figure parameters
