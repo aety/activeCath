@@ -1,8 +1,12 @@
-function [x,y] = FindYLimit(H,A_thres)
+function [x,y] = FindYLimit(H,A_thres,pct_sch)
 plt = 0;
 
 I_str = imadjust(H);
 I = imbinarize(I_str); I = imcomplement(I);
+
+temp = round((1-pct_sch)*size(I,1));
+I(1:temp,:) = 0;
+
 s = regionprops('table',I,'Centroid','BoundingBox','Area');
 s.Area(s.Area < A_thres) = nan;
 [~,b] = sort(s.Area);

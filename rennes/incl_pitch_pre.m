@@ -4,7 +4,7 @@ clear; ca; clc;
 dbgflag = 0; % plot (dianostics)
 savflag = 0; % save data (mat file)
 pltflag = 1; % plot (for video)
-vidflag = 0; % save video
+vidflag = 1; % save video
 vidrate = 4; % video frame rate
 
 % figure parameters
@@ -29,12 +29,12 @@ thrs_sm = 2; % (pixels)^2 threshold for removing identified bounding boxes that 
 thrs_near = 5; % (pixel) minimal distance required to keep points (when removing overlaps)
 pf_npt = 100; % polyfit-- the of points (parallel to the base of the catheter)
 
-cath_len_pc = 0.95; % percentage of catheter length to include in ConvexHull search
+cath_len_pc = 0.9; % percentage of catheter length to include in ConvexHull search
 
 %% pitch variation associated variables
 bd_arr = [1.6564, 20.2525, 35.3308, 52.8649, 65.4128]; %  [64.4128];
 fn_arr = {37:51,52:66,68:82,84:98,100:114}; % {115:134}; % 15 frames for each bending angle. The last 20 frames are with a phantom;
-ii = 1; % index to pitch from the third dimension of the .ima file
+ii = 2; % index to pitch from the third dimension of the .ima file
 
 %% prepare video
 if vidflag
@@ -47,7 +47,7 @@ end
 cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
 
 %% load image
-for dd = 1%:length(bd_arr)
+for dd = 1:length(bd_arr)
     
     fn = fn_arr{dd};
     bd = dd;
@@ -59,7 +59,7 @@ for dd = 1%:length(bd_arr)
     BBOX = I_disp_arr;
     TGL = I_disp_arr;
     
-    for ff = 1%:length(fn)
+    for ff = 1:length(fn)
         
         %% load image and data
         dname = ['DSA_2_0' num2str(fn(ff),'%03.f')];
@@ -79,7 +79,8 @@ for dd = 1%:length(bd_arr)
         H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4)); % extract the "global" area of interest
         
         %% Decide a reasonable y_min based on the three boxes at the bottom
-        [x_mean,y_min_temp] = FindYLimit(H,A_thres);
+        pct_sch = 0.5; % percentage (from the bottom) of vertical dimension to search 
+        [x_mean,y_min_temp] = FindYLimit(H,A_thres,pct_sch);
         
         %% identify the base of helix and translate image (I_str)
         x = x_mean-20; y = y_min_temp-60; w = 60; h = 50;
@@ -99,8 +100,6 @@ for dd = 1%:length(bd_arr)
         I_ctol(:,[1:bbox_big(1)-thrs_near,(thrs_near+bbox_big(1)+bbox_big(3)):end]) = temp;
         I_ctol([1:bbox_big(2)-thrs_near,(thrs_near+bbox_big(2)+bbox_big(4)):end],:) = temp;
         
-        imshow(I_ctol);
-        break
         %% translate image again (based on catheter polyfit results
         b_diff = y(end) - ref_pt(1); a_diff = x(end) - ref_pt(2);
         I_ctol = imtranslate(I_ctol,-[b_diff,a_diff],'FillValues',1); % translate the image
@@ -118,6 +117,7 @@ for dd = 1%:length(bd_arr)
         pixidlist = CC.PixelIdxList; pixidlist(ind_exc) = [];
         
         pk = nan(nobj,2);
+        
         % find furthest point
         for cc = 1:nobj
             temp = pixidlist{cc};
@@ -129,11 +129,13 @@ for dd = 1%:length(bd_arr)
         end
         
         imshow(I_disp); hold on;
-        plot(pk(:,2),pk(:,1),'x','color',c_lab_y,'linewidth',2);
+%         plot(pk(:,2),pk(:,1),'x','color',c_lab_y,'linewidth',2);
         
-        tgl_exc = pk(:,1) > y_min - thrs_dev/2;
+        tgl_exc = pk(:,1) > y_min - thrs_dev/2; % exclude those below y limit
+        
         pk(tgl_exc,:) = [];
         
+        plot(y,x,'w','linewidth',2);
         plot(pk(:,2),pk(:,1),'x','color',c_lab_b,'linewidth',2);
                 
         %% BoundingBox regionprops(for convex front)
