@@ -4,7 +4,7 @@ clear; ca; clc;
 dbgflag = 0; % plot (dianostics)
 savflag = 0; % save data (mat file)
 pltflag = 1; % plot (for video)
-vidflag = 1; % save video
+vidflag = 0; % save video
 vidrate = 4; % video frame rate
 
 % figure parameters
@@ -83,7 +83,7 @@ for dd = 1:length(bd_arr)
         
         %% identify the base of helix and translate image (I_str)
         x = x_mean-20; y = y_min_temp-60; w = 60; h = 50;
-        ref_range = [y,y+h,x,x+w]; % range within which to search for the reference
+        ref_range = round([y,y+h,x,x+w]); % range within which to search for the reference
         [a_mean,b_mean] = FindHelixBaseXY(H,ref_range,dbgflag); % find helix base x- and y- positions        
         %         I_str = imadjust(H);
         %         imshow(I_str); hold on;
@@ -186,6 +186,7 @@ for dd = 1:length(bd_arr)
             h2 = plot(xx(~tgl_side),yy(~tgl_side),'.','color',c_lab_b,'markersize',msize*2);
             hr = plot(ref_pt(1),ref_pt(2),'ok','markerfacecolor','w','markersize',msize/2);
             %             text(txt_d,size(I_str,1)-txt_d,['\theta_{roll} = ' num2str(th1_arr(fn))],'fontsize',txt_s); % th1_arr : roll angle of this frame (deg)
+            text(10,10,[num2str(dd) ', ' num2str(ff)]);
         end
         
         %% ConvexHull regionprops (for convex front)-- divide into sections
