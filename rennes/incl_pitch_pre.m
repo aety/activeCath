@@ -4,7 +4,7 @@ clear; ca; clc;
 dbgflag = 0; % plot (dianostics)
 savflag = 0; % save data (mat file)
 pltflag = 1; % plot (for video)
-vidflag = 1; % save video
+vidflag = 0; % save video
 vidrate = 4; % video frame rate
 
 % figure parameters
@@ -47,7 +47,7 @@ end
 cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
 
 %% load image
-for dd = 1:length(bd_arr)
+for dd = 1%:length(bd_arr)
     
     fn = fn_arr{dd};
     bd = dd;
@@ -59,7 +59,7 @@ for dd = 1:length(bd_arr)
     BBOX = I_disp_arr;
     TGL = I_disp_arr;
     
-    for ff = 1:length(fn)
+    for ff = 1%:length(fn)
         
         %% load image and data
         dname = ['DSA_2_0' num2str(fn(ff),'%03.f')];
@@ -85,11 +85,6 @@ for dd = 1:length(bd_arr)
         x = x_mean-20; y = y_min_temp-60; w = 60; h = 50;
         ref_range = round([y,y+h,x,x+w]); % range within which to search for the reference
         [a_mean,b_mean] = FindHelixBaseXY(H,ref_range,dbgflag); % find helix base x- and y- positions        
-        %         I_str = imadjust(H);
-        %         imshow(I_str); hold on;
-        %         rectangle('Position',[x,y,w,h],'edgecolor','r','linewidth',1);
-        %         plot(b_mean,a_mean,'xw','markersize',10);
-        %         text(10,10,[num2str(dd) ', ' num2str(ff)]);                
         a_diff = a_mean - ref_pt(2); b_diff = b_mean - ref_pt(1); % calculate the x- and y- offset to translate the image by        
         G = imtranslate(G,-[b_diff,a_diff]); % translate the image
         H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4)); % re-extract the "global" area of interest        
@@ -107,108 +102,137 @@ for dd = 1:length(bd_arr)
         x = x - a_diff; y = y - b_diff;
         I_disp = imtranslate(I_str,-[b_diff,a_diff],'FillValues',max(max(I_str))); % change image parameters for display
         
+        %% BWconncomp
+        CC = bwconncomp(I_ctol,4); % this searches for the 4-connected components, which regionprops misses
+        Area = nan(1,CC.NumObjects);
+        for cc = 1:CC.NumObjects
+            Area(cc) = length(CC.PixelIdxList{cc});
+        end
+        ind_exc = find(Area > thrs_big); % remove boxes much bigger than an "envelope" size
+        nobj = CC.NumObjects - length(ind_exc);
+        pixidlist = CC.PixelIdxList; pixidlist(ind_exc) = [];
+        
+        pk = nan(nobj,2);
+        % find furthest point
+        for cc = 1:nobj
+            temp = pixidlist{cc};
+            [temp1,temp2] = ind2sub(CC.ImageSize,temp);
+            Idx = knnsearch([x;y]',[temp1,temp2]);
+            Y = rssq([temp1,temp2]' - [x(Idx);y(Idx)]);
+            [~,ind] = max(Y);
+            pk(cc,:) = [temp1(ind),temp2(ind)];
+        end
+        
+        imshow(I_disp); hold on;
+        plot(pk(:,2),pk(:,1),'x','color',c_lab_y,'linewidth',2);
+        
+        tgl_exc = pk(:,1) > y_min - thrs_dev/2;
+        pk(tgl_exc,:) = [];
+        
+        plot(pk(:,2),pk(:,1),'x','color',c_lab_b,'linewidth',2);
+                
         %% BoundingBox regionprops(for convex front)
         
-        % BoundingBox
-        s = regionprops('table',I_ctol,'Centroid','BoundingBox','Area','FilledImage','MajorAxisLength','MinorAxisLength','Orientation');
-        Centroid = s.Centroid;
-        Area = s.Area;
-        BoundingBox = s.BoundingBox;
-        MajorAxisLength = s.MajorAxisLength;
-        MinorAxisLength = s.MinorAxisLength;
-        Orientation = s.Orientation;
+% % %         % BoundingBox
+% % %         s = regionprops('table',I_ctol,'Centroid','BoundingBox','Area','FilledImage','MajorAxisLength','MinorAxisLength','Orientation');
+% % %         Centroid = s.Centroid;
+% % %         Area = s.Area;
+% % %         BoundingBox = s.BoundingBox;
+% % %         MajorAxisLength = s.MajorAxisLength;
+% % %         MinorAxisLength = s.MinorAxisLength;
+% % %         Orientation = s.Orientation;
+% % %         
+% % %         % Exclude big boxes, small boxes, and low centroids
+% % %         tgl_exc = zeros(size(Centroid,1),1);
+% % %         tgl_exc(Area > thrs_big) = 1; % remove boxes much bigger than an "envelope" size
+% % % % %         tgl_exc(Area < thrs_sm) = 1; % remove boxes smaller than a pixel
+% % %         tgl_exc(Centroid(:,2) > y_min - thrs_dev) = 1; % remove boxes below reference point
+% % %         
+% % %         Area(logical(tgl_exc),:) = [];
+% % %         BoundingBox(logical(tgl_exc),:) = [];
+% % %         Centroid(logical(tgl_exc),:) = [];
+% % %         MajorAxisLength(logical(tgl_exc)) = [];
+% % %         MinorAxisLength(logical(tgl_exc)) = [];
+% % %         Orientation(logical(tgl_exc)) = [];
+% % %         
+% % %         bbox_plt = FindBoundingBoxPeaks(BoundingBox,Centroid,MajorAxisLength,MinorAxisLength,Orientation,x,y);
+% % %         xx0 = bbox_plt(:,1); yy0 = bbox_plt(:,2);
         
-        % Exclude big boxes, small boxes, and low centroids
-        tgl_exc = zeros(size(Centroid,1),1);
-        tgl_exc(Area > thrs_big) = 1; % remove boxes much bigger than an "envelope" size
-        tgl_exc(Area < thrs_sm) = 1; % remove boxes smaller than a pixel
-        tgl_exc(Centroid(:,2) > y_min - thrs_dev) = 1; % remove boxes below reference point
-        
-        Area(logical(tgl_exc),:) = [];
-        BoundingBox(logical(tgl_exc),:) = [];
-        Centroid(logical(tgl_exc),:) = [];
-        MajorAxisLength(logical(tgl_exc)) = [];
-        MinorAxisLength(logical(tgl_exc)) = [];
-        Orientation(logical(tgl_exc)) = [];
-        
-        bbox_plt = FindBoundingBoxPeaks(BoundingBox,Centroid,MajorAxisLength,MinorAxisLength,Orientation,x,y);
-        xx0 = bbox_plt(:,1); yy0 = bbox_plt(:,2);
-        
-        %% ConvexHull regionprops (for convex back)-- divide into sections
-        n_div = 1; % number of boxes to divide the bounding box into
-        BW = imcomplement(I_ctol);
-        BW(y_min:end,:) = 0;
-        [xx1,yy1] = FindConvexPeaks(BW,n_div,bbox_big,y_min-10);
-        
-        if ~isempty(xx1)
-            % remove points too close together (usually happening along the edges)
-            temp = rssq([diff(xx1),diff(yy1)]');
-            xx1(temp < thrs_near) = [];
-            yy1(temp < thrs_near) = [];
-            
-            % keep only points on the right
-            [xout,~] = polyval(p,yy1,S,mu);
-            tgl_hull = (xout - xx1) > 0;
-            xx1(tgl_hull) = [];
-            yy1(tgl_hull) = [];
-            if length(xx1) > 2
-                xx1(1) = []; xx1(end) = [];
-                yy1(1) = []; yy1(end) = [];
-            end
-        end
-        
-        %% combine ConvexHulls and BoundingBoxes, clean up, and choose sides
-        % left to the curve --> lower left corner / right to the curve --> upper right corner
-        xx = [xx0;xx1]; yy = [yy0;yy1]; temp = [xx,yy];
-        [xout,~] = polyval(p,yy,S,mu);
-        tgl_side = (xout - xx) > 0;
-        
-        % remove outliers (deviated from the curve)
-        tgl_outlier = abs(xout - xx) > thrs_dev;
-        xx(tgl_outlier) = []; yy(tgl_outlier) = []; tgl_side(tgl_outlier) = [];
-        
-        % remove overlaps
-        tgl_near = RemoveOverlap([xx,yy],thrs_near);
-        xx(~tgl_near) = []; yy(~tgl_near) = [];
-        tgl_side(~tgl_near) = [];
-        
-        %% plot
-        if pltflag
-            wd = size(I_str,2)*ht/size(I_str,1);
-            set(gcf,'position',[1000,200,wd,ht]);
-            set(gca,'position',[0.01,0.01,.99,.99]);
-            
-            imshow(I_disp);
-            hold on;
-            
-            hc = plot(y,x,'--','linewidth',lwd,'color',0.5*[1,1,1]);
-            h1 = plot(xx(tgl_side),yy(tgl_side),'.','color',c_lab_y,'markersize',msize*2);
-            h2 = plot(xx(~tgl_side),yy(~tgl_side),'.','color',c_lab_b,'markersize',msize*2);
-            hr = plot(ref_pt(1),ref_pt(2),'ok','markerfacecolor','w','markersize',msize/2);
-            %             text(txt_d,size(I_str,1)-txt_d,['\theta_{roll} = ' num2str(th1_arr(fn))],'fontsize',txt_s); % th1_arr : roll angle of this frame (deg)
-            text(10,10,[num2str(dd) ', ' num2str(ff)]);
-        end
-        
-        %% ConvexHull regionprops (for convex front)-- divide into sections
-        % % %         temp = size(BW);
-        % % %         x_px = repmat((1:temp(1))',1,temp(2));
-        % % %         y_px = repmat(1:temp(2),temp(1),1);
-        % % %
-        % % %         % Evaluate distance between points and fitted curve
-        % % %         [yyy,delta] = polyval(p,x_px,S,mu);
-        % % %
-        % % %         % left to the curve --> lower left corner / right to the curve --> upper right corner
-        % % %         tgl_right = (yyy - y_px) < 0;
-        % % %         BW(tgl_right) = 0;
-        % % %         BW = imcomplement(BW);
-        % % %         [xx2,yy2] = FindConvexPeaks(BW,n_div,bbox_big,y_min);
-        % % %
-        %% store data
-        X(:,ff) = x; Y(:,ff) = y;
-        REF(:,ff) = ref_pt;
-        I_disp_arr{ff} = I_disp;
-        BBOX{ff} = [xx,yy];
-        TGL{ff} = tgl_side;
+% % %         %% ConvexHull regionprops (for convex back)-- divide into sections
+% % %         n_div = 1; % number of boxes to divide the bounding box into
+% % %         BW = imcomplement(I_ctol);
+% % %         BW(y_min:end,:) = 0;
+% % %         [xx1,yy1] = FindConvexPeaks(BW,n_div,bbox_big,y_min-10);
+% % %         
+% % %         if ~isempty(xx1)
+% % %             % remove points too close together (usually happening along the edges)
+% % %             temp = rssq([diff(xx1),diff(yy1)]');
+% % %             xx1(temp < thrs_near) = [];
+% % %             yy1(temp < thrs_near) = [];
+% % %             
+% % %             % keep only points on the right
+% % %             [xout,~] = polyval(p,yy1,S,mu);
+% % %             tgl_hull = (xout - xx1) > 0;
+% % %             xx1(tgl_hull) = [];
+% % %             yy1(tgl_hull) = [];
+% % %             if length(xx1) > 2
+% % %                 xx1(1) = []; xx1(end) = [];
+% % %                 yy1(1) = []; yy1(end) = [];
+% % %             end
+% % %         end
+% % %         
+% % %         %% combine ConvexHulls and BoundingBoxes, clean up, and choose sides
+% % %         % left to the curve --> lower left corner / right to the curve --> upper right corner
+% % %         xx = [xx0;xx1]; yy = [yy0;yy1]; temp = [xx,yy];
+% % %         [xout,~] = polyval(p,yy,S,mu);
+% % %         tgl_side = (xout - xx) > 0;
+% % %         
+% % %         % remove outliers (deviated from the curve)
+% % %         tgl_outlier = abs(xout - xx) > thrs_dev;
+% % %         xx(tgl_outlier) = []; yy(tgl_outlier) = []; tgl_side(tgl_outlier) = [];
+% % %         
+% % %         % remove overlaps
+% % %         tgl_near = RemoveOverlap([xx,yy],thrs_near);
+% % %         xx(~tgl_near) = []; yy(~tgl_near) = [];
+% % %         tgl_side(~tgl_near) = [];
+% % %         
+% % %         %% plot
+% % %         if pltflag
+% % %             wd = size(I_str,2)*ht/size(I_str,1);
+% % %             set(gcf,'position',[1000,200,wd,ht]);
+% % %             set(gca,'position',[0.01,0.01,.99,.99]);
+% % %             
+% % %             imshow(I_disp);
+% % %             hold on;
+% % %             
+% % %             hc = plot(y,x,'--','linewidth',lwd,'color',0.5*[1,1,1]);
+% % %             h1 = plot(xx(tgl_side),yy(tgl_side),'.','color',c_lab_y,'markersize',msize*2);
+% % %             h2 = plot(xx(~tgl_side),yy(~tgl_side),'.','color',c_lab_b,'markersize',msize*2);
+% % %             hr = plot(ref_pt(1),ref_pt(2),'ok','markerfacecolor','w','markersize',msize/2);
+% % %             %             text(txt_d,size(I_str,1)-txt_d,['\theta_{roll} = ' num2str(th1_arr(fn))],'fontsize',txt_s); % th1_arr : roll angle of this frame (deg)
+% % %             text(10,10,[num2str(dd) ', ' num2str(ff)]);
+% % %         end
+% % %         
+% % %         %% ConvexHull regionprops (for convex front)-- divide into sections
+% % %         % % %         temp = size(BW);
+% % %         % % %         x_px = repmat((1:temp(1))',1,temp(2));
+% % %         % % %         y_px = repmat(1:temp(2),temp(1),1);
+% % %         % % %
+% % %         % % %         % Evaluate distance between points and fitted curve
+% % %         % % %         [yyy,delta] = polyval(p,x_px,S,mu);
+% % %         % % %
+% % %         % % %         % left to the curve --> lower left corner / right to the curve --> upper right corner
+% % %         % % %         tgl_right = (yyy - y_px) < 0;
+% % %         % % %         BW(tgl_right) = 0;
+% % %         % % %         BW = imcomplement(BW);
+% % %         % % %         [xx2,yy2] = FindConvexPeaks(BW,n_div,bbox_big,y_min);
+% % %         % % %
+% % %         %% store data
+% % %         X(:,ff) = x; Y(:,ff) = y;
+% % %         REF(:,ff) = ref_pt;
+% % %         I_disp_arr{ff} = I_disp;
+% % %         BBOX{ff} = [xx,yy];
+% % %         TGL{ff} = tgl_side;
         
         %% save frame
         if vidflag
