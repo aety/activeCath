@@ -4,8 +4,8 @@ clear; ca; clc;
 dbgflag = 0; % plot (dianostics)
 savflag = 0; % save data (mat file)
 pltflag = 1; % plot (for video)
-vidflag = 0; % save video
-vidrate = 2; % video frame rate
+vidflag = 1; % save video
+vidrate = 4; % video frame rate
 
 % figure parameters
 c_arr = lines(6); c_lab_y = c_arr(3,:); c_lab_b = c_arr(6,:); % marker color label
@@ -16,19 +16,17 @@ txt_d = 30; % distance of labeling text from the edge (pixels)
 txt_s = 14; % font size
 
 % image processing parameters
+A_thres = 500; % minimum area to qualify as a candidate when searching for the three boxes at the bottom of the image
 ref_n_pts = 5; % number of points to average on each side when searching for the reference point
 ref_pt = [375,520]; % specify the location of the reference point (i.e. the centroid of the helices at the base)
-ref_range = [500,550,300,390]; % range within which to search for the reference
 % th1_range = [-75,75]; % range of "roll" rotations to include
 plt_range = [201,850,251,800]; % range of pixels to plot ([x_0,x_end,y_0,y_end])
+y_min = ref_pt(2); % y position for reference point
 
 thrs_big = 50; % (pixels)^2 threshold for removing oversized identified area (catheter diameter is about 10 pixels)
 thrs_dev = 25; % (pixels) maximum deviation from the catheter (fitted curve) an identified point is allowed to be (wire envelopes are about 5 pixels outside of the catheter)
 thrs_sm = 2; % (pixels)^2 threshold for removing identified bounding boxes that are too small
 thrs_near = 5; % (pixel) minimal distance required to keep points (when removing overlaps)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% y_min = ref_pt(2); % y_min = 510; % (pixels) vertical pixel location of the lowest interesting extracted features (to avoid inclusion of the catheter base holder) %%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 pf_npt = 100; % polyfit-- the of points (parallel to the base of the catheter)
 
 cath_len_pc = 0.85; % percentage of catheter length to include in ConvexHull search
@@ -49,7 +47,7 @@ end
 cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
 
 %% load image
-for dd = 1%:length(bd_arr)
+for dd = 1:length(bd_arr)
     
     fn = fn_arr{dd};
     bd = dd;
@@ -61,7 +59,7 @@ for dd = 1%:length(bd_arr)
     BBOX = I_disp_arr;
     TGL = I_disp_arr;
     
-    for ff = 5%:length(fn)
+    for ff = 1:length(fn)
         
         %% load image and data
         dname = ['DSA_2_0' num2str(fn(ff),'%03.f')];
@@ -80,37 +78,22 @@ for dd = 1%:length(bd_arr)
         G = X3(:,:,ii);
         H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4)); % extract the "global" area of interest
         
-        %% identify the base of helix and translate image (I_str)
-        [a_mean,b_mean] = FindHelixBaseXY(H,ref_range,dbgflag); % find helix base x- and y- positions
-        a_diff = a_mean - ref_pt(2); b_diff = b_mean - ref_pt(1); % calculate the x- and y- offset to translate the image by
-        
-        G = imtranslate(G,-[b_diff,a_diff]); % translate the image
-        H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4)); % re-extract the "global" area of interest
-        
-        fr = stretchlim(H); I_str = imadjust(H,fr); % re-stretch image
-        
-        
         %% Decide a reasonable y_min based on the three boxes at the bottom
+        [x_mean,y_min_temp] = FindYLimit(H,A_thres);
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        I = imbinarize(I_str); I = imcomplement(I);
+        %% identify the base of helix and translate image (I_str)
+        x = x_mean-20; y = y_min_temp-60; w = 60; h = 50;
+        ref_range = [y,y+h,x,x+w]; % range within which to search for the reference
+        [a_mean,b_mean] = FindHelixBaseXY(H,ref_range,dbgflag); % find helix base x- and y- positions        
+        %         I_str = imadjust(H);
         %         imshow(I_str); hold on;
-        
-        s = regionprops('table',I,'Centroid','BoundingBox','Area');
-        [~,b] = sort(s.Area,'ascend');
-        b = b(1:2);
-        BoundingBox = s.BoundingBox(b,:);
-        %         for bb = 1:2
-        %             rectangle('position',BoundingBox(bb,:),'edgecolor',c_lab_y,'linewidth',2);
-        %         end
-        y_min_test = mean(BoundingBox(:,2));
-        %         plot([0,550],y_min_test*ones(1,2),'color',c_lab_b,'linewidth',2);
-        
-        %         text(10,10,[num2str(dd) ', ' num2str(ff)]);
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        y_min = y_min_test;
+        %         rectangle('Position',[x,y,w,h],'edgecolor','r','linewidth',1);
+        %         plot(b_mean,a_mean,'xw','markersize',10);
+        %         text(10,10,[num2str(dd) ', ' num2str(ff)]);                
+        a_diff = a_mean - ref_pt(2); b_diff = b_mean - ref_pt(1); % calculate the x- and y- offset to translate the image by        
+        G = imtranslate(G,-[b_diff,a_diff]); % translate the image
+        H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4)); % re-extract the "global" area of interest        
+        fr = stretchlim(H); I_str = imadjust(H,fr); % re-stretch image
         
         %% Identify catheter shape and bounding box
         [I_ctol,x,y,p,S,mu,bbox_big] = IdentifyCatheter(I_str,y_min,pf_npt,dbgflag);
@@ -122,9 +105,7 @@ for dd = 1%:length(bd_arr)
         b_diff = y(end) - ref_pt(1); a_diff = x(end) - ref_pt(2);
         I_ctol = imtranslate(I_ctol,-[b_diff,a_diff],'FillValues',1); % translate the image
         x = x - a_diff; y = y - b_diff;
-        
-        % change image parameters for display
-        I_disp = imtranslate(I_str,-[b_diff,a_diff],'FillValues',max(max(I_str)));
+        I_disp = imtranslate(I_str,-[b_diff,a_diff],'FillValues',max(max(I_str))); % change image parameters for display
         
         %% BoundingBox regionprops(for convex front)
         
@@ -228,15 +209,13 @@ for dd = 1%:length(bd_arr)
         BBOX{ff} = [xx,yy];
         TGL{ff} = tgl_side;
         
-        
         %% save frame
         if vidflag
             frame = getframe(gcf);
             writeVideo(anim,frame);
             clf;
         else
-            pause(0.1);
-            %             clf;
+            pause(0.5);
         end
     end
     

@@ -47,7 +47,7 @@ if dbgflag
     subplot(1,4,4);
     imshow(I_rsm);
     hold on;
-    rectangle('Position',bbox_big,'edgecolor',c_lab_y,'linewidth',lwd);
+    rectangle('Position',bbox_big,'edgecolor','y','linewidth',2);
     title('tallest bounding box');
     
 end
@@ -60,10 +60,9 @@ level = graythresh(I_shp(bbox_big(2):bbox_big(2)+bbox_big(4),bbox_big(1):bbox_bi
 I_ctol = imbinarize(I_shp,level);
 I_ctol(~tgl) = 1;
 
-if dbgflag
-    figure;
+if dbgflag    
     imshow(I_ctol,[]); hold on;
-    title('exclude outside (from sharpen) and binarize');
+    title('exclude outside (from sharpen) and binarize');    
 end
 
 %% identify catheter main shape
@@ -82,6 +81,7 @@ x = linspace(min(fa),max(fa),pf_npt);
 [y,~] = polyval(p,x,S,mu);
 
 if dbgflag
-    imshow(I_ctol,[]); hold on;
-    rectangle('position',BoundingBox,'edgecolor',c_lab_y,'linewidth',lwd);
+    figure;
+    imshow(I_ctol_inv,[]); hold on;
+    rectangle('position',BoundingBox,'edgecolor','y','linewidth',2);
 end
