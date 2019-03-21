@@ -29,7 +29,7 @@ thrs_sm = 2; % (pixels)^2 threshold for removing identified bounding boxes that 
 thrs_near = 5; % (pixel) minimal distance required to keep points (when removing overlaps)
 pf_npt = 100; % polyfit-- the of points (parallel to the base of the catheter)
 
-cath_len_pc = 0.85; % percentage of catheter length to include in ConvexHull search
+cath_len_pc = 0.95; % percentage of catheter length to include in ConvexHull search
 
 %% pitch variation associated variables
 bd_arr = [1.6564, 20.2525, 35.3308, 52.8649, 65.4128]; %  [64.4128];
@@ -95,7 +95,12 @@ for dd = 1%:length(bd_arr)
         
         %% Retain regions surrounding the catheter main shape only
         I_ctol = CutDistal(I_ctol,cath_len_pc,x,y,p,S,mu);
+        temp = max(max(I_ctol));
+        I_ctol(:,[1:bbox_big(1)-thrs_near,(thrs_near+bbox_big(1)+bbox_big(3)):end]) = temp;
+        I_ctol([1:bbox_big(2)-thrs_near,(thrs_near+bbox_big(2)+bbox_big(4)):end],:) = temp;
         
+        imshow(I_ctol);
+        break
         %% translate image again (based on catheter polyfit results
         b_diff = y(end) - ref_pt(1); a_diff = x(end) - ref_pt(2);
         I_ctol = imtranslate(I_ctol,-[b_diff,a_diff],'FillValues',1); % translate the image
