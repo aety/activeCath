@@ -5,10 +5,10 @@ dbgflag = 0; % plot (dianostics)
 savflag = 0; % save data (mat file)
 pltflag = 1; % plot (for video)
 vidflag = 0; % save video
-vidrate = 4; % video frame rate
+vidrate = 3; % video frame rate
 
 % figure parameters
-c_arr = lines(6); c_lab_y = c_arr(3,:); c_lab_b = c_arr(6,:); % marker color label
+c_arr = lines(6); c_lab_y = c_arr(2,:); c_lab_b = c_arr(6,:); % marker color label
 msize = 12; % markersize
 lwd = 2; % linewidth
 ht = 800; % figure height (pixels)
@@ -24,7 +24,7 @@ plt_range = [201,850,251,800]; % range of pixels to plot ([x_0,x_end,y_0,y_end])
 y_min = ref_pt(2); % y position for reference point
 
 thrs_big = 50; % (pixels)^2 threshold for removing oversized identified area (catheter diameter is about 10 pixels)
-thrs_dev = 25; % (pixels) maximum deviation from the catheter (fitted curve) an identified point is allowed to be (wire envelopes are about 5 pixels outside of the catheter)
+thrs_dev = 10; % (pixels) maximum deviation from the catheter (fitted curve) an identified point is allowed to be (wire envelopes are about 5 pixels outside of the catheter)
 thrs_sm = 2; % (pixels)^2 threshold for removing identified bounding boxes that are too small
 thrs_near = 5; % (pixel) minimal distance required to keep points (when removing overlaps)
 pf_npt = 100; % polyfit-- the of points (parallel to the base of the catheter)
@@ -34,7 +34,6 @@ cath_len_pc = 0.9; % percentage of catheter length to include in ConvexHull sear
 %% pitch variation associated variables
 bd_arr = [1.6564, 20.2525, 35.3308, 52.8649, 65.4128]; %  [64.4128];
 fn_arr = {37:51,52:66,68:82,84:98,100:114}; % {115:134}; % 15 frames for each bending angle. The last 20 frames are with a phantom;
-ii = 2; % index to pitch from the third dimension of the .ima file
 
 %% prepare video
 if vidflag
@@ -47,7 +46,7 @@ end
 cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
 
 %% load image
-for dd = 1%:length(bd_arr)
+for dd = 1:length(bd_arr)
     
     fn = fn_arr{dd};
     bd = dd;
@@ -59,7 +58,7 @@ for dd = 1%:length(bd_arr)
     BBOX = I_disp_arr;
     TGL = I_disp_arr;
     
-    for ff = 2%:length(fn)
+    for ff = 1:length(fn)
         
         %% load image and data
         dname = ['DSA_2_0' num2str(fn(ff),'%03.f')];
@@ -95,53 +94,27 @@ for dd = 1%:length(bd_arr)
         I_str = imadjust(H); % re-stretch image
         
         %% Identify catheter shape and bounding box
-        [I_ctol,x,y,p,S,mu,bbox_big] = IdentifyCatheter(I_str,y_min,pf_npt,dbgflag);
-%         I_ctol = I_str;
+        [~,x,y,p,S,mu,bbox_big] = IdentifyCatheter(I_str,y_min,pf_npt,dbgflag);
         
         %% Retain regions surrounding the catheter main shape only
-        I_ctol = CutDistal(I_ctol,cath_len_pc,x,y,p,S,mu);
-        temp = max(max(I_ctol));
-        I_ctol(:,[1:bbox_big(1)-thrs_near,(thrs_near+bbox_big(1)+bbox_big(3)):end]) = temp;
-        I_ctol([1:bbox_big(2)-thrs_near,(thrs_near+bbox_big(2)+bbox_big(4)):end],:) = temp;
-        break
+        I_cut = CutDistal(I_str,cath_len_pc,x,y,p,S,mu);
+        temp = max(max(I_cut));
+        I_cut(:,[1:bbox_big(1)-thrs_near,(thrs_near+bbox_big(1)+bbox_big(3)):end]) = temp;
+        I_cut([1:bbox_big(2)-thrs_near,(thrs_near+bbox_big(2)+bbox_big(4)):end],:) = temp;
         
         %% Translate again (based on catheter polyfit results
         b_diff = y(end) - ref_pt(1); a_diff = x(end) - ref_pt(2);
-        I_ctol = imtranslate(I_ctol,-[b_diff,a_diff],'FillValues',1); % translate the image
+        I = imtranslate(I_cut,-[b_diff,a_diff],'FillValues',1); % translate the image
         x = x - a_diff; y = y - b_diff;
-        I_disp = imtranslate(I_str,-[b_diff,a_diff],'FillValues',max(max(I_str))); % change image parameters for display
+        I_disp = imtranslate(I_str,-[b_diff,a_diff],'FillValues',1); % translate the image
         
-        %% BWconncomp
-        CC = bwconncomp(I_ctol,4); % this searches for the 4-connected components, which regionprops misses
-        Area = nan(1,CC.NumObjects);
-        for cc = 1:CC.NumObjects
-            Area(cc) = length(CC.PixelIdxList{cc});
-        end
-        ind_exc = find(Area > thrs_big); % remove boxes much bigger than an "envelope" size
-        nobj = CC.NumObjects - length(ind_exc);
-        pixidlist = CC.PixelIdxList; pixidlist(ind_exc) = [];
-        
-        pk = nan(nobj,2);
-        
-        % find furthest point
-        for cc = 1:nobj
-            temp = pixidlist{cc};
-            [temp1,temp2] = ind2sub(CC.ImageSize,temp);
-            Idx = knnsearch([x;y]',[temp1,temp2]);
-            Y = rssq([temp1,temp2]' - [x(Idx);y(Idx)]);
-            [~,ind] = max(Y);
-            pk(cc,:) = [temp1(ind),temp2(ind)];
-        end
-        
-        imshow(I_ctol); hold on;
-        plot(pk(:,2),pk(:,1),'x','color',c_lab_y,'linewidth',2);
-        
-        tgl_exc = pk(:,1) > y_min - thrs_dev/2; % exclude those below y limit
-        
-        pk(tgl_exc,:) = [];
-        
-        plot(y,x,'w','linewidth',1);
-        plot(pk(:,2),pk(:,1),'x','color',c_lab_b,'linewidth',2);
+        %% Find connected components
+        pks = FindConnComp(I_cut,x,y,y_min,thrs_dev); % find peaks by bwconncomp     
+
+        imshow(I_str); hold on;
+        plot(pks(:,2),pks(:,1),'x','color',c_lab_y,'linewidth',2);
+
+        text(10,10,[num2str(dd) ', ' num2str(ff)]);
         
         %% BoundingBox regionprops(for convex front)
         

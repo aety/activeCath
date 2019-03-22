@@ -2,7 +2,7 @@ function [I_ctol,x,y,p,S,mu,bbox_big] = IdentifyCatheter(I_str,y_min,pf_npt,dbgf
 
 sharp_r = 2; % sharpening radius
 sharp_a = 10;  % sharpening amount 
-thrs_small = 100; % (pixels)^2 threshold for removing small objects (during arbitrary stage; helps remove tip positioning boxes)
+thrs_small = 200; % (pixels)^2 threshold for removing small objects (during arbitrary stage; helps remove tip positioning boxes)
 pf_n = 3; % polyfit-- the order of equation(to find a curve best describing the catheter shape)
 pf_rpt = 10; % polyfit-- the number of times to eliminate outliers (to eliminate noise)
 pf_exc = 0.1; % polyfit-- the percentage of catheter distal (vertical) distance to exclude before polyfit
