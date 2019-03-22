@@ -75,9 +75,13 @@ for dd = 1:length(bd_arr)
         
         %% sizing
         X3 = permute(X0,[1,2,4,3]);
-        G = X3(:,:,ii);
+        G = X3(:,:,1);
+        for gg = 1:size(X3,3)
+            G = imfuse(G,X3(:,:,gg));
+        end
         H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4)); % extract the "global" area of interest
-        
+        I = imadjust(H);
+                
         %% Decide a reasonable y_min based on the three boxes at the bottom
         pct_sch = 0.5; % percentage (from the bottom) of vertical dimension to search 
         [x_mean,y_min_temp] = FindYLimit(H,A_thres,pct_sch);
@@ -89,7 +93,7 @@ for dd = 1:length(bd_arr)
         a_diff = a_mean - ref_pt(2); b_diff = b_mean - ref_pt(1); % calculate the x- and y- offset to translate the image by        
         G = imtranslate(G,-[b_diff,a_diff]); % translate the image
         H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4)); % re-extract the "global" area of interest        
-        fr = stretchlim(H); I_str = imadjust(H,fr); % re-stretch image
+        I_str = imadjust(H); % re-stretch image
         
         %% Identify catheter shape and bounding box
         [I_ctol,x,y,p,S,mu,bbox_big] = IdentifyCatheter(I_str,y_min,pf_npt,dbgflag);
@@ -129,13 +133,13 @@ for dd = 1:length(bd_arr)
         end
         
         imshow(I_disp); hold on;
-%         plot(pk(:,2),pk(:,1),'x','color',c_lab_y,'linewidth',2);
+        plot(pk(:,2),pk(:,1),'x','color',c_lab_y,'linewidth',2);
         
         tgl_exc = pk(:,1) > y_min - thrs_dev/2; % exclude those below y limit
         
         pk(tgl_exc,:) = [];
         
-        plot(y,x,'w','linewidth',2);
+        plot(y,x,'w','linewidth',1);
         plot(pk(:,2),pk(:,1),'x','color',c_lab_b,'linewidth',2);
                 
         %% BoundingBox regionprops(for convex front)
