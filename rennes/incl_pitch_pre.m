@@ -19,6 +19,7 @@ txt_s = 14; % font size
 A_thres = 500; % minimum area to qualify as a candidate when searching for the three boxes at the bottom of the image
 ref_n_pts = 5; % number of points to average on each side when searching for the reference point
 ref_pt = [375,520]; % specify the location of the reference point (i.e. the centroid of the helices at the base)
+ref_pct_sch = 0.5; % percentage (from the bottom) of vertical dimension to search for the reference boxes 
 % th1_range = [-75,75]; % range of "roll" rotations to include
 plt_range = [201,850,251,800]; % range of pixels to plot ([x_0,x_end,y_0,y_end])
 y_min = ref_pt(2); % y position for reference point
@@ -80,40 +81,38 @@ for dd = 1:length(bd_arr)
         end
         H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4)); % extract the "global" area of interest
         
-        %% Decide a reasonable y_min based on the three boxes at the bottom
-        pct_sch = 0.5; % percentage (from the bottom) of vertical dimension to search
-        [x_mean,y_min_temp] = FindYLimit(H,A_thres,pct_sch);
+        %% Decide a reasonable y_min based on the three boxes at the bottom        
+        [x_mean,y_min_temp] = FindYLimit(H,A_thres,ref_pct_sch);    % find y-limit of view of interest based on the three reference boxes at the base
         
         %% identify the base of helix and translate image (I_str)
-        x = x_mean-20; y = y_min_temp-60; w = 60; h = 50;
-        ref_range = round([y,y+h,x,x+w]); % range within which to search for the reference
-        [a_mean,b_mean] = FindHelixBaseXY(H,ref_range,dbgflag); % find helix base x- and y- positions
-        a_diff = a_mean - ref_pt(2); b_diff = b_mean - ref_pt(1); % calculate the x- and y- offset to translate the image by
-        G = imtranslate(G,-[b_diff,a_diff]); % translate the image
+        x = x_mean-20; y = y_min_temp-60; w = 60; h = 50;           % define range within which to search for the reference
+        ref_range = round([y,y+h,x,x+w]);                           % define range within which to search for the reference
+        [a_mean,b_mean] = FindHelixBaseXY(H,ref_range,dbgflag);     % find helix base x- and y- positions
+        a_diff = a_mean - ref_pt(2); b_diff = b_mean - ref_pt(1);   % calculate the x- and y- offset to translate the image by
+        G = imtranslate(G,-[b_diff,a_diff]);                        % translate the image
         H = G(plt_range(1):plt_range(2),plt_range(3):plt_range(4)); % re-extract the "global" area of interest
-        I_str = imadjust(H); % re-stretch image
+        I_str = imadjust(H);                                        % re-stretch image
         
         %% Identify catheter shape and bounding box
-        [~,x,y,p,S,mu,bbox_big] = IdentifyCatheter(I_str,y_min,pf_npt,dbgflag);
+        [~,x,y,p,S,mu,bbox_big] = IdentifyCatheter(I_str,y_min,pf_npt,dbgflag); % approximate catheter shape
         
         %% Retain regions surrounding the catheter main shape only
-        I_cut = CutDistal(I_str,cath_len_pc,x,y,p,S,mu);
-        temp = max(max(I_cut));
-        I_cut(:,[1:bbox_big(1)-thrs_near,(thrs_near+bbox_big(1)+bbox_big(3)):end]) = temp;
-        I_cut([1:bbox_big(2)-thrs_near,(thrs_near+bbox_big(2)+bbox_big(4)):end],:) = temp;
+        I_cut = CutDistal(I_str,cath_len_pc,x,y,p,S,mu);            % truncate the tip of the catheter based on defined range 
+        temp = max(max(I_cut)); % calculate brightest pixel value
+        I_cut(:,[1:bbox_big(1)-thrs_near,(thrs_near+bbox_big(1)+bbox_big(3)):end]) = temp;  % retain only area around the catheter
+        I_cut([1:bbox_big(2)-thrs_near,(thrs_near+bbox_big(2)+bbox_big(4)):end],:) = temp;  % retain only area around the catheter
         
         %% Translate again (based on catheter polyfit results
-        b_diff = y(end) - ref_pt(1); a_diff = x(end) - ref_pt(2);
-        I = imtranslate(I_cut,-[b_diff,a_diff],'FillValues',1); % translate the image
-        x = x - a_diff; y = y - b_diff;
-        I_disp = imtranslate(I_str,-[b_diff,a_diff],'FillValues',1); % translate the image
+        b_diff = y(end) - ref_pt(1); a_diff = x(end) - ref_pt(2);       % calcuate distance to translate 
+        x = x - a_diff; y = y - b_diff;                                 % offset catheter 
+        I = imtranslate(I_cut,-[b_diff,a_diff],'FillValues',1);         % translate the image        
+        I_disp = imtranslate(I_str,-[b_diff,a_diff],'FillValues',1);    % translate the image
         
         %% Find connected components
         pks = FindConnComp(I_cut,x,y,y_min,thrs_dev); % find peaks by bwconncomp     
 
         imshow(I_str); hold on;
         plot(pks(:,2),pks(:,1),'x','color',c_lab_y,'linewidth',2);
-
         text(10,10,[num2str(dd) ', ' num2str(ff)]);
         
         %% BoundingBox regionprops(for convex front)
