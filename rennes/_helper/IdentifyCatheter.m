@@ -18,7 +18,7 @@ if dbgflag
 end
 
 %% distance transform (I_dtr)
-I_dtr = bwdist(I_shp,'cityblock');
+I_dtr = bwdist(I_shp);
 
 if dbgflag
     subplot(1,4,2);
@@ -38,7 +38,6 @@ end
 %% identify catheter (BoundingBox)
 s = regionprops('table',I_rsm,'Area','BoundingBox','PixelIdxList','ConvexHull');
 BoundingBox = s.BoundingBox;
-PixelIdxList = s.PixelIdxList;
 [~,ind] = max(BoundingBox(:,4)); % find the tallest BoundingBox
 bbox_big = BoundingBox(ind,:);
 bbox_big = floor(bbox_big); % round down to the nearest pixel integer

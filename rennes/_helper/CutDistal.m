@@ -44,4 +44,4 @@ b = ln_x(2);    % slope function coefficient 2 (y = a*x + b)
 fy = polyval([a,b],px_x);   % evaluate
 tgl = (px_y - fy) < 0;      % decide if each point is above the slope
 
-I_cut = I_ctol; I_cut(tgl) = 1;
+I_cut = I_ctol; I_cut(tgl) = max(max(I_cut));
