@@ -1,14 +1,15 @@
 %% load data
 clear; clc; ca;
-fname = '20SDF_H_30_short';
-% fname = 'interp_btw_fr_res';
+% fname = '20SDF_H_30_short';
+fname = 'interp_btw_fr_res';
 
 cmap = {flipud(parula),flipud(parula)}; % for "positive" (sequential, sequential)
 % cmap = {flipud(parula),RdYlGn}; % for "both" (sequential, diverging)
 
 load(['nn_' fname]);
 
-[ind_a,ind_b] = find(P_ARR==min(min(P_ARR)));
+[ind_a,ind_b] = find(P_ARR==min(min(P_ARR))); % find best predictors
+% ind_a = 1; ind_b = 4; % Y_0 and mean(d_i)
 
 tr = TR_ARR{ind_a}{ind_b};
 y = Y_ARR{ind_a}{ind_b};
@@ -73,7 +74,7 @@ for rr = 1:size(y,1)
     
 end
 
-title(['Predictors: ' PDT_txt{best_pdt(1)} ', ' PDT_txt{best_pdt(2)} ', R = ' num2str(r)],'fontweight','normal');
+title(['Predictors: ' PDT_txt{best_pdt(1)} ', ' PDT_txt{best_pdt(2)}],'fontweight','normal');
 xlabel('actual');
 ylabel('predicted');
 axis tight;
@@ -88,8 +89,17 @@ for rr = 1:size(y,1)
     figure;
     hold on;
     
-    h = scatter(t(rr,ind),abs(y(rr,ind) - t(rr,ind)),10,'k','filled');
+    plt = abs(y(rr,ind) - t(rr,ind));
+    h = scatter(t(rr,ind),plt,10,'k','filled');
     alpha(h,0.5);
+    
+    mplt = mean(plt);
+    seplt = std(plt)/sqrt(length(plt));
+    h1 = plot([min(t(rr,ind)),max(t(rr,ind))],mplt*ones(1,2),'k');
+    h2 = plot([min(t(rr,ind)),max(t(rr,ind))],(mplt+seplt)*ones(1,2),'--k');
+    plot([min(t(rr,ind)),max(t(rr,ind))],(mplt-seplt)*ones(1,2),'--k');
+    
+    legend([h1,h2],num2str(mplt,3),['\pm ' num2str(seplt,3) ' (SE)'],'location','northwest');
     
     xlabel(['actual ' RSP_txt{rr}]);
     ylabel(['|' RSP_txt{rr} ' error|']);
