@@ -1,6 +1,6 @@
 ca;
 
-fsz = 10;
+fsz = 6;
 lwd = 1;
 
 TGL_sav = 0;
@@ -36,7 +36,7 @@ trans_z = 0; % base z-translation
 % define camera
 cam_cl = [0,0.4470,0.7410]; % camera color in RGB
 camAngle = 0*pi/180;        % camera y-rotation angle
-cam_lc = [L/3,0,L/3];       % camera position
+cam_lc = [L/2,L/2,5];       % camera position
 
 % configure catheter
 L2 = 0.01*L_pct_bent*L;
@@ -106,7 +106,7 @@ Z = Z + trans_z; zh = zh + trans_z;
 % prepare to plot
 c_arr = colormap(lines); % color array
 ii_arr = 1 + [0,length(x1)]; % index along the catheter to start plotting from
-vv_arr = [-37.5,30; 0,90; 0,90];% view in each subplot
+vv_arr = [-36,21; 0,90; 0,90];% view in each subplot
 xx_arr = {'x_0','x_c','x_c'};   % xlabel in each subplot
 yy_arr = {'y_0','y_c','y_c'};   % ylabel in each subplot
 zz_arr = {'z_0','z_c','z_c'};   % zlabel in each subplot
@@ -122,13 +122,13 @@ hb = plot3(xh,yh,zh,'color','k','linewidth',lwd); % plot helix
 hc = plotCamera('Location',cam_lc,'Orientation',getRY(camAngle),'Size',5,'Label','','Color',c_arr(1,:),'Opacity',0.2,'AxesVisible',0);
 
 % plot axes
-f = 25;
+f = 20;
 c = c_arr(5,:);
 x = [0,0,0]; y = -2*[1,1,1]; z = [0,0,0];
 u = f*[1,0,0]; v = f*[0,1,0]; w = f*[0,0,1];
 hq = quiver3(x,y,z,u,v,w,'filled','color',c,'linewidth',1,'maxheadsize',1);
-hx = text(0.9*f,-0.5*f,0,'\theta_{roll}','color',c,'fontsize',fsz);
-hy = text(0,1.5*f,0,'\theta_{elev}','color',c,'fontsize',fsz);
+hx = text(0.9*f,-0.5*f,0.1,'\theta_{roll}','color',c,'fontsize',fsz);
+hy = text(0,2*f,0,'\theta_{elev}','color',c,'fontsize',fsz);
 hz = text(0,0,1.1*f,'\theta_{yaw}','color',c,'fontsize',fsz);
 
 % format
@@ -137,6 +137,7 @@ axis tight;
 axis equal;
 box off;
 grid on;
+zlim([-1,20]);
 ax = gca;
 ax.TickLength = [0,0];
 ax.XTick = 0:20:100; ax.YTick =0:20:100; ax.ZTick = 0:20:100;
@@ -145,7 +146,7 @@ ax.XTickLabel = []; ax.YTickLabel = []; ax.ZTickLabel = [];
 ax.Position = [0,0,1,1];
 set(gcf,'position',[500,500,500,500]);
 set(gcf,'color','w');
-set(gcf,'paperposition',[0,0,2,2],'unit','inches');
+set(gcf,'paperposition',[0,0,2,1.2],'unit','inches');
 print('-dtiff','-r300','FigZA');
 
 %% FigZB
@@ -157,7 +158,7 @@ yt = Y(end); xt = yt/tand(th_b);
 plot([X(end)-xt,X(end)],[0,Y(end)],'--','color',c_arr(2,:));
 text(5+X(end)-xt,6+0,'\theta_{bend}','fontsize',fsz,'color',c_arr(2,:));
 
-legend([ha,hb],'catheter','helices','location','northoutside');
+legend([ha,hb],'catheter','helices','location','northwest');
 ax.Position = [0.05,0,0.9,1];
 print('-dtiff','-r300','FigZB');
 close
