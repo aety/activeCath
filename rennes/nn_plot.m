@@ -63,24 +63,28 @@ for rr = 1:size(y,1)
     temp2 = max([max(max(t)),max(max(y))]);
     temp1 = min([min(min(t)),min(min(y))]);
     axis([temp1,temp2,temp1,temp2]);
-    plot([temp1,temp2],[temp1,temp2],'color',0.75*[1,1,1],'linewidth',2);
+    p = plot([temp1,temp2],[temp1,temp2],'color',0.75*[1,1,1],'linewidth',1);    
     
-    h = scatter(t(rr,ind),y(rr,ind),10,c_map(rr,:),'filled');
+    h = scatter(t(rr,ind),y(rr,ind),20,c_map(rr,:),'filled');
     alpha(h,0.5);
     
     [r,m,b] = regression(t(rr,ind),y(rr,ind));
     
-    text(temp1+10,temp2-10*rr,[RSP_txt{rr} ', R = ' num2str(r,3)],'color',c_map(rr,:));
+    text(temp1+2,temp2-10*rr,[RSP_txt{rr} ', R = ' num2str(r,3)],'color',c_map(rr,:),'fontsize',12);
     
 end
 
-title(['Predictors: ' PDT_txt{best_pdt(1)} ', ' PDT_txt{best_pdt(2)}],'fontweight','normal');
-xlabel('actual');
-ylabel('predicted');
-axis tight;
+% title(['Predictors: ' PDT_txt{best_pdt(1)} ', ' PDT_txt{best_pdt(2)}],'fontweight','normal');
+ax = xlabel('actual (deg)');
+ay = ylabel('predicted (deg)');
+temp = round([0,temp2]);
 axis equal;
-set(gca,'fontsize',8);
-set(gcf,'paperposition',[0,0,3,3]);
+axis([temp,temp]);
+ay.Position(1) = ay.Position(1) + 3;
+ax.Position(2) = ax.Position(2) + 5;
+set(gca,'xtick',temp,'ytick',temp);
+set(gca,'fontsize',12);
+set(gcf,'paperposition',[0,0,2.7,2.7]);
 print('-dtiff','-r300',['nn_' fname '_cmb']);
 close;
 
