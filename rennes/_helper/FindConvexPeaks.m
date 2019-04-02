@@ -1,6 +1,7 @@
 function [x,y] = FindConvexPeaks(BW,n_div,bbox_big,y_min)
 
 % figure;imshow(BW); hold on;
+
 x = [];
 y = [];
 
@@ -30,7 +31,23 @@ for vv = 1:n_div % need to adapt it so it can account for multiple divisions
     else
         xi = []; yi = [];
     end
-    %     plot(xi,yi,'.','color','m','markersize',10);
+    
+    % remove horizontal boundaries
+    tgl = abs(diff(yi)) > 0;
+    tgl = [true;tgl];
+    xi = xi(tgl); yi = yi(tgl);
+    
+    % remove overlaps
+    tgl = abs(diff(yi)) > 0.5;
+    tgl = [true;tgl];
+    xi = xi(tgl); yi = yi(tgl);
+    
+    % remove the top two points and bottom right point within each Qhull
+    temp = sortrows([xi,yi],2);
+    xi = temp(:,1); yi = temp(:,2);
+    xi([1,2,end]) = []; yi([1,2,end]) = [];
+    
+    %     plot(xi,yi,'o','linewidth',2);
     
     x = [x;xi];
     y = [y;yi];

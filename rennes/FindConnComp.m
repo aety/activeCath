@@ -56,7 +56,7 @@ for nn = 1:size(pks,1)
     d_temp(nn) = rssq(pks(i_temp,:) - pks(nn,:)); % distance from nearest neighbor
     idx(nn) = i_temp; % index of the nearst neighbor
 end
-ind_ovl = find(d_temp < (mean(d_temp)-2*std(d_temp))); % look for minimal distances that are more than 2 STD below the mean 
+ind_ovl = find(d_temp < (mean(d_temp)-1*std(d_temp))); % look for minimal distances that are more than 2 STD below the mean 
 
 temp = [ind_ovl; idx(ind_ovl)]; % prepare to eliminate overlaps (only one of them)
 dtemp = d(temp);                % distances of these close points from the catheter
