@@ -2,9 +2,9 @@ clear; ca; clc;
 
 % display toggle
 dbgflag = 0; % plot (dianostics)
-savflag = 0; % save data (mat file)
-pltflag = 1; % plot (for video)
-vidflag = 1; % save video
+savflag = 1; % save data (mat file)
+pltflag = 0; % plot (for video)
+vidflag = 0; % save video
 vidrate = 3; % video frame rate
 
 % figure parameters
@@ -46,6 +46,13 @@ end
 
 cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
 
+nn = 0;
+n_fr = length(cell2mat(fn_arr));
+I_arr = cell(n_fr,1);
+r_arr = nan(n_fr,1);
+p_arr = nan(n_fr,1);
+b_arr = nan(n_fr,1);
+
 %% load image
 for dd = 1:length(bd_arr)
     
@@ -61,6 +68,8 @@ for dd = 1:length(bd_arr)
     TGL = I_disp_arr;
     
     for ff = 1:length(fn)
+        
+        disp([dd,ff]);
         
         %% load image and data
         dname = ['DSA_2_0' num2str(fn(ff),'%03.f')];
@@ -106,15 +115,12 @@ for dd = 1:length(bd_arr)
         %% Translate again (based on catheter polyfit results
         b_diff = y(end) - ref_pt(1); a_diff = x(end) - ref_pt(2);       % calcuate distance to translate
         x = x - a_diff; y = y - b_diff;                                 % offset catheter
-        I = imtranslate(I_cut,-[b_diff,a_diff],'FillValues',1);         % translate the image
+        %         I = imtranslate(I_cut,-[b_diff,a_diff],'FillValues',1);         % translate the image
         I_disp = imtranslate(I_str,-[b_diff,a_diff],'FillValues',1);    % translate the image
         
         %% Find connected components
         pks = FindConnComp(I_cut,x,y,y_min,thrs_dev); % find peaks by bwconncomp
-        
-        imshow(I_str); hold on;
         xx1 = pks(:,2); yy1 = pks(:,1);
-        %         plot(xx1,yy1,'x','color',c_lab_y,'linewidth',2);
         
         %% ConvexHull regionprops (for convex back)-- divide into sections
         II = imbinarize(imsharpen(I_cut,'radius',2,'amount',10));
@@ -122,7 +128,6 @@ for dd = 1:length(bd_arr)
         BW = imcomplement(II);
         BW(y_min:end,:) = 0;
         [xx2,yy2] = FindConvexPeaks(BW,n_div,bbox_big,y_min-10);
-        %         plot(xx2,yy2,'x','color',c_lab_b,'linewidth',2);
         
         %% combine ConvexHulls and BoundingBoxes, clean up, and choose sides
         % left to the curve --> lower left corner / right to the curve --> upper right corner
@@ -134,38 +139,18 @@ for dd = 1:length(bd_arr)
         tgl_near = RemoveOverlap([xx,yy],thrs_near);
         xx(~tgl_near) = []; yy(~tgl_near) = [];
         tgl_side(~tgl_near) = [];
-        % % %
-        % % %         %% plot
-        % % %         if pltflag
-        % % %             wd = size(I_str,2)*ht/size(I_str,1);
-        % % %             set(gcf,'position',[1000,200,wd,ht]);
-        % % %             set(gca,'position',[0.01,0.01,.99,.99]);
-        % % %
-        % % %             imshow(I_disp);
-        % % %             hold on;
-        % % %
-        % % %             hc = plot(y,x,'--','linewidth',lwd,'color',0.5*[1,1,1]);
-        % % %             h1 = plot(xx(tgl_side),yy(tgl_side),'.','color',c_lab_y,'markersize',msize*2);
-        % % %             h2 = plot(xx(~tgl_side),yy(~tgl_side),'.','color',c_lab_b,'markersize',msize*2);
-        % % %             hr = plot(ref_pt(1),ref_pt(2),'ok','markerfacecolor','w','markersize',msize/2);
-        % % %             %             text(txt_d,size(I_str,1)-txt_d,['\theta_{roll} = ' num2str(th1_arr(fn))],'fontsize',txt_s); % th1_arr : roll angle of this frame (deg)
-        % % %             text(10,10,[num2str(dd) ', ' num2str(ff)]);
-        % % %         end
-        % % %
-        % % %         %% store data
-        % % %         X(:,ff) = x; Y(:,ff) = y;
-        % % %         REF(:,ff) = ref_pt;
-        % % %         I_disp_arr{ff} = I_disp;
-        % % %         BBOX{ff} = [xx,yy];
-        % % %         TGL{ff} = tgl_side;
-        hc = plot(y,x,'linewidth',lwd,'color',0.5*[1,1,1]);
-        hr = plot(ref_pt(1),ref_pt(2),'.w','markersize',msize);
-        plot(xx(tgl_side),yy(tgl_side),'.','color',c_lab_y,'markersize',msize);
-        plot(xx(~tgl_side),yy(~tgl_side),'.','color',c_lab_b,'markersize',msize);
         
-        text(10,50,{['\theta_{roll} = ' num2str(roll)];...
-            ['\theta_{pitch} = ' num2str(pitch)];...
-            ['\theta_{bend} = ' num2str(bend)]});
+        if pltflag
+            imshow(I_str); hold on;
+            hc = plot(y,x,'linewidth',lwd,'color',0.5*[1,1,1]);
+            hr = plot(ref_pt(1),ref_pt(2),'.w','markersize',msize);
+            plot(xx(tgl_side),yy(tgl_side),'.','color',c_lab_y,'markersize',msize);
+            plot(xx(~tgl_side),yy(~tgl_side),'.','color',c_lab_b,'markersize',msize);
+            
+            text(10,50,{['\theta_{roll} = ' num2str(roll)];...
+                ['\theta_{pitch} = ' num2str(pitch)];...
+                ['\theta_{bend} = ' num2str(bend)]});
+        end
         
         %% save frame
         if vidflag
@@ -175,13 +160,29 @@ for dd = 1:length(bd_arr)
         else
             pause(0.5);
         end
+        
+        
+        %% store data
+        % % %         X(:,ff) = x; Y(:,ff) = y;
+        % % %         REF(:,ff) = ref_pt;
+        % % %         I_disp_arr{ff} = I_disp;
+        % % %         BBOX{ff} = [xx,yy];
+        % % %         TGL{ff} = tgl_side;
+        
+        nn = nn + 1;
+        I_arr{nn} = I_str;
+        r_arr(nn) = roll;
+        p_arr(nn) = pitch;
+        b_arr(nn) = bend;
+        
     end
     
-    %% save data
-    if savflag
-        save(['proc_incl_pitch_pre_test_' num2str(dd)],'X','Y','REF','BBOX','TGL','ind_arr','I_disp_arr','th1_arr');
-    end
-    
+end
+
+%% save data
+if savflag
+    save incl_pitch_pre I_arr r_arr p_arr b_arr ref_pt;
+    %         save(['proc_incl_pitch_pre_test_' num2str(dd)],'X','Y','REF','BBOX','TGL','ind_arr','I_disp_arr','th1_arr');
 end
 
 %% close video
