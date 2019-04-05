@@ -1,6 +1,6 @@
 clear;ca;clc;
 
-load incl_pitch_pre
+load incl_pitch_pre *_arr ref_pt X Y
 
 npt = 15; % number of points on each side
 
@@ -8,9 +8,8 @@ pr = 70; % plot range (x and y direction) (pixels)
 c_arr = {'m','b'};
 t_txt = {'left','right'};
 
-X = cell(length(I_arr),1);
-Y = X;
-TGL = X;
+PKS = cell(length(I_arr),1);
+TGL = PKS;
 
 for ff = 1:length(I_arr)
     
@@ -52,11 +51,10 @@ for ff = 1:length(I_arr)
     
     tgl = [zeros(1,npt),ones(1,npt)];
     
-    X{ff} = xx;
-    Y{ff} = yy;
+    PKS{ff} = [xx;yy];    
     TGL{ff} = tgl;
     close;
     save incl_pitch_manualPicking_temp X Y TGL ff
 end
 
-save incl_pitch_manualPicking X Y TGL ff
+save incl_pitch_manualPicking *_arr ref_pt X Y TGL ff

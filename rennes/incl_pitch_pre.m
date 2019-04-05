@@ -2,8 +2,8 @@ clear; ca; clc;
 
 % display toggle
 dbgflag = 0; % plot (dianostics)
-savflag = 0; % save data (mat file)
-pltflag = 1; % plot (for video)
+savflag = 1; % save data (mat file)
+pltflag = 0; % plot (for video)
 vidflag = 0; % save video
 vidrate = 3; % video frame rate
 
@@ -46,12 +46,16 @@ end
 
 cd C:\Users\yang\ownCloud\rennes_experiment\18_12_11-09_47_11-STD_18_12_11-09_47_11-STD-160410\__20181211_095212_765000
 
+%% preallocate 
 nn = 0;
 n_fr = length(cell2mat(fn_arr));
 I_arr = cell(n_fr,1);
 r_arr = nan(n_fr,1);
 p_arr = nan(n_fr,1);
 b_arr = nan(n_fr,1);
+X = nan(pf_npt,n_fr); Y = X;
+PKS = cell(n_fr,1);
+TGL = PKS;
 
 %% load image
 for dd = 1:length(bd_arr)
@@ -59,14 +63,7 @@ for dd = 1:length(bd_arr)
     fn = fn_arr{dd};
     bd = dd;
     bend = bd_arr(dd);
-    
-    %% preallocate
-    X = nan(pf_npt,length(fn)); Y = X;
-    REF = nan(2,length(fn));
-    I_disp_arr = cell(length(fn),1);
-    BBOX = I_disp_arr;
-    TGL = I_disp_arr;
-    
+        
     for ff = 1:length(fn)
         
         disp([dd,ff]);
@@ -163,26 +160,24 @@ for dd = 1:length(bd_arr)
         
         
         %% store data
-        % % %         X(:,ff) = x; Y(:,ff) = y;
-        % % %         REF(:,ff) = ref_pt;
-        % % %         I_disp_arr{ff} = I_disp;
-        % % %         BBOX{ff} = [xx,yy];
-        % % %         TGL{ff} = tgl_side;
-        
         nn = nn + 1;
         I_arr{nn} = I_str;
         r_arr(nn) = roll;
         p_arr(nn) = pitch;
         b_arr(nn) = bend;
+        X(:,nn) = x; Y(:,nn) = y;
+        PKS{nn} = [xx,yy];
+        TGL{nn} = tgl_side;
         
     end
     
 end
 
+cd C:\Users\yang\ownCloud\MATLAB\rennes
+
 %% save data
 if savflag
-    save incl_pitch_pre I_arr r_arr p_arr b_arr ref_pt;
-    %         save(['proc_incl_pitch_pre_test_' num2str(dd)],'X','Y','REF','BBOX','TGL','ind_arr','I_disp_arr','th1_arr');
+    save incl_pitch_pre I_arr r_arr p_arr b_arr ref_pt X Y PKS TGL;
 end
 
 %% close video
@@ -190,5 +185,3 @@ if vidflag
     close(anim);
     close;
 end
-
-cd C:\Users\yang\ownCloud\MATLAB\rennes

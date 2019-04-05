@@ -8,7 +8,6 @@ y_lim = [0,450]; % figure y-limin (pixels)
 
 dname_arr = {'20SDR-H_30_0003','20SDR-H_30_0021','20SDR-H_30_0067','20SDR-H_30_0083','20SDR-H_30_0099'}; %
 
-
 % r_range = [-60,60]; cmap1 = RdBu; cmap2 = BrBG; % for "both"
 r_range = [0,75]; cmap1 = PuBu; cmap2 = YlOrBr; % for "positive"
 
