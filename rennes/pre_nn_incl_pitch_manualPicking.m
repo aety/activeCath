@@ -65,7 +65,7 @@ end
 TIPx = X(1,:) - X(end,:); % catheter tip X-location % end-- base; 1--tip
 TIPy = Y(1,:) - Y(end,:); % catheter tip Y-location % end-- base; 1--tip
 
-RSP = [r_arr,b_arr,p_arr];
+RSP = [r_arr,b_arr,p_arr]';
 
 %%
 % scatter(X(1,:),Y(1,:),10,'k','filled');

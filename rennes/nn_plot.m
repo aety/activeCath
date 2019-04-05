@@ -1,9 +1,10 @@
 %% load data
 clear; clc; ca;
+fname = 'incl_pitch_manualPicking';
 % fname = '20SDF_H_30_short';
-fname = 'interp_btw_fr_res';
+% fname = 'interp_btw_fr_res';
 
-cmap = {flipud(parula),flipud(parula)}; % for "positive" (sequential, sequential)
+cmap = {flipud(parula),flipud(parula),jet}; % for "positive" (sequential, sequential)
 % cmap = {flipud(parula),RdYlGn}; % for "both" (sequential, diverging)
 
 load(['nn_' fname]);
@@ -17,44 +18,9 @@ best_pdt = pdt_arr(ind_a,:);
 
 ind = tr.testInd;
 
-%% plot separate
-
-c_plt = [2,1];
-for rr = 1:size(y,1)
-    
-    figure;
-    hold on;
-    
-    temp2 = max([max(max(t(rr,:))),max(max(y(rr,:)))]);
-    temp1 = min([min(min(t(rr,:))),min(min(y(rr,:)))]);
-    axis([temp1,temp2,temp1,temp2]);
-    plot([temp1,temp2],[temp1,temp2],'color',0.75*[1,1,1],'linewidth',2);
-    
-    
-    colormap(cmap{rr});
-    h = scatter(t(rr,ind),y(rr,ind),10,RSP(c_plt(rr),ind),'filled');
-    alpha(h,0.5);
-    
-    [r,m,b] = regression(t(rr,ind),y(rr,ind));
-    
-    title(['Predictors: ' PDT_txt{best_pdt(1)} ', ' PDT_txt{best_pdt(2)} ', R = ' num2str(r)],'fontweight','normal');
-    xlabel(['actual ' RSP_txt{rr}]);
-    ylabel(['predicted ' RSP_txt{rr}]);
-    
-    axis equal
-    
-    c = colorbar;
-    c.Label.String = RSP_txt{c_plt(rr)};
-    c.Box = 'off';
-    
-    set(gca,'fontsize',8);
-    set(gcf,'paperposition',[0,0,4,3]);
-    print('-dtiff','-r300',['nn_' fname '_' num2str(rr)]);
-    close;
-end
-
 %% plot combined
-c_map = [118,42,131;27,120,55]/255;
+% c_map = [118,42,131;27,120,55;]/255;
+c_map = [27,158,119; 217,95,2; 117,112,179]/255;
 
 for rr = 1:size(y,1)
     
@@ -77,7 +43,7 @@ end
 % title(['Predictors: ' PDT_txt{best_pdt(1)} ', ' PDT_txt{best_pdt(2)}],'fontweight','normal');
 ax = xlabel('actual (deg)');
 ay = ylabel('predicted (deg)');
-temp = round([0,temp2]);
+temp = round([temp1,temp2]);
 axis equal;
 axis([temp,temp]);
 ay.Position(1) = ay.Position(1) + 3;
