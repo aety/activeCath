@@ -27,6 +27,13 @@ ind_exc = find(Area > thrs_big); % remove boxes much bigger than an "envelope" s
 nobj = CC.NumObjects - length(ind_exc);
 pixidlist = CC.PixelIdxList; pixidlist(ind_exc) = [];
 
+% imshow(I_in); hold on;
+% for tt = 1:length(pixidlist)
+%     temp = pixidlist{tt};
+%     [temp1,temp2] = ind2sub(CC.ImageSize,temp);
+%     plot(temp2,temp1,'.r');
+% end
+
 pks = nan(nobj,2);
 d = nan(nobj,1);
 

@@ -2,8 +2,8 @@ clear; ca; clc;
 
 % display toggle
 dbgflag = 0; % plot (dianostics)
-savflag = 1; % save data (mat file)
-pltflag = 0; % plot (for video)
+savflag = 0; % save data (mat file)
+pltflag = 1; % plot (for video)
 vidflag = 0; % save video
 vidrate = 3; % video frame rate
 
