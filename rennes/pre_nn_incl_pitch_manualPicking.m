@@ -1,11 +1,7 @@
 clear;
 clc;
 ca;
-load incl_pitch_manualPicking_new
-
-% n_roll = length(unique(r_arr));
-% n_bend = length(unique(b_arr));
-% n_pitch = length(unique(p_arr));
+load incl_pitch_manualPicking
 
 PDT_txt = {'Y_0','mean(d_i)','std(d_i)','mean(d_i)_1 - mean(d_i)_2','\alpha_e - \alpha_0',...
     'mean[\Delta\alpha]','std[\Delta\alpha]','CV[d_i]','CV[\Delta\alpha]','mean(d_i)_1 / mean(d_i)_2'};
@@ -14,10 +10,8 @@ RSP_txt = {'\theta_{roll}','\theta_{bend}','\theta_{pitch}'};
 n_pks = 15;
 n_fr = length(I_arr);
 PDT = nan(length(PDT_txt),n_fr);
-% RSP = nan(length(RSP_txt),n_fr);
 TIPx = nan(1,n_fr);
 TIPy = TIPx;
-% PKS1 = nan(n_pks,2,n_roll,n_bend); PKS2 = PKS1;
 
 %%
 ref = ref_pt';
@@ -74,13 +68,12 @@ TIPy = Y(1,:) - Y(end,:); % catheter tip Y-location % end-- base; 1--tip
 RSP = [r_arr,b_arr,p_arr];
 
 %%
-% plot(TIPx,TIPy,'*');
-scatter(X(1,:),Y(1,:),10,'k','filled');
-hold on;
-for nn = 1:n_fr
-    temp = PKS{nn};
-    scatter(temp(1,:),temp(2,:),10,1:30,'filled');
-end
+% scatter(X(1,:),Y(1,:),10,'k','filled');
+% hold on;
+% for nn = 1:n_fr
+%     temp = PKS{nn};
+%     scatter(temp(1,:),temp(2,:),10,1:30,'filled');
+% end
 
 %% save results
 save pre_nn_incl_pitch_manualPicking PDT* RSP* TIP*
