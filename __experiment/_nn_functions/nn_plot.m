@@ -1,8 +1,8 @@
 %% load data
 clear; clc; ca;
-fname = 'incl_pitch_manualPicking';
+% fname = 'incl_pitch_manualPicking';
 % fname = '20SDF_H_30_short';
-% fname = 'interp_btw_fr_res';
+fname = 'interp_btw_fr_res';
 
 cmap = {flipud(parula),flipud(parula),jet}; % for "positive" (sequential, sequential)
 % cmap = {flipud(parula),RdYlGn}; % for "both" (sequential, diverging)
@@ -65,11 +65,12 @@ for rr = 1:size(y,1)
     
     mplt = mean(plt);
     seplt = std(plt)/sqrt(length(plt));
-    h1 = plot([min(t(rr,ind)),max(t(rr,ind))],mplt*ones(1,2),'k');
-    h2 = plot([min(t(rr,ind)),max(t(rr,ind))],(mplt+seplt)*ones(1,2),'--k');
-    plot([min(t(rr,ind)),max(t(rr,ind))],(mplt-seplt)*ones(1,2),'--k');
+%     h1 = plot([min(t(rr,ind)),max(t(rr,ind))],mplt*ones(1,2),'k');
+%     h2 = plot([min(t(rr,ind)),max(t(rr,ind))],(mplt+seplt)*ones(1,2),'--k');
+%     plot([min(t(rr,ind)),max(t(rr,ind))],(mplt-seplt)*ones(1,2),'--k');
     
-    legend([h1,h2],num2str(mplt,3),['\pm ' num2str(seplt,3) ' (SE)'],'location','northwest');
+%     legend([h1,h2],num2str(mplt,3),['\pm ' num2str(seplt,3) ' (SE)'],'location','northwest');
+    title(['mean = ' num2str(mplt,3) '\pm ' num2str(seplt,3) ' (SE)'],'fontweight','normal');
     
     xlabel(['actual ' RSP_txt{rr}]);
     ylabel(['|' RSP_txt{rr} ' error|']);
