@@ -1,6 +1,6 @@
 clear; ca; clc;
-fname = '20SDF_H_30_short';
-% fname = 'interp_btw_fr_res';
+% fname = '20SDF_H_30_short';
+fname = 'interp_btw_fr_res';
 
 load(['pre_nn_' fname]);
 n_tr = 5;
@@ -14,8 +14,9 @@ best_pdt = cell(1,length(n_pdt_arr));
 best_tr = best_pdt;
 best_y = best_pdt;
 all_p = best_pdt;
+all_e = all_p;
 
-
+%%
 for zz = 1:length(n_pdt_arr)
     
     %% load predictors
@@ -72,14 +73,14 @@ for zz = 1:length(n_pdt_arr)
             
             % Test the Network
             y = net(x);
-            e = gsubtract(t,y);
             p = perform(net,t,y);
             
-            y = mapminmax('reverse',y,PS_rsp); % reverse normalization
-            
             p_arr(nn) = p;
-            e_arr(nn) = norm(e);
             tr_arr{nn} = tr;
+            
+            y = mapminmax('reverse',y,PS_rsp); % reverse normalization
+            e = gsubtract(RSP,y); % error
+            e_arr(nn) = sum(rssq(e))/length(rssq(e));
             y_arr{nn} = y;
             
             clear net
@@ -93,7 +94,7 @@ for zz = 1:length(n_pdt_arr)
         
     end
     
-    [ind_a,ind_b] = find(P_ARR==min(min(P_ARR)));
+    [ind_a,ind_b] = find(E_ARR==min(min(E_ARR)));
     best_p(zz) = P_ARR(ind_a,ind_b);
     best_e(zz) = E_ARR(ind_a,ind_b);
     best_tr{zz} = TR_ARR{ind_a}{ind_b};
@@ -101,6 +102,7 @@ for zz = 1:length(n_pdt_arr)
     
     best_pdt{zz} = C(ind_a,:);
     all_p{zz} = P_ARR;
+    all_e{zz} = E_ARR;
     
 end
 
@@ -110,11 +112,11 @@ save(['nn_' fname '_Npdt'],'best_*','ind_*','all_p','RSP','n_pdt_arr','*_txt');
 
 load(['nn_' fname '_Npdt']);
 
-plt = nan(length(all_p),2);
-pmin = nan(length(all_p),1);
+plt = nan(length(all_e),2);
+pmin = nan(length(all_e),1);
 
-for pp = 1:length(all_p)
-    temp = mean(all_p{pp},2);
+for pp = 1:length(all_e)
+    temp = mean(all_e{pp},2);
     pmin(pp) = min(temp);
     
     plt(pp,1) = mean(temp);
@@ -133,8 +135,7 @@ axis tight;
 xlim([0.5,length(all_p)+0.5]);
 legend([h1,h2],'mean\pm std','min.');
 xlabel('number of predictors');
-ylabel('normalized error');
-% set(gca,'ytick',[]);
+ylabel('avg. norm of two errors');
 box off;
 set(gca,'fontsize',10);
 set(gcf,'paperposition',[0,0,4,2],'unit','inches');
@@ -142,44 +143,44 @@ print('-dtiff','-r300',['test_Npdt_' fname '_p']);
 close;
 
 %% plot best correlation (overlay)
-n = length(n_pdt_arr);
-figure(1);
-cmap = colormap(parula(n));
-hold on;
-plot([0,75],[0,75],'k');
-
-figure(2);
-hold on;
-plot([0,75],[0,75],'k');
-
-for zz = 1:n
-    
-    ind = best_tr{zz}.testInd;
-    
-    for ff = 1:2
-        x = RSP(ff,ind);
-        y = best_y{zz}(ff,ind);
-        
-        figure(ff);
-        h(ff) = scatter(x,y,10,cmap(zz,:),'filled');
-        alpha(h(ff),0.5);
-        r = regression(x,y);
-        text(5,80-5*zz,['n = ' num2str(zz) ', R = ' num2str(r,3)],'color',cmap(zz,:),'fontsize',6);
-    end
-end
-
-for ff = 1:2
-    figure(ff);
-    set(gca,'fontsize',10);
-    xlabel('actual');
-    ylabel('predicted');
-    title(RSP_txt{ff},'fontweight','normal');
-    axis equal
-    axis tight
-    temp = [get(gca,'xlim');get(gca,'ylim')];
-    temp = [min(temp(:,1)),max(temp(:,2))];
-    axis([temp,temp]);
-    set(gcf,'paperposition',[0,0,3,3],'unit','inches');
-    print('-dtiff','-r300',['test_Npdt_' fname '_' num2str(ff)]);
-    close;
-end
+% % % n = length(n_pdt_arr);
+% % % figure(1);
+% % % cmap = colormap(parula(n));
+% % % hold on;
+% % % plot([0,75],[0,75],'k');
+% % % 
+% % % figure(2);
+% % % hold on;
+% % % plot([0,75],[0,75],'k');
+% % % 
+% % % for zz = 1:n
+% % %     
+% % %     ind = best_tr{zz}.testInd;
+% % %     
+% % %     for ff = 1:2
+% % %         x = RSP(ff,ind);
+% % %         y = best_y{zz}(ff,ind);
+% % %         
+% % %         figure(ff);
+% % %         h(ff) = scatter(x,y,10,cmap(zz,:),'filled');
+% % %         alpha(h(ff),0.5);
+% % %         r = regression(x,y);
+% % %         text(5,80-5*zz,['n = ' num2str(zz) ', R = ' num2str(r,3)],'color',cmap(zz,:),'fontsize',6);
+% % %     end
+% % % end
+% % % 
+% % % for ff = 1:2
+% % %     figure(ff);
+% % %     set(gca,'fontsize',10);
+% % %     xlabel('actual');
+% % %     ylabel('predicted');
+% % %     title(RSP_txt{ff},'fontweight','normal');
+% % %     axis equal
+% % %     axis tight
+% % %     temp = [get(gca,'xlim');get(gca,'ylim')];
+% % %     temp = [min(temp(:,1)),max(temp(:,2))];
+% % %     axis([temp,temp]);
+% % %     set(gcf,'paperposition',[0,0,3,3],'unit','inches');
+% % %     print('-dtiff','-r300',['test_Npdt_' fname '_' num2str(ff)]);
+% % %     close;
+% % % end
