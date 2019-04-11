@@ -1,14 +1,16 @@
 clear; clc; ca;
 
 %% define catheter 3D rotation (about x-axis)
-roll_arr = 0:10:70; % array of the "roll" rotation (deg)
-pitch_arr = -20:10:20;% array of the "pitch" rotation (deg)
-bend_arr = [0.000001,20:20:80];% array of values for the varying parameter
+roll_arr = 0:10:80; % array of the "roll" rotation (deg)
+pitch_arr = 0:10:40;% array of the "pitch" rotation (deg)
+bend_arr = [0.000001,10:10:80];% array of values for the varying parameter
 
 %% define catheter
-L = 105;        % length of catheter (mm)
-L_res = 0.5;      % catheter spatial resolution (interval between nodes) (mm)
-L_pct_bent = 95;  % percent length bent (%)
+L = 105;            % length of catheter (mm)
+L_res = 0.5;        % catheter spatial resolution (interval between nodes) (mm)
+L_pct_bent = 95;    % percent length bent (%)
+poly_npt = 100;     % number of points for polynomial appxoimation
+poly_ord = 3;       % order for polynomial fit
 
 %% define helix
 p1_helix = 10*100/L;    % helix starting point (% length)
@@ -17,15 +19,19 @@ npt_helix = 500;        % number of points of the helix
 a_helix = 3.5;          % amplitude of the sine wave of the helix (mm)
 n_helix = 16;           % number of sinusoids of the helix
 
+%% define reference
+ref_pt = [5,0]; % reference base point (circular coils in experiment)
+
 %% preallocate
-X_ARR = cell(length(roll_arr),length(bend_arr),length(pitch_arr));
+n_row = length(roll_arr)*length(pitch_arr)*length(bend_arr);
+b_arr = nan(1,n_row);
+r_arr = b_arr;
+p_arr = b_arr;
+PKS = cell(1,n_row);
+TGL = PKS;
+X_ARR = nan(poly_npt,n_row);
 Y_ARR = X_ARR;
-Z_ARR = X_ARR;
-XH_ARR = X_ARR;
-YH_ARR = X_ARR;
-ZH_ARR = X_ARR;
-X_PKS_ARR= X_ARR;
-Y_PKS_ARR = X_ARR;
+nn = 0;
 
 %% loop for "pitch" rotation
 for bb = 1:length(pitch_arr)
@@ -51,8 +57,8 @@ for bb = 1:length(pitch_arr)
             L1 = L - L2;
             
             Rk = L2/th_end; % radius of curvature of the bent section
-            
-            x1 = 0:L_res:L1;              % x of unbent
+                        
+            x1 = 0:L_res:L1;            % x of unbent
             y1 = zeros(1,length(x1));   % y of unbent
             
             xc = L1;    % x-location of the center of virtual circle
@@ -104,19 +110,31 @@ for bb = 1:length(pitch_arr)
             xh = M_helix(1,:); yh = M_helix(2,:); zh = M_helix(3,:);
             
             %% find apexes in X-Y projection
-            [x_pks,y_pks] = FindHelixPeaks(xh,yh,X,Y);            
+            [x_pks,y_pks] = FindHelixPeaks(xh,yh,X,Y);
+                       
+            %% determine on which side of the catheter the peaks are 
+            [p,S,mu] = polyfit(X,Y,poly_ord); % polyfit 
+            X_ap = interp1(linspace(0,1,length(X)),X,linspace(0,1,poly_npt));
+            [Y_ap,~] = polyval(p,X_ap,S,mu);
+            [y_pks_poly,~] = polyval(p,x_pks,S,mu);
+            tgl = (y_pks - y_pks_poly) < 0;
             
             %% save into big arrays
-            X_PKS_ARR{rr,aa,bb} = x_pks;
-            Y_PKS_ARR{rr,aa,bb} = y_pks;
-            X_ARR{rr,aa,bb} = X; Y_ARR{rr,aa,bb} = Y; Z_ARR{rr,aa,bb} = Z;
-            XH_ARR{rr,aa,bb} = xh; YH_ARR{rr,aa,bb} = yh; ZH_ARR{rr,aa,bb} = zh;
-            
-            
-        end
+            nn = nn + 1;
+            b_arr(nn) = bend_arr(rr);
+            r_arr(nn) = roll_arr(aa);
+            p_arr(nn) = pitch_arr(bb);
+            PKS{nn} = [x_pks;y_pks];
+            TGL{nn} = tgl;
+            X_ARR(:,nn) = X_ap;
+            Y_ARR(:,nn) = Y_ap;
+        end % bend_arr
         
-    end
+    end % roll_arr
     
-end
+end % pitch_arr
 
-save catheter_simulator_findApex_3D *_ARR *_arr p1_helix p2_helix npt_helix a_helix n_helix L L_res L_pct_bent
+X = X_ARR;
+Y = Y_ARR;
+
+save proc_findApex_3DoF b_arr r_arr p_arr PKS TGL X_ARR Y_ARR

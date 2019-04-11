@@ -5,6 +5,11 @@ function [x_pks,y_pks] = FindHelixPeaks(xh,yh,X,Y)
 temp = uniquetol([x0,y0],'ByRows',true);
 x0 = temp(:,1); y0 = temp(:,2);
 
+% hold on;
+% plot(xh,yh);
+% plot(X,Y);
+% plot(x0,y0,'o');
+
 %% find peaks
 x_pks = nan(1,length(x0)-1);
 y_pks = x_pks;
@@ -16,8 +21,11 @@ for ii = 1:length(x0)-1
     xm = mean(xx);          % midpoint
     ym = mean(yy);          % midpoint
     m = -diff(xx)/diff(yy); % slope of normal
+    if isinf(m)
+        m = 1000000000;
+    end
     
-    d = abs(m*xh-yh+(ym-m*xm))/sqrt(m^2+1^2); % point-to-line distance (normal of connection line)
+    d = abs(m*xh-yh+(ym-m*xm))/sqrt(m^2+1^2); % point-to-line distance (normal of connection line) % https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
     [~,I] = sort(d);    % sort helix-to-normal distance
     I_arr = I(1:4);     % find 4 points the helix closest to the normal line
     x_arr = xh(I_arr);  % candidate x
@@ -28,4 +36,8 @@ for ii = 1:length(x0)-1
     
     x_pks(ii) = xh(id); % store
     y_pks(ii) = yh(id); % store
+        
+%     plot(xm,ym,'*');
+%     plot(xh(id),yh(id),'d');
+    
 end
