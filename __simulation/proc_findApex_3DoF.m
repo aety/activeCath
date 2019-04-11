@@ -24,7 +24,7 @@ ref_pt = [5,0]; % reference base point (circular coils in experiment)
 
 %% preallocate
 n_row = length(roll_arr)*length(pitch_arr)*length(bend_arr);
-b_arr = nan(1,n_row);
+b_arr = nan(n_row,1);
 r_arr = b_arr;
 p_arr = b_arr;
 PKS = cell(1,n_row);
@@ -137,4 +137,4 @@ end % pitch_arr
 X = X_ARR;
 Y = Y_ARR;
 
-save proc_findApex_3DoF b_arr r_arr p_arr PKS TGL X_ARR Y_ARR
+save proc_findApex_3DoF b_arr r_arr p_arr PKS TGL X Y ref_pt

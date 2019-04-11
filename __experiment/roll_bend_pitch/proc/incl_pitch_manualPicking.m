@@ -57,4 +57,4 @@ for ff = 1:length(I_arr)
     save incl_pitch_manualPicking_temp X Y TGL ff
 end
 
-save incl_pitch_manualPicking *_arr ref_pt X Y TGL ff
+save proc_incl_pitch_manualPicking *_arr ref_pt X Y TGL ff
