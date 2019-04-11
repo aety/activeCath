@@ -1,21 +1,21 @@
 clear; clc; ca;
 
 %% define catheter 3D rotation (about x-axis)
-roll_arr = 0:5:80; % array of the "roll" rotation (deg)
-pitch_arr = 0:5:80;% array of the "pitch" rotation (deg)
-bend_arr = 10:5:90;% array of values for the varying parameter
-
-%% define helix
-p1_helix = 30;      % helix starting point (% length)
-p2_helix = 90;      % helix ending point (% length)
-npt_helix = 200;    % number of points of the helix
-a_helix = 1;        % amplitude of the sine wave of the helix (mm)
-n_helix = 10;        % number of sinusoids of the helix
+roll_arr = 0:10:70; % array of the "roll" rotation (deg)
+pitch_arr = -20:10:20;% array of the "pitch" rotation (deg)
+bend_arr = [0.000001,20:20:80];% array of values for the varying parameter
 
 %% define catheter
-L = 100;        % length of catheter (mm)
+L = 105;        % length of catheter (mm)
 L_res = 0.5;      % catheter spatial resolution (interval between nodes) (mm)
-L_pct_bent = 80;  % percent length bent (%)
+L_pct_bent = 95;  % percent length bent (%)
+
+%% define helix
+p1_helix = 10*100/L;    % helix starting point (% length)
+p2_helix = 92*100/L;    % helix ending point (% length)
+npt_helix = 500;        % number of points of the helix
+a_helix = 3.5;          % amplitude of the sine wave of the helix (mm)
+n_helix = 16;           % number of sinusoids of the helix
 
 %% preallocate
 X_ARR = cell(length(roll_arr),length(bend_arr),length(pitch_arr));
@@ -104,7 +104,7 @@ for bb = 1:length(pitch_arr)
             xh = M_helix(1,:); yh = M_helix(2,:); zh = M_helix(3,:);
             
             %% find apexes in X-Y projection
-            [x_pks,y_pks] = func_find_apex_rot(xh,yh,X,Y,0);
+            [x_pks,y_pks] = FindHelixPeaks(xh,yh,X,Y);            
             
             %% save into big arrays
             X_PKS_ARR{rr,aa,bb} = x_pks;

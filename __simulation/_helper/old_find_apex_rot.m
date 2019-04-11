@@ -32,7 +32,7 @@ ind_arr = temp(:,1); x0 = temp(:,2); y0 = temp(:,3);
 
 % check if the critical indices are unique
 rep = sum(diff(ind_arr)<2);
-if  rep > 0
+if  rep > 0    
     warning([num2str(rep) ' catheter-helix intersections too close. Examine the surrounding nodes for substitutes.']);
     i_problem = find(diff(ind_arr)<2); %     i_problem = setdiff(1:length(ind_arr),sort(b)); % find the repeating indices
     for pp = 1:length(i_problem)
