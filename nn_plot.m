@@ -1,7 +1,8 @@
 %% load data
 clear; clc; ca;
+fname = 'findApex_3DoF';
 % fname = 'incl_pitch_manualPicking';
-fname = '20SDF_H_30_short';
+% fname = '20SDF_H_30_short';
 % fname = 'interp_btw_fr_res';
 
 cmap = {flipud(parula),flipud(parula),jet}; % for "positive" (sequential, sequential)
@@ -40,7 +41,7 @@ for rr = 1:size(y,1)
     
 end
 
-% title(['Predictors: ' PDT_txt{best_pdt(1)} ', ' PDT_txt{best_pdt(2)}],'fontweight','normal');
+title(['Predictors: ' PDT_txt{best_pdt}],'fontweight','normal');
 ax = xlabel('actual (deg)');
 ay = ylabel('predicted (deg)');
 temp = round([temp1,temp2]);
@@ -50,7 +51,7 @@ ay.Position(1) = ay.Position(1) + 3;
 ax.Position(2) = ax.Position(2) + 5;
 set(gca,'xtick',temp,'ytick',temp);
 set(gca,'fontsize',12);
-set(gcf,'paperposition',[0,0,2.7,2.7]);
+set(gcf,'paperposition',[0,0,4,4]);
 print('-dtiff','-r300',['nn_' fname '_cmb']);
 close;
 
@@ -82,31 +83,35 @@ for rr = 1:size(y,1)
 end
 
 %% plot average error for all predictors
-E_avg = mean(E_ARR,2);
 
-figure;
-hold on;
-
-% --------- version 1: colormap -----------
-colormap(hot);
-scatter(pdt_arr(:,1),pdt_arr(:,2),50,E_avg/size(RSP,2),'filled');
-cb = colorbar;
-caxis([0.1,0.8]);
-ylabel(cb,['norm of all errors / no. of samples']);
-
-% --------- version 2: markersize -----------
-% scatter(pdt_arr(:,1),pdt_arr(:,2),80*E_avg/size(RSP,2),'k','filled');
-% text(3,3,'marker sizes \propto error');
-
-set(gca,'xtick',1:length(PDT_txt),'xticklabel',PDT_txt);
-set(gca,'ytick',1:length(PDT_txt),'yticklabel',PDT_txt);
-xlabel('predictor #1');
-ylabel('predictor #2');
-xtickangle(30);
-ytickangle(30);
-
-axis equal;
-set(gca,'fontsize',8);
-set(gcf,'paperposition',[0,0,4,3]);
-print('-dtiff','-r300',['nn_' fname '_err_all']);
-close;
+if size(y,1)==2
+    E_avg = mean(E_ARR,2);
+    
+    figure;
+    hold on;
+    
+    % --------- version 1: colormap -----------
+    colormap(hot);
+    scatter(pdt_arr(:,1),pdt_arr(:,2),50,E_avg/size(RSP,2),'filled');
+    cb = colorbar;
+    caxis([0.1,0.8]);
+    ylabel(cb,['norm of all errors / no. of samples']);
+    
+    % --------- version 2: markersize -----------
+    % scatter(pdt_arr(:,1),pdt_arr(:,2),80*E_avg/size(RSP,2),'k','filled');
+    % text(3,3,'marker sizes \propto error');
+    
+    set(gca,'xtick',1:length(PDT_txt),'xticklabel',PDT_txt);
+    set(gca,'ytick',1:length(PDT_txt),'yticklabel',PDT_txt);
+    xlabel('predictor #1');
+    ylabel('predictor #2');
+    xtickangle(30);
+    ytickangle(30);
+    
+    axis equal;
+    set(gca,'fontsize',8);
+    set(gcf,'paperposition',[0,0,4,3]);
+    print('-dtiff','-r300',['nn_' fname '_err_all']);
+    close;
+    
+end

@@ -1,9 +1,9 @@
 clear; clc; ca;
 
 %% define catheter 3D rotation (about x-axis)
-roll_arr = 0:10:80; % array of the "roll" rotation (deg)
-pitch_arr = 0:10:40;% array of the "pitch" rotation (deg)
-bend_arr = [0.000001,10:10:80];% array of values for the varying parameter
+roll_arr = 0:2:80; % array of the "roll" rotation (deg)
+pitch_arr = 0:2:40;% array of the "pitch" rotation (deg)
+bend_arr = [0.000001,2:2:80];% array of values for the varying parameter
 
 %% define catheter
 L = 105;            % length of catheter (mm)
@@ -46,6 +46,8 @@ for bb = 1:length(pitch_arr)
         
         %% loop for bending the catheter
         for rr = 1:length(bend_arr)
+            
+            disp([num2str(bb) '/' num2str(length(pitch_arr)) ', ' num2str(aa) '/' num2str(length(roll_arr)) ', ' num2str(rr) '/' num2str(length(bend_arr))]);
             
             th_end = bend_arr(rr)*pi/180;  % radius of curvature (to define bent shape)
             if th_end==0

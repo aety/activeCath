@@ -5,11 +5,12 @@ fname = 'findApex_3DoF';
 % fname = 'interp_btw_fr_res'; 
 load(['pre_nn_' fname]);
 n_tr = 5;
+n_pdt = 3;
 
 %% load predictors
 v = 1:length(PDT_txt);
 
-pdt_arr = nchoosek(v,2);
+pdt_arr = nchoosek(v,n_pdt);
 
 P_ARR = nan(length(pdt_arr),n_tr);
 E_ARR = P_ARR;
