@@ -1,9 +1,9 @@
-clear;
-clc;
-ca;
+% clear;
+% clc;
+% ca;
 % fname = 'incl_pitch_manualPicking';
-fname = 'findApex_3DoF';
-load(['proc_' fname]);
+% fname = 'findApex_3DoF';
+% load(['proc_' fname]);
 
 PDT_txt = {'Y_0','mean(d_i)','std(d_i)','mean(d_i)_1 - mean(d_i)_2','\alpha_e - \alpha_0',...
     'mean[\Delta\alpha]','std[\Delta\alpha]','CV[d_i]','CV[\Delta\alpha]','mean(d_i)_1 / mean(d_i)_2'};
