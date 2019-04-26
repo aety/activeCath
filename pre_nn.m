@@ -32,11 +32,15 @@ for nn = 1:n_fr
     
     % separate-- set 1 -- inner
     pxy1 = PXY(:,tgl);
-    plt1= sortrows(pxy1,2);
+    if size(pxy1,2) > 1
+        plt1= sortrows(pxy1,2);
+    end
     
     % separate-- set 2 -- outer
     pxy2 = PXY(:,~tgl);
-    plt2 = sortrows(pxy2,2);
+    if size(pxy2,2) > 1
+        plt2 = sortrows(pxy2,2);
+    end
     
     %% compile NN predictors (set 1 -- on the right) (set 2 -- on the left)
     slc = plt2(1,2) < plt1(1,2);    % pick a point at the lowest y-position
