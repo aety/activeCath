@@ -8,12 +8,12 @@ L = 105;            % length of catheter (mm)
 L_res = 0.5;        % catheter spatial resolution (interval between nodes) (mm)
 L_pct_bent = 95;    % percent length bent (%)
 poly_npt = 100;     % number of points for polynomial appxoimation
-poly_ord = 3;       % order for polynomial fit
+% poly_ord = 3;       % order for polynomial fit
 
 %% define helix
 p1_helix = 10*100/L;    % helix starting point (% length)
 p2_helix = 92*100/L;    % helix ending point (% length)
-npt_helix = 500;        % number of points of the helix
+npt_helix = 1000;        % number of points of the helix
 a_helix = 3.5;          % amplitude of the sine wave of the helix (mm)
 
 %% define reference
@@ -56,7 +56,7 @@ for bb = 1:length(pitch_arr)
             L1 = L - L2;
             
             Rk = L2/th_end; % radius of curvature of the bent section
-                        
+            
             x1 = 0:L_res:L1;            % x of unbent
             y1 = zeros(1,length(x1));   % y of unbent
             
@@ -109,14 +109,32 @@ for bb = 1:length(pitch_arr)
             xh = M_helix(1,:); yh = M_helix(2,:); zh = M_helix(3,:);
             
             %% find apexes in X-Y projection
-            [x_pks,y_pks] = FindHelixPeaks(xh,yh,X,Y);
-                       
-            %% determine on which side of the catheter the peaks are 
-            [p,S,mu] = polyfit(X,Y,poly_ord); % polyfit 
-            X_ap = interp1(linspace(0,1,length(X)),X,linspace(0,1,poly_npt));
-            [Y_ap,~] = polyval(p,X_ap,S,mu);
-            [y_pks_poly,~] = polyval(p,x_pks,S,mu);
-            tgl = (y_pks - y_pks_poly) < 0;
+            [x_pks,y_pks,tgl] = FindHelixPeaks(xh,yh,X,Y);
+            
+            %% determine on which side of the catheter the peaks are
+            %             [p,S,mu] = polyfit(X,Y,poly_ord); % polyfit
+            %             X_ap = interp1(linspace(0,1,length(X)),X,linspace(0,1,poly_npt));
+            %             [Y_ap,~] = polyval(p,X_ap,S,mu);
+            %             [y_pks_poly,~] = polyval(p,x_pks,S,mu);
+            %             tgl = (y_pks - y_pks_poly) < 0;
+            
+            %% reduce the resolution of catheter (no need for high-resolution calculation)
+            X = interp1(1:length(X),X,linspace(1,length(X),poly_npt));
+            Y = interp1(1:length(Y),Y,linspace(1,length(Y),poly_npt));
+            
+            %% plot (optional)
+            dif = abs(length(tgl) - sum(tgl) - sum(tgl));
+            if dif > 1
+                hold on;
+                plot(x_pks,y_pks,'*');                
+                plot(X,Y,'--');
+                plot(x_pks(tgl),y_pks(tgl),'o')
+                plot(xh,yh);
+                axis equal
+                title([bb,aa,rr]);
+                pause;
+                clf;
+            end
             
             %% save into big arrays
             nn = nn + 1;
@@ -125,8 +143,8 @@ for bb = 1:length(pitch_arr)
             p_arr(nn) = pitch_arr(bb);
             PKS{nn} = [x_pks;y_pks];
             TGL{nn} = tgl;
-            X_ARR(:,nn) = X_ap;
-            Y_ARR(:,nn) = Y_ap;
+            X_ARR(:,nn) = X;
+            Y_ARR(:,nn) = Y;
         end % bend_arr
         
     end % roll_arr
