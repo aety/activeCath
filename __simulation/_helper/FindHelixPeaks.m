@@ -1,6 +1,6 @@
 function [x_pks,y_pks,tgl] = FindHelixPeaks(xh,yh,X,Y)
 
-plt = 1;
+plt = 0;
 
 %% find helices-catheter intersection
 [x0,y0,~,~] = intersections(xh,yh,X,Y,0);
