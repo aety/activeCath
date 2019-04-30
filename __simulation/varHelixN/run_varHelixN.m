@@ -1,5 +1,5 @@
 clear; clc; ca;
-n_helix_arr = 4:2:20;
+n_helix_arr = 16; % 4:2:20;
 
 for nnn = 1:length(n_helix_arr)
     
@@ -7,7 +7,7 @@ for nnn = 1:length(n_helix_arr)
     
     d = ['varHelixN_' num2str(n_helix)];
     
-    proc_findApex_3DoF_varHelixN;
+%     proc_findApex_3DoF_varHelixN;
     
     clearvars -except nn n_helix_arr n_helix d
     
@@ -16,9 +16,9 @@ for nnn = 1:length(n_helix_arr)
     
     mkdir(d);
     cd(d);
-    pre_nn;
+%     pre_nn;
     nn_training;
-    nn_plot;
+%     nn_plot;
     
     cd ..
     

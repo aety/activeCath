@@ -18,6 +18,9 @@ TIPy = TIPx;
 %%
 ref = ref_pt';
 
+TIPx = X(1,:) - X(end,:); % catheter tip X-location % end-- base; 1--tip
+TIPy = Y(1,:) - Y(end,:); % catheter tip Y-location % end-- base; 1--tip
+
 for nn = 1:n_fr
     %% load data
     tgl = logical(TGL{nn});
@@ -27,20 +30,18 @@ for nn = 1:n_fr
     %     PXY = PXY - repmat(ref,1,length(PXY)); PXY(2,:) = -PXY(2,:);
     
     % remove NaN's
-    tgl(isnan(PXY(:,1))) = [];
-    PXY(isnan(PXY(:,1)),:) = [];
+    %     tgl(isnan(PXY(:,1))) = [];
+    %     PXY(isnan(PXY(:,1)),:) = [];
     
-    % separate-- set 1 -- inner
+    % separate
     pxy1 = PXY(:,tgl);
-    if size(pxy1,2) > 1
-        plt1= sortrows(pxy1,2);
-    end
-    
-    % separate-- set 2 -- outer
     pxy2 = PXY(:,~tgl);
-    if size(pxy2,2) > 1
-        plt2 = sortrows(pxy2,2);
+    if size(pxy1,1)<=2
+        pxy1 = pxy1';
+        pxy2 = pxy2';
     end
+    plt1 = sortrows(pxy1,2);
+    plt2 = sortrows(pxy2,2);
     
     %% compile NN predictors (set 1 -- on the right) (set 2 -- on the left)
     slc = plt2(1,2) < plt1(1,2);    % pick a point at the lowest y-position
@@ -60,7 +61,7 @@ for nn = 1:n_fr
     PDT(2,nn) = nanmean(dlat);                          % predictor 2 -- mean(di)
     PDT(3,nn) = nanstd(dlat);                           % predictor 3 -- std(di)
     PDT(4,nn) = nanmean(dlat1) - nanmean(dlat2);        % predictor 4 -- mean(di)_left - mean(di)_right
-    PDT(5,nn) = atan2(TIPx(:,nn),TIPy(:,nn));           % predictor 5 -- alpha_e - alpha_0 (global slope angle, assuming base slope is 0)
+    PDT(5,nn) = atan2(TIPx(nn),TIPy(nn));           % predictor 5 -- alpha_e - alpha_0 (global slope angle, assuming base slope is 0)
     PDT(6,nn) = nanmean(dalp);                          % predictor 6 -- mean[del(alpha)]
     PDT(7,nn) = nanstd(dalp);                           % predictor 7 -- std[del(alpha)]
     PDT(8,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 8 -- CV[di]
@@ -68,8 +69,8 @@ for nn = 1:n_fr
     PDT(10,nn) = nanmean(dlat1)/nanmean(dlat2);         % predictor 10 -- mean(di)_left / mean(di)_right
     
 end
-TIPx = X(1,:) - X(end,:); % catheter tip X-location % end-- base; 1--tip
-TIPy = Y(1,:) - Y(end,:); % catheter tip Y-location % end-- base; 1--tip
+% TIPx = X(1,:) - X(end,:); % catheter tip X-location % end-- base; 1--tip
+% TIPy = Y(1,:) - Y(end,:); % catheter tip Y-location % end-- base; 1--tip
 
 RSP = [r_arr,b_arr,p_arr]';
 

@@ -1,7 +1,7 @@
 %% define catheter 3D rotation (about x-axis)
-roll_arr = 0:2.5:80; % array of the "roll" rotation (deg)
-pitch_arr = 0:2.5:50;% array of the "pitch" rotation (deg)
-bend_arr = [0.000001,2.5:2.5:80];% array of values for the varying parameter
+roll_arr = 0:5:80; % array of the "roll" rotation (deg)
+pitch_arr = 0:5:50;% array of the "pitch" rotation (deg)
+bend_arr = [0.000001,5:5:80];% array of values for the varying parameter
 
 %% define catheter
 L = 105;            % length of catheter (mm)
@@ -73,7 +73,7 @@ for bb = 1:length(pitch_arr)
             Y = [y1,y2];            % catheter Y coordinate
             Z = zeros(1,length(X)); % catheter Z coordinate
             
-            M = [X;Y;Z]; % catheter XYZ combined
+            M = [X;Y;Z]; % catheter XYZ combined            
             
             %% configure helix
             pct_helix = p2_helix - p1_helix; % helix global length (% of cathetler L)
@@ -144,10 +144,10 @@ for bb = 1:length(pitch_arr)
             b_arr(nn) = bend_arr(rr);
             r_arr(nn) = roll_arr(aa);
             p_arr(nn) = pitch_arr(bb);
-            PKS{nn} = [x_pks;y_pks];
+            PKS{nn} = [x_pks;y_pks]; % flip x and y to correspond to experiment
             TGL{nn} = tgl;
             X_ARR(:,nn) = X;
-            Y_ARR(:,nn) = Y;
+            Y_ARR(:,nn) = Y;         % flip x and y to correspond to experiment
         end % bend_arr
         
     end % roll_arr
@@ -157,4 +157,4 @@ end % pitch_arr
 X = X_ARR;
 Y = Y_ARR;
 
-% save(['proc_findApex_3DoF_varHelixN_' num2str(n_helix)],'b_arr','r_arr','p_arr','PKS','TGL','X','Y','ref_pt');
+save(['proc_findApex_3DoF_varHelixN_' num2str(n_helix)],'b_arr','r_arr','p_arr','PKS','TGL','X','Y','ref_pt');

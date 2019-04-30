@@ -10,7 +10,7 @@
 
 %% load
 clear; clc; ca;
-load interp\interp_btw_fr_res
+load interp_btw_fr_res
 
 PDT_txt = {'Y_0','mean(d_i)','std(d_i)','mean(d_i)_1 - mean(d_i)_2','\alpha_e - \alpha_0',...
     'mean[\Delta\alpha]','std[\Delta\alpha]','CV[d_i]','CV[\Delta\alpha]','mean(d_i)_1 / mean(d_i)_2'};
