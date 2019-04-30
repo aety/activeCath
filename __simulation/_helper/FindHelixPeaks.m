@@ -1,6 +1,6 @@
 function [x_pks,y_pks,tgl] = FindHelixPeaks(xh,yh,X,Y)
 
-plt = 0;
+plt = 1;
 
 %% find helices-catheter intersection
 [x0,y0,~,~] = intersections(xh,yh,X,Y,0);
@@ -24,7 +24,7 @@ for ii = 1:length(x0)
     end
 end
 temp = [i0,x0,y0]; % sort all intersects based on helical indices
-temp = sortrows(temp,1,'descend'); x0 = temp(:,2); y0 = temp(:,3);
+temp = sortrows(temp,1,'ascend'); x0 = temp(:,2); y0 = temp(:,3);
 
 %% find peaks
 n_pks = length(x0)-1;
@@ -52,14 +52,11 @@ for ii = 1:n_pks
     temp = [xx,yy]; temp = sortrows(temp); xx = temp(:,1); yy = temp(:,2); % sort [xx,yy] so they are in the order of x
     dot_arr = (xd - xx(1))*(yy(2) - yy(1)) - (yd - yy(1))*(xx(2) - xx(1)); % dot product
     sign_arr = sign(dot_arr); % retain only the signs of the dot products
-    if ii==1
-        si0 = sign_arr(round(length(xd)/2));
-        si = si0;
-    else
+    if ii > 1
         si = si*(-1); % flip signs
-    end
         xd(sign_arr~=si) = nan; % exclude points on the wrong side
         yd(sign_arr~=si) = nan; % exclude points on the wrong side
+    end
     
     % find the point furthest from the catheter from the points nearest to the normal of the tangent at midpoint
     d = abs(m*xd-yd+(ym-m*xm))/sqrt(m^2+1^2); % point-to-line distance (normal of connection line) % https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
@@ -74,12 +71,17 @@ for ii = 1:n_pks
     % store peaks
     x_pks(ii) = xd(id); % store
     y_pks(ii) = yd(id); % store
+    if ii==1
+        si = sign(sign_arr(id)); % save sign of the first peak
+        si0 = si;
+    end
     
     if plt
         plot(xd,yd,'*g');
         plot(xm,ym,'+m');
         plot(xd(id),yd(id),'dm','linewidth',2);
         title(ii);
+        axis equal;
         pause;
     end
 end

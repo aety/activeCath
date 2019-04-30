@@ -71,7 +71,7 @@ for rr = 1:size(y,1)
     %     h2 = plot([min(t(rr,ind)),max(t(rr,ind))],(mplt+seplt)*ones(1,2),'--k');
     %     plot([min(t(rr,ind)),max(t(rr,ind))],(mplt-seplt)*ones(1,2),'--k');
     %     legend([h1,h2],num2str(mplt,3),['\pm ' num2str(seplt,3) ' (SE)'],'location','northwest');
-    title(['mean = ' num2str(mplt,3) '\pm ' num2str(seplt,3) ' (STD)'],'fontweight','normal');
+    title(['mean = ' num2str(mplt,3) '\pm ' num2str(seplt,3) ' (SD)'],'fontweight','normal');
     
     xlabel(['actual ' RSP_txt{rr}]);
     ylabel(['|' RSP_txt{rr} ' error|']);
