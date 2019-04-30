@@ -8,16 +8,15 @@ L = 105;            % length of catheter (mm)
 L_res = 0.5;        % catheter spatial resolution (interval between nodes) (mm)
 L_pct_bent = 95;    % percent length bent (%)
 poly_npt = 100;     % number of points for polynomial appxoimation
-% poly_ord = 3;       % order for polynomial fit
 
 %% define helix
 p1_helix = 10*100/L;    % helix starting point (% length)
 p2_helix = 92*100/L;    % helix ending point (% length)
-npt_helix = 1000;        % number of points of the helix
-a_helix = 3.5;          % amplitude of the sine wave of the helix (mm)
+npt_helix = 1000;       % number of points of the helix
+a_helix = 2;            % amplitude of the sine wave of the helix (mm) (radius)
 
 %% define reference
-ref_pt = [5,0]; % reference base point (circular coils in experiment)
+ref_pt = [7,0]; % reference base point (circular coils in experiment)
 
 %% preallocate
 n_row = length(roll_arr)*length(pitch_arr)*length(bend_arr);
@@ -80,7 +79,7 @@ for bb = 1:length(pitch_arr)
             pct_helix = p2_helix - p1_helix; % helix global length (% of cathetler L)
             
             % define three segments along the bent length (space 1, helix, space 2) % the three variables below should sum up to 1
-            frac_space_1 = (p1_helix - (100 - L_pct_bent))/L_pct_bent;  % ratio of the bent section before helix coverage (a ratio of bent length)
+            frac_space_1 = (p1_helix - (100 - L_pct_bent))/L_pct_bent;% ratio of the bent section without helix coverage (a ratio of bent length)
             frac_helix_bent = pct_helix/L_pct_bent;                   % ratio of helix coverage (a ratio of bent length)
             frac_space_2 = (100 - p2_helix)/L_pct_bent;               % ratio of the bent section after helix coverage (a ratio of bent length)
             
@@ -93,12 +92,22 @@ for bb = 1:length(pitch_arr)
             n_effect_helix = n_helix*2*pi/th_helix_range;           % effective number of sinusoids (adjusted for the equation)
             
             % define an array for all theta angles along the helix
-            th_helix = linspace(th_2,th_1,npt_helix);
+            th_helix = linspace(th_1,th_2,npt_helix);           % theta array for global angles (curvature)
+            th_helix_small = linspace(0,th_2-th_1,npt_helix);   % theta array for helical angles (oscillations)
             
             % compile helix
-            xh = xc + (Rk + a_helix*sin(n_effect_helix*th_helix)).*cos(th_helix);   % x location of helix
-            yh = yc + (Rk + a_helix*sin(n_effect_helix*th_helix)).*sin(th_helix);   % y location of helix
-            zh = a_helix*cos(n_effect_helix*th_helix);
+            xh = xc + (Rk + a_helix*sin(n_effect_helix*th_helix_small)).*cos(th_helix);   % x location of helix
+            yh = yc + (Rk + a_helix*sin(n_effect_helix*th_helix_small)).*sin(th_helix);   % y location of helix
+            zh = a_helix*cos(n_effect_helix*th_helix_small);
+            
+            %             hold on;
+            %             scatter3(xh,yh,zh,1,nn*ones(size(xh)));
+            %             scatter3(xh(1),yh(1),zh(1),20,nn,'*');
+            %             axis equal;
+            %             axis([0,150,-10,50,-10,10]);
+            %             view(3);
+            %             disp(th_1);
+            %             pause(.1);
             
             M_helix = [xh;yh;zh];
             
@@ -111,30 +120,24 @@ for bb = 1:length(pitch_arr)
             %% find apexes in X-Y projection
             [x_pks,y_pks,tgl] = FindHelixPeaks(xh,yh,X,Y);
             
-            %% determine on which side of the catheter the peaks are
-            %             [p,S,mu] = polyfit(X,Y,poly_ord); % polyfit
-            %             X_ap = interp1(linspace(0,1,length(X)),X,linspace(0,1,poly_npt));
-            %             [Y_ap,~] = polyval(p,X_ap,S,mu);
-            %             [y_pks_poly,~] = polyval(p,x_pks,S,mu);
-            %             tgl = (y_pks - y_pks_poly) < 0;
-            
             %% reduce the resolution of catheter (no need for high-resolution calculation)
             X = interp1(1:length(X),X,linspace(1,length(X),poly_npt));
             Y = interp1(1:length(Y),Y,linspace(1,length(Y),poly_npt));
             
             %% plot (optional)
-            dif = abs(length(tgl) - sum(tgl) - sum(tgl));
-            if dif > 1
-                hold on;
-                plot(x_pks,y_pks,'*');                
-                plot(X,Y,'--');
-                plot(x_pks(tgl),y_pks(tgl),'o')
-                plot(xh,yh);
-                axis equal
-                title([bb,aa,rr]);
-                pause;
-                clf;
-            end
+            %             dif = abs(length(tgl) - sum(tgl) - sum(tgl));
+            %             if dif > 1
+            %             hold on;
+            %             plot(x_pks,y_pks,'*');
+            %             plot(X,Y,'--');
+            %             plot(x_pks(tgl),y_pks(tgl),'o')
+            %             plot(xh,yh);
+            %             axis equal
+            %             axis([0,100,-10,50]);
+            %             title([bb,aa,rr]);
+            %             pause(0.5);
+            %             clf;
+            %             end
             
             %% save into big arrays
             nn = nn + 1;
@@ -154,4 +157,4 @@ end % pitch_arr
 X = X_ARR;
 Y = Y_ARR;
 
-save(['proc_findApex_3DoF_varHelixN_' num2str(n_helix)],'b_arr','r_arr','p_arr','PKS','TGL','X','Y','ref_pt');
+% save(['proc_findApex_3DoF_varHelixN_' num2str(n_helix)],'b_arr','r_arr','p_arr','PKS','TGL','X','Y','ref_pt');
