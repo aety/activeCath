@@ -40,9 +40,13 @@ for ii = 1:n_pks
     xm = mean(xx);          % midpoint
     ym = mean(yy);          % midpoint
     m = -diff(xx)/diff(yy); % slope of normal
+    mcath = -1/m;           % slope of catheter segment
     if isinf(m)
-        m = 1000000000;
+        m = 1000000000;        
     end
+    if isinf(mcath)
+        m = 1000000000;        
+    end    
     
     % find the relevant segment on the helical wire
     id = [ind_arr(ii,:),ind_arr(ii+1,:)]; % include the widest range of possible helices
@@ -56,10 +60,13 @@ for ii = 1:n_pks
         si = si*(-1); % flip signs
         xd(sign_arr~=si) = nan; % exclude points on the wrong side
         yd(sign_arr~=si) = nan; % exclude points on the wrong side
-    end
+    end    
     
     % find the point furthest from the catheter from the points nearest to the normal of the tangent at midpoint
-    d = abs(m*xd-yd+(ym-m*xm))/sqrt(m^2+1^2); % point-to-line distance (normal of connection line) % https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+    d = abs(m*xd-yd+(ym-m*xm))/sqrt(m^2+1^2);                   % point-to-line distance, [normal] of catheter segment % https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line    
+    dcath = abs(mcath*xd-yd+(ym-mcath*xm))/sqrt(mcath^2+1^2);   % point-to-line distance, [tangent] to catheter
+    tgl_el = dcath<mean(dcath);                                 % exclude points too close to catheter
+    xd(tgl_el) = nan; yd(tgl_el) = nan; d(tgl_el) = nan;        % exclude points too close to catheter    
     [~,I] = sort(d);    % sort helix-to-normal distance
     I_arr = I(1:6);     % find 4 points the helix closest to the normal line
     x_arr = xd(I_arr);  % candidate x
