@@ -9,6 +9,8 @@ if plt
     plot(xh,yh,'k');
     plot(X,Y,'k');
 end
+% x0 = [x0(1:4);37.27;x0(5:end)]; % only for N = 6 and fr = 3169
+% y0 = [y0(1:4);0;y0(5:end)];
 
 %% sort [x0,y0] by the order of indices of helices (xh,yh)
 n_apx = 4; % number of nearest elements to include (to avoid errors due to "loops")
@@ -42,11 +44,11 @@ for ii = 1:n_pks
     m = -diff(xx)/diff(yy); % slope of normal
     mcath = -1/m;           % slope of catheter segment
     if isinf(m)
-        m = 1000000000;        
+        m = 1000000000;
     end
     if isinf(mcath)
-        m = 1000000000;        
-    end    
+        m = 1000000000;
+    end
     
     % find the relevant segment on the helical wire
     id = [ind_arr(ii,:),ind_arr(ii+1,:)]; % include the widest range of possible helices
@@ -60,13 +62,15 @@ for ii = 1:n_pks
         si = si*(-1); % flip signs
         xd(sign_arr~=si) = nan; % exclude points on the wrong side
         yd(sign_arr~=si) = nan; % exclude points on the wrong side
-    end    
+    end
     
     % find the point furthest from the catheter from the points nearest to the normal of the tangent at midpoint
-    d = abs(m*xd-yd+(ym-m*xm))/sqrt(m^2+1^2);                   % point-to-line distance, [normal] of catheter segment % https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line    
+    d = abs(m*xd-yd+(ym-m*xm))/sqrt(m^2+1^2);                   % point-to-line distance, [normal] of catheter segment % https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
     dcath = abs(mcath*xd-yd+(ym-mcath*xm))/sqrt(mcath^2+1^2);   % point-to-line distance, [tangent] to catheter
-    tgl_el = dcath<mean(dcath);                                 % exclude points too close to catheter
-    xd(tgl_el) = nan; yd(tgl_el) = nan; d(tgl_el) = nan;        % exclude points too close to catheter    
+    tgl_el = dcath < nanmean(dcath);                                 % exclude points too close to catheter
+    xd(tgl_el) = nan; yd(tgl_el) = nan; d(tgl_el) = nan;        % exclude points too close to catheter
+    
+    %     % version 1 -- closest to center line
     [~,I] = sort(d);    % sort helix-to-normal distance
     I_arr = I(1:6);     % find 4 points the helix closest to the normal line
     x_arr = xd(I_arr);  % candidate x
@@ -74,6 +78,21 @@ for ii = 1:n_pks
     d_arr = rssq([x_arr-xm;y_arr-ym]); % candidate distance
     [~,idx] = max(d_arr);   % find the candidate furthest from the midpoint
     id = I_arr(idx);        % identify peak index
+    
+    % version 2 -- furthest to catheter
+    %%%% find the furthest 2 points. If far apart, choose the first
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % %     [~,I] = sort(dcath);    % sort helix-to-normal distance
+    % %     I_arr = I(1:2);     % find 4 points the helix closest to the normal line
+    % %     x_arr = xd(I_arr);  % candidate x
+    % %     y_arr = yd(I_arr);  % candidate y
+    % %     d_arr = rssq(diff([x_arr;y_arr]'));
+    % %     if d_arr > 1
+    % %         id = min(I_arr);
+    % %     else
+    % %         id = I_arr(1);
+    % %     end
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % store peaks
     x_pks(ii) = xd(id); % store
@@ -84,12 +103,14 @@ for ii = 1:n_pks
     end
     
     if plt
-        plot(xd,yd,'*g');
-        plot(xm,ym,'+m');
+        h1 = plot(xd,yd,'*g');
+        h2 = plot(xm,ym,'+m');
         plot(xd(id),yd(id),'dm','linewidth',2);
+        text(xd(id),yd(id),num2str(ii));
         title(ii);
         axis equal;
-        pause;
+        % %         pause;
+        delete([h1,h2]);
     end
 end
 

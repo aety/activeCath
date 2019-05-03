@@ -38,8 +38,8 @@ for nn = 1:n_fr
         pxy1 = pxy1';
         pxy2 = pxy2';
     end
-    plt1 = sortrows(pxy1,2);
-    plt2 = sortrows(pxy2,2);
+    plt1 = pxy1; %     plt1 = sortrows(pxy1,2);
+    plt2 = pxy2; %     plt2 = sortrows(pxy2,2);
     
     %% compile NN predictors (set 1 -- on the right) (set 2 -- on the left)
     slc = plt2(1,2) < plt1(1,2);    % pick a point at the lowest y-position

@@ -82,4 +82,4 @@ for ii = 1:length(pdt_arr)
     
 end
 
-save(['nn_' fname],'*_ARR','pdt_arr','RSP');
+save(['nn_' fname],'*_ARR','pdt_arr','RSP','*_txt');

@@ -7,12 +7,12 @@ pitch_arr = 0:2.5:50;% array of the "pitch" rotation (deg)
 L = 105;            % length of catheter (mm)
 L_res = 0.5;        % catheter spatial resolution (interval between nodes) (mm)
 L_pct_bent = 95;    % percent length bent (%)
-poly_npt = 100;     % number of points for polynomial appxoimation
+L_npt = 500;     % number of points for polynomial appxoimation
 
 %% define helix
 p1_helix = 10*100/L;    % helix starting point (% length)
 p2_helix = 92*100/L;    % helix ending point (% length)
-npt_helix = 1000;       % number of points of the helix
+npt_helix = 2000;       % number of points of the helix
 a_helix = 2;            % amplitude of the sine wave of the helix (mm) (radius)
 
 %% define reference
@@ -25,7 +25,7 @@ r_arr = b_arr;
 p_arr = b_arr;
 PKS = cell(1,n_row);
 TGL = PKS;
-X_ARR = nan(poly_npt,n_row);
+X_ARR = nan(L_npt,n_row);
 Y_ARR = X_ARR;
 nn = 0;
 
@@ -112,8 +112,8 @@ for bb = 1:length(pitch_arr)
             [x_pks,y_pks,tgl] = FindHelixPeaks(xh,yh,X,Y);
             
             %% reduce the resolution of catheter (no need for high-resolution calculation)
-            X = interp1(1:length(X),X,linspace(1,length(X),poly_npt));
-            Y = interp1(1:length(Y),Y,linspace(1,length(Y),poly_npt));
+            X = interp1(1:length(X),X,linspace(1,length(X),L_npt));
+            Y = interp1(1:length(Y),Y,linspace(1,length(Y),L_npt));
             
             %% plot (optional)
             dif = abs(length(tgl) - sum(tgl) - sum(tgl));

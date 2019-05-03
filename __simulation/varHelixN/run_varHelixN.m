@@ -9,10 +9,10 @@ for nnn = 1:length(n_helix_arr)
     
     proc_findApex_3DoF_varHelixN;
     
-    clearvars -except nn n_helix_arr n_helix d
+    clearvars -except nn n_helix_arr n_helix d %%%%%%%%%%
     
     fname = ['findApex_3DoF_varHelixN_' num2str(n_helix)];
-    load(['proc_' fname]);
+    load(['proc_' fname]); %%%%%%%%%%%%%%%%%
     
     mkdir(d);
     cd(d);
@@ -23,3 +23,5 @@ for nnn = 1:length(n_helix_arr)
     cd ..
     
 end
+
+post_nn_varHelixN;
