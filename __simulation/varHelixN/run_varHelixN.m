@@ -1,5 +1,5 @@
 clear; clc; ca;
-n_helix_arr = 4:2:24;
+n_helix_arr = 24; % 4:2:24;
 
 for nnn = 1:length(n_helix_arr)
     
@@ -13,15 +13,15 @@ for nnn = 1:length(n_helix_arr)
     
     fname = ['findApex_3DoF_varHelixN_' num2str(n_helix)];
     load(['proc_' fname]); %%%%%%%%%%%%%%%%%
-    
-    mkdir(d);
-    cd(d);
-    pre_nn;
-    nn_training;
-    nn_plot;
-    
-    cd ..
+    %
+    %     mkdir(d);
+    %     cd(d);
+    %     pre_nn;
+    %     nn_training;
+    %     nn_plot;
+    %
+    %     cd ..
     
 end
 
-post_nn_varHelixN;
+% post_nn_varHelixN;
