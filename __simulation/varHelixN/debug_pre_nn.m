@@ -1,5 +1,5 @@
 clear; clc; ca;
-n_helix_arr = 24; % 4:2:24;
+n_helix_arr = 4:2:24;
 
 for nnn = length(n_helix_arr):-1:1
     
@@ -15,7 +15,7 @@ for nnn = length(n_helix_arr):-1:1
     c_arr = colormap(jet(length(n_helix_arr)));
     load(['pre_nn_' fname]);
     
-    for ii = 6
+    for ii = 7
         
         figure(ii);
         hold on;
@@ -28,7 +28,7 @@ for nnn = length(n_helix_arr):-1:1
         %         xlim([0,2000]);
         %         view(3);
     end
-%     pause;
+    pause;
     
     
     

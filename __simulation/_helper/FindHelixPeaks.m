@@ -31,23 +31,19 @@ end
 
 % ------------ version 2
 i0 = nan(size(x0));
-ind_arr = nan(length(x0),1);
 xhfind = xh; yhfind = yh;
 for ii = 1:length(x0)
     dn = (x0(ii)-xhfind).^2 + (y0(ii)-yhfind).^2; % calculate distance from an intersect to the helical wire
-    [~,tempb] = sort(dn,'ascend');
-    %     tempb = sort(tempb(1:2));
-    b = tempb(1);
+    [~,b] = sort(dn,'ascend');
     i0(ii) = b;
     xhfind(b) = nan;
-    yhfind(b) = nan;
-    ind_arr(ii) = b;
+    yhfind(b) = nan;    
 end
 
 % ------------
 
 temp = [i0,x0,y0]; % sort all intersects based on helical indices
-temp = sortrows(temp,1,'ascend'); x0 = temp(:,2); y0 = temp(:,3);
+temp = sortrows(temp,1,'ascend'); i0 = temp(:,1); x0 = temp(:,2); y0 = temp(:,3);
 
 %% find peaks
 n_pks = length(x0)-1;
@@ -72,8 +68,9 @@ for ii = 1:n_pks
     end
     
     % find the relevant segment on the helical wire
-    id = [ind_arr(ii,:),ind_arr(ii+1,:)]; % include the widest range of possible helices
-    xd = xh(min(id):max(id)); yd = yh(min(id):max(id));
+    %     id = [ind_arr(ii,:),ind_arr(ii+1,:)]; % include the widest range of possible helices
+    %     xd = xh(min(id):max(id)); yd = yh(min(id):max(id));
+    xd = xh(i0(ii):i0(ii+1)); yd = yh(i0(ii):i0(ii+1));
     
     % contrain to only one side of the catheter (alternating)
     temp = [xx,yy]; temp = sortrows(temp); xx = temp(:,1); yy = temp(:,2); % sort [xx,yy] so they are in the order of x
@@ -155,4 +152,4 @@ tgl = logical(tgl);
 %% re-sort by x
 temp = [x_pks',y_pks',tgl'];
 temp = sortrows(temp);
-x_pks = temp(:,1)'; y_pks = temp(:,2)'; tgl = temp(:,3)';
+x_pks = temp(:,1)'; y_pks = temp(:,2)'; tgl = logical(temp(:,3))';

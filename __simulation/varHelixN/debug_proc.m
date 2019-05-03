@@ -16,12 +16,12 @@ load proc_findApex_3DoF_varHelixN_24
 %%
 ind = 1:length(PKS); % find(p_arr==40);
 
-for ii = 253 % 1:length(ind) % 1:size(X,2)
+for ii = 1463 % 1:length(ind) % 1:size(X,2)
     
     id = ind(ii);
     
     temp = PKS{id};
-    tg = TGL{id};
+    tg = logical(TGL{id});
     
     hold on;
     h0 = plot(X(:,id),Y(:,id),'k');
