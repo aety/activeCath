@@ -1,7 +1,7 @@
 clear; clc; ca;
 n_helix_arr = 4:2:24;
 
-for nnn = length(n_helix_arr):-1:1
+for nnn = 1:length(n_helix_arr)
     
     n_helix = n_helix_arr(nnn);           % number of sinusoids of the helix
     
@@ -15,17 +15,19 @@ for nnn = length(n_helix_arr):-1:1
     c_arr = colormap(parula(length(n_helix_arr)));
     load(['pre_nn_' fname]);
     
-    for ii = 1
+    for ii = 1:size(PDT,1)
         
         figure(ii);
         hold on;
-        %         h = scatter(1:size(PDT,2),PDT(ii,:),20,c_arr(nnn,:),'filled');
-        %         alpha(h,0.3);
-        plot(PDT(ii,:),'.-','color',c_arr(nnn,:));
+        h = scatter(1:size(PDT,2),PDT(ii,:),20,c_arr(nnn,:),'filled');
+        alpha(h,0.5);
         title(PDT_txt{ii});
         axis tight;
+        
+        if ii==size(PDT,1)
+            
+        end
     end
-    pause;
     
     %%
     cd ..

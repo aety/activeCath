@@ -76,6 +76,8 @@ print('-dtiff','-r300','post_nn_varHelixN');
 close;
 
 %% plot sum
+load post_nn_varHelixN
+
 for pp = 1:length(p_arr)
     plot(n_helix_arr,sum(BEST_E_ARR,2),'.--k','markersize',10);
     title(['sum of three average errors'],'fontweight','normal');
@@ -89,13 +91,14 @@ print('-dtiff','-r300','post_nn_varHelixN_all');
 close;
 
 %% show best predictors
+load post_nn_varHelixN
+
 plot(repmat(n_helix_arr',1,3),BEST_PDT,'ok','markerfacecolor','k','markersize',2);
 set(gca,'xtick',n_helix_arr);
 set(gca,'ytick',1:length(PDT_txt),'yticklabel',PDT_txt);
 axis([n_helix_arr(1),n_helix_arr(end),1,length(PDT_txt)]);
 title('best predictors','fontweight','normal');
 xlabel('no. of helices');
-% ylabel('predictors');
 box off;
 set(gca,'fontsize',8);
 set(gcf,'paperposition',[0,0,4,2]);
