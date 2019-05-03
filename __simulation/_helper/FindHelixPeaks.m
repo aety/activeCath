@@ -1,6 +1,6 @@
 function [x_pks,y_pks,tgl] = FindHelixPeaks(xh,yh,X,Y)
 
-plt = 1;
+plt = 0;
 
 %% find helices-catheter intersection
 [x0,y0,~,~] = intersections(xh,yh,X,Y,0);
@@ -14,6 +14,7 @@ end
 % y0 = [y0(1:4);0;y0(5:end)];
 
 %% sort [x0,y0] by the order of indices of helices (xh,yh)
+% ------------ version 1
 % % % n_apx = 4; % number of nearest elements to include (to avoid errors due to "loops")
 % % % i0 = nan(size(x0));
 % % % ind_arr = nan(length(x0),n_apx);
@@ -28,19 +29,23 @@ end
 % % %     end
 % % % end
 
+% ------------ version 2
 i0 = nan(size(x0));
 ind_arr = nan(length(x0),1);
 xhfind = xh; yhfind = yh;
 for ii = 1:length(x0)
     dn = (x0(ii)-xhfind).^2 + (y0(ii)-yhfind).^2; % calculate distance from an intersect to the helical wire
     [~,tempb] = sort(dn,'ascend');
-    tempb = sort(tempb(1:2));
+    %     tempb = sort(tempb(1:2));
     b = tempb(1);
     i0(ii) = b;
     xhfind(b) = nan;
     yhfind(b) = nan;
     ind_arr(ii) = b;
 end
+
+% ------------
+
 temp = [i0,x0,y0]; % sort all intersects based on helical indices
 temp = sortrows(temp,1,'ascend'); x0 = temp(:,2); y0 = temp(:,3);
 
@@ -97,8 +102,14 @@ for ii = 1:n_pks
     % %     [~,idx] = max(d_arr);   % find the candidate furthest from the midpoint
     % %     id = I_arr(idx);        % identify peak index
     
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
     % version 2 -- furthest to catheter
     dcath(isnan(dcath)) = 0;    % remove nan's in dacth (for sorting purposes)
+    % method 1
+    [~,id] = nanmax(dcath);
+    
+    % method 2
     % % %     [~,I] = sort(dcath,'descend');  % sort helix-to-normal distance
     % % %     I_arr = I(1:8);     % find 8 points on the helix furthest from the catheter
     % % %     x_arr = xd(I_arr);  % candidate x
@@ -111,7 +122,7 @@ for ii = 1:n_pks
     % % %     else
     % % %         id = nanmax(I_arr);    % choose the first peak
     % % %     end
-    [~,id] = nanmax(dcath);
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     % store peaks
@@ -130,7 +141,7 @@ for ii = 1:n_pks
         text(xd(id),yd(id),num2str(ii));
         title(ii);
         axis equal;
-        %         pause;
+        pause;
         delete([h0,h1,h2]);
     end
 end
@@ -140,3 +151,8 @@ tgl = (-ones(1,n_pks)).^(1:n_pks);
 tgl = tgl*si0;
 tgl(tgl<0) = 0;
 tgl = logical(tgl);
+
+%% re-sort by x
+temp = [x_pks',y_pks',tgl'];
+temp = sortrows(temp);
+x_pks = temp(:,1)'; y_pks = temp(:,2)'; tgl = temp(:,3)';

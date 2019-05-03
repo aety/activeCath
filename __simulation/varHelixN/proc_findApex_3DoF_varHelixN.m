@@ -1,7 +1,7 @@
 %% define catheter 3D rotation (about x-axis)
-bend_arr = 70; % [0.000001,5:2.5:80];% array of values for the varying parameter
-roll_arr = 67.5; % 0:2.5:80; % array of the "roll" rotation (deg)
-pitch_arr = 0; % 0:2.5:50;% array of the "pitch" rotation (deg)
+bend_arr = [0.000001,5:5:80];% array of values for the varying parameter
+roll_arr = 0:5:80; % array of the "roll" rotation (deg)
+pitch_arr = 0:5:50;% array of the "pitch" rotation (deg)
 
 %% define catheter
 L = 105;            % length of catheter (mm)
@@ -12,7 +12,7 @@ L_npt = 200;     % number of points for polynomial appxoimation
 %% define helix
 p1_helix = 10*100/L;    % helix starting point (% length)
 p2_helix = 92*100/L;    % helix ending point (% length)
-npt_helix = 5000;       % number of points of the helix
+npt_helix = 10000;       % number of points of the helix
 a_helix = 2;            % amplitude of the sine wave of the helix (mm) (radius)
 
 %% define reference
@@ -148,4 +148,4 @@ end % pitch_arr
 X = X_ARR;
 Y = Y_ARR;
 
-% save(['proc_findApex_3DoF_varHelixN_' num2str(n_helix)],'b_arr','r_arr','p_arr','PKS','TGL','X','Y','ref_pt');
+save(['proc_findApex_3DoF_varHelixN_' num2str(n_helix)],'b_arr','r_arr','p_arr','PKS','TGL','X','Y','ref_pt');

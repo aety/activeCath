@@ -15,12 +15,12 @@ for nnn = 1:length(n_helix_arr)
     load(['proc_' fname]); %%%%%%%%%%%%%%%%%
     %
     %     mkdir(d);
-    %     cd(d);
-    %     pre_nn;
+    cd(d);
+    pre_nn;
     %     nn_training;
     %     nn_plot;
     %
-    %     cd ..
+    cd ..
     
 end
 

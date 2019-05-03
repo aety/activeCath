@@ -28,7 +28,7 @@ for nnn = length(n_helix_arr):-1:1
         %         xlim([0,2000]);
         %         view(3);
     end
-    pause;
+%     pause;
     
     
     
