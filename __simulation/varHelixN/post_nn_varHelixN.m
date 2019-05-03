@@ -14,7 +14,7 @@ for nnn = 1:length(n_helix_arr)
     cd(d);
     
     fname = ['findApex_3DoF_varHelixN_' num2str(n_helix)];
-        
+    
     %% view nn results
     c_map = [27,158,119; 217,95,2; 117,112,179]/255;
     load(['nn_' fname]);
@@ -32,18 +32,18 @@ for nnn = 1:length(n_helix_arr)
     r_arr = nan(1,3);
     e_arr = r_arr;
     
-    for rr = 1:size(y,1)        
+    for rr = 1:size(y,1)
         a = RSP(rr,ind);
         b = y(rr,ind);
         [r,~,~] = regression(a,b);
-                
+        
         err = abs(y(rr,ind) - RSP(rr,ind));
         merr = mean(err);
         
         r_arr(rr) = r;
-        e_arr(rr) = merr;        
+        e_arr(rr) = merr;
     end
-        
+    
     %% store
     BEST_PDT(nnn,:) = best_pdt;
     BEST_R_ARR(nnn,:) = r_arr;
@@ -73,4 +73,31 @@ end
 legend(RSP_txt,'location','northeast');
 set(gcf,'paperposition',[0,0,8,2]);
 print('-dtiff','-r300','post_nn_varHelixN');
+close;
+
+%% plot sum
+for pp = 1:length(p_arr)
+    plot(n_helix_arr,sum(BEST_E_ARR,2),'.--k','markersize',10);
+    title(['sum of three average errors'],'fontweight','normal');
+    xlabel('no. of helices');
+    set(gca,'fontsize',8);
+    box off;
+    axis tight;
+end
+set(gcf,'paperposition',[0,0,3,2]);
+print('-dtiff','-r300','post_nn_varHelixN_all');
+close;
+
+%% show best predictors
+plot(repmat(n_helix_arr',1,3),BEST_PDT,'ok','markerfacecolor','k','markersize',2);
+set(gca,'xtick',n_helix_arr);
+set(gca,'ytick',1:length(PDT_txt),'yticklabel',PDT_txt);
+axis([n_helix_arr(1),n_helix_arr(end),1,length(PDT_txt)]);
+title('best predictors','fontweight','normal');
+xlabel('no. of helices');
+% ylabel('predictors');
+box off;
+set(gca,'fontsize',8);
+set(gcf,'paperposition',[0,0,4,2]);
+print('-dtiff','-r300','post_nn_varHelixN_PDT');
 close;

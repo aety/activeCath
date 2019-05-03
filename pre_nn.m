@@ -8,7 +8,7 @@
 load(['proc_' fname]); %%%%%%%% TEMP %%%%%%%%%%%%%%%%%
 
 PDT_txt = {'Y_0','mean(d_i)','std(d_i)','mean(d_i)_1 - mean(d_i)_2','\alpha_e - \alpha_0',...
-    'mean[\Delta\alpha]','std[\Delta\alpha]','CV[d_i]','CV[\Delta\alpha]','mean(d_i)_1 / mean(d_i)_2'};
+    'mean[\Delta\alpha]','std[\Delta\alpha]','CV[d_i]','mean(d_i)_1 / mean(d_i)_2'};
 RSP_txt = {'\theta_{roll}','\theta_{bend}','\theta_{pitch}'};
 
 % n_pks = 15;
@@ -61,12 +61,12 @@ for nn = 1:n_fr
     PDT(2,nn) = nanmean(dlat);                          % predictor 2 -- mean(di)
     PDT(3,nn) = nanstd(dlat);                           % predictor 3 -- std(di)
     PDT(4,nn) = nanmean(dlat1) - nanmean(dlat2);        % predictor 4 -- mean(di)_left - mean(di)_right
-    PDT(5,nn) = atan2(TIPx(nn),TIPy(nn));           % predictor 5 -- alpha_e - alpha_0 (global slope angle, assuming base slope is 0)
+    PDT(5,nn) = atan2(TIPx(nn),TIPy(nn));               % predictor 5 -- alpha_e - alpha_0 (global slope angle, assuming base slope is 0)
     PDT(6,nn) = nanmean(dalp);                          % predictor 6 -- mean[del(alpha)]
     PDT(7,nn) = nanstd(dalp);                           % predictor 7 -- std[del(alpha)]
     PDT(8,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 8 -- CV[di]
-    PDT(9,nn) = nanstd(dalp)/nanmean(dalp);             % predictor 9 -- CV[del(alpha)]
-    PDT(10,nn) = nanmean(dlat1)/nanmean(dlat2);         % predictor 10 -- mean(di)_left / mean(di)_right
+    PDT(9,nn) = nanmean(dlat1)/nanmean(dlat2);          % predictor 9 -- mean(di)_left / mean(di)_right
+%     PDT(9,nn) = nanstd(dalp)/nanmean(dalp);             % predictor 9 -- CV[del(alpha)]
     
 end
 

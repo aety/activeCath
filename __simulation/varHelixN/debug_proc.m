@@ -3,20 +3,12 @@ clear;
 clc;
 ca;
 
-load proc_findApex_3DoF_varHelixN_24
+load proc_findApex_3DoF_varHelixN_20
 
 %%
-% for ii = 1:size(PDT,1)
-%     subplot(10,1,ii);
-%     plot(PDT(ii,:));
-%     title(PDT_txt{ii});
-%     axis tight;
-% end
+ind = 1:length(PKS); 
 
-%%
-ind = 1:length(PKS); % find(p_arr==40);
-
-for ii = 1463 % 1:length(ind) % 1:size(X,2)
+for ii = 123
     
     id = ind(ii);
     

@@ -10,18 +10,19 @@ if plt
     plot(X,Y,'-k');
     plot(x0,y0,'ob');
 end
-% x0 = [x0(1:4);37.27;x0(5:end)]; % only for N = 6 and fr = 3169
-% y0 = [y0(1:4);0;y0(5:end)];
 
 %% sort [x0,y0] by the order of indices of helices (xh,yh)
 i0 = nan(size(x0));
 xhfind = xh; yhfind = yh;
 for ii = 1:length(x0)
     dn = (x0(ii)-xhfind).^2 + (y0(ii)-yhfind).^2; % calculate distance from an intersect to the helical wire
-    [~,b] = sort(dn,'ascend');
+    [~,btemp] = sort(dn,'ascend');
+    b = btemp(1);
     i0(ii) = b;
-    xhfind(b) = nan;
-    yhfind(b) = nan;    
+    if b > 1
+        xhfind(b-1:b+1) = nan;
+        yhfind(b-1:b+1) = nan;
+    end
 end
 
 temp = [i0,x0,y0]; % sort all intersects based on helical indices
@@ -66,11 +67,10 @@ for ii = 1:n_pks
     d = abs(m*xd-yd+(ym-m*xm))/sqrt(m^2+1^2);                   % point-to-line distance, [normal] of catheter segment % https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
     dcath = abs(mcath*xd-yd+(ym-mcath*xm))/sqrt(mcath^2+1^2);   % point-to-line distance, [tangent] to catheter
     tgl_el = dcath < nanmean(dcath);        % exclude points too close to catheter
-    xd(tgl_el) = nan; yd(tgl_el) = nan;     % exclude points too close to catheter    
+    xd(tgl_el) = nan; yd(tgl_el) = nan;     % exclude points too close to catheter
+    d(tgl_el) = nan;                        % exclude points too close to catheter
     
-    % version 2 -- furthest to catheter
     dcath(isnan(dcath)) = 0;    % remove nan's in dacth (for sorting purposes)
-    % method 1
     [~,id] = nanmax(dcath);
         
     % store peaks
