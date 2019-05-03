@@ -14,22 +14,6 @@ end
 % y0 = [y0(1:4);0;y0(5:end)];
 
 %% sort [x0,y0] by the order of indices of helices (xh,yh)
-% ------------ version 1
-% % % n_apx = 4; % number of nearest elements to include (to avoid errors due to "loops")
-% % % i0 = nan(size(x0));
-% % % ind_arr = nan(length(x0),n_apx);
-% % % for ii = 1:length(x0)
-% % %     dn = (x0(ii)-xh).^2 + (y0(ii)-yh).^2; % calculate distance from an intersect to the helical wire
-% % %     [~,tempb] = sort(dn);
-% % %     i0(ii) = tempb(1); % find the closest points to the intersect
-% % %     ind = tempb(1:n_apx); % indices of the closest points
-% % %     ind_arr(ii,:) = ind; % save the indices
-% % %     if plt
-% % %         plot(x0(ii),y0(ii),'ob');
-% % %     end
-% % % end
-
-% ------------ version 2
 i0 = nan(size(x0));
 xhfind = xh; yhfind = yh;
 for ii = 1:length(x0)
@@ -39,8 +23,6 @@ for ii = 1:length(x0)
     xhfind(b) = nan;
     yhfind(b) = nan;    
 end
-
-% ------------
 
 temp = [i0,x0,y0]; % sort all intersects based on helical indices
 temp = sortrows(temp,1,'ascend'); i0 = temp(:,1); x0 = temp(:,2); y0 = temp(:,3);
@@ -68,8 +50,6 @@ for ii = 1:n_pks
     end
     
     % find the relevant segment on the helical wire
-    %     id = [ind_arr(ii,:),ind_arr(ii+1,:)]; % include the widest range of possible helices
-    %     xd = xh(min(id):max(id)); yd = yh(min(id):max(id));
     xd = xh(i0(ii):i0(ii+1)); yd = yh(i0(ii):i0(ii+1));
     
     % contrain to only one side of the catheter (alternating)
@@ -86,42 +66,13 @@ for ii = 1:n_pks
     d = abs(m*xd-yd+(ym-m*xm))/sqrt(m^2+1^2);                   % point-to-line distance, [normal] of catheter segment % https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
     dcath = abs(mcath*xd-yd+(ym-mcath*xm))/sqrt(mcath^2+1^2);   % point-to-line distance, [tangent] to catheter
     tgl_el = dcath < nanmean(dcath);        % exclude points too close to catheter
-    xd(tgl_el) = nan; yd(tgl_el) = nan;     % exclude points too close to catheter
-    d(tgl_el) = nan;                        % exclude points too close to catheter
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    % %     % version 1 -- closest to center line
-    % %     [~,I] = sort(d);    % sort helix-to-normal distance
-    % %     I_arr = I(1:6);     % find 4 points on the helix closest to the normal line
-    % %     x_arr = xd(I_arr);  % candidate x
-    % %     y_arr = yd(I_arr);  % candidate y
-    % %     d_arr = rssq([x_arr-xm;y_arr-ym]); % candidate distance
-    % %     [~,idx] = max(d_arr);   % find the candidate furthest from the midpoint
-    % %     id = I_arr(idx);        % identify peak index
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    xd(tgl_el) = nan; yd(tgl_el) = nan;     % exclude points too close to catheter    
     
     % version 2 -- furthest to catheter
     dcath(isnan(dcath)) = 0;    % remove nan's in dacth (for sorting purposes)
     % method 1
     [~,id] = nanmax(dcath);
-    
-    % method 2
-    % % %     [~,I] = sort(dcath,'descend');  % sort helix-to-normal distance
-    % % %     I_arr = I(1:8);     % find 8 points on the helix furthest from the catheter
-    % % %     x_arr = xd(I_arr);  % candidate x
-    % % %     y_arr = yd(I_arr);  % candidate y
-    % % %     d_arr = rssq(range([x_arr;y_arr]'));    % calculate the furthest distance between candidates
-    % % %     if d_arr > mean(rssq(diff([x0,y0])'))   % if the furthest distance is greater than the average distance between catheter-helix intersects
-    % % %         xy_mean = mean([x_arr;y_arr],2);
-    % % %         I_arr(x_arr > xy_mean(1)) = nan;
-    % % %         id = nanmax(I_arr);    % choose the first peak
-    % % %     else
-    % % %         id = nanmax(I_arr);    % choose the first peak
-    % % %     end
-    
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+        
     % store peaks
     x_pks(ii) = xd(id); % store
     y_pks(ii) = yd(id); % store
