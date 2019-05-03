@@ -5,7 +5,7 @@
 % fname = 'interp_btw_fr_res';
 
 load(['pre_nn_' fname]);
-n_tr = 1;
+n_tr = 3;
 n_pdt = 3;
 
 %% load predictors

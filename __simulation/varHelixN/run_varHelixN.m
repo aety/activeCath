@@ -1,7 +1,7 @@
 clear; clc; ca;
 n_helix_arr = 4:2:24;
 
-for nnn = 1:length(n_helix_arr)
+for nnn = length(n_helix_arr)-1:length(n_helix_arr)
     
     n_helix = n_helix_arr(nnn);
     
@@ -22,9 +22,13 @@ for nnn = 1:length(n_helix_arr)
     clearvars -except nn n_helix_arr n_helix d fname
     
     nn_plot;
+    clearvars -except nn n_helix_arr n_helix d fname
     
     cd ..
     
 end
 
 post_nn_varHelixN;
+clearvars -except nn n_helix_arr n_helix d fname
+
+plot_pre_nn;

@@ -28,6 +28,12 @@ end
 temp = [i0,x0,y0]; % sort all intersects based on helical indices
 temp = sortrows(temp,1,'ascend'); i0 = temp(:,1); x0 = temp(:,2); y0 = temp(:,3);
 
+if sum(diff(i0)==0) > 0     % remove redundant points
+    x0(diff(i0)==0) = [];   % remove redundant points
+    y0(diff(i0)==0) = [];   % remove redundant points
+    i0(diff(i0)==0) = [];   % remove redundant points
+end
+
 %% find peaks
 n_pks = length(x0)-1;
 x_pks = nan(1,n_pks);

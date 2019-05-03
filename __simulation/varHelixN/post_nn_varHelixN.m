@@ -1,6 +1,3 @@
-clear; clc; ca;
-n_helix_arr = 4:2:24;
-
 BEST_PDT = nan(length(n_helix_arr),3);
 BEST_R_ARR = BEST_PDT;
 BEST_E_ARR = BEST_PDT;
