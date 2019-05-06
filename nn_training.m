@@ -68,7 +68,7 @@ for ii = 1:length(pdt_arr)
         tr_arr{nn} = tr;
         
         y = mapminmax('reverse',y,PS_rsp); % reverse normalization
-        e = gsubtract(RSP,y); % error
+        e = gsubtract(RSP(tr.testInd),y(tr.testInd)); % error
         e_arr(nn) = sum(rssq(e))/length(rssq(e));
         y_arr{nn} = y;
         
