@@ -56,8 +56,8 @@ save post_nn_varHelixN BEST_* n_helix_arr RSP_txt
 %% plot results
 load post_nn_varHelixN
 
-p_arr = {BEST_R_ARR,BEST_E_ARR,BEST_R_ARR./BEST_E_ARR};
-t_arr = {'R','E','R/E'};
+p_arr = {BEST_R_ARR,BEST_E_ARR};%,BEST_R_ARR./BEST_E_ARR};
+t_arr = {'R','E'};%,'R/E'};
 for pp = 1:length(p_arr)
     subplot(1,length(p_arr),pp);
     plot(n_helix_arr,p_arr{pp},'.--','markersize',10);
@@ -67,8 +67,8 @@ for pp = 1:length(p_arr)
     box off;
     axis tight;
 end
-legend(RSP_txt,'location','northeast');
-set(gcf,'paperposition',[0,0,8,2]);
+legend(RSP_txt,'location','northeastoutside');
+set(gcf,'paperposition',[0,0,6,2]);
 print('-dtiff','-r300','post_nn_varHelixN');
 close;
 
