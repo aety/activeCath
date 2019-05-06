@@ -59,25 +59,28 @@ load post_nn_varHelixN
 p_arr = {BEST_R_ARR,BEST_E_ARR};%,BEST_R_ARR./BEST_E_ARR};
 t_arr = {'R','E'};%,'R/E'};
 for pp = 1:length(p_arr)
-    subplot(1,length(p_arr),pp);
     plot(n_helix_arr,p_arr{pp},'.--','markersize',10);
     title(t_arr{pp},'fontweight','normal');
     xlabel('no. of helices');
     set(gca,'fontsize',8);
     box off;
     axis tight;
+    set(gcf,'paperposition',[0,0,3,2]);
+    print('-dtiff','-r300',['post_nn_varHelixN_' num2str(pp)]);
+    if pp==1
+        legend(RSP_txt,'location','northeastoutside');
+        print('-dtiff','-r300',['post_nn_varHelixN_lgd']);
+    end
+    close;
 end
-legend(RSP_txt,'location','northeastoutside');
-set(gcf,'paperposition',[0,0,6,2]);
-print('-dtiff','-r300','post_nn_varHelixN');
-close;
+
 
 %% plot sum
 load post_nn_varHelixN
 
 for pp = 1:length(p_arr)
-    plot(n_helix_arr,sum(BEST_E_ARR,2),'.--k','markersize',10);
-    title(['sum of three average errors'],'fontweight','normal');
+    plot(n_helix_arr,rssq(BEST_E_ARR,2),'.--k','markersize',10);
+    title(['sqrt of sum of the square of three errors'],'fontweight','normal');
     xlabel('no. of helices');
     set(gca,'fontsize',8);
     box off;

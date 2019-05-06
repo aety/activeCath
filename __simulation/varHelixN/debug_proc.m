@@ -3,12 +3,12 @@ clear;
 clc;
 ca;
 
-load proc_findApex_3DoF_varHelixN_20
+load proc_findApex_3DoF_varHelixN_16
 
 %%
 ind = 1:length(PKS); 
 
-for ii = 123
+for ii = 1020:1040
     
     id = ind(ii);
     
