@@ -1,5 +1,5 @@
 clear; clc; ca;
-n_helix_arr = 4:2:24;
+n_helix_arr = 4:24;
 
 for nnn = 1:length(n_helix_arr)
     
