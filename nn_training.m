@@ -5,8 +5,8 @@
 % fname = 'interp_btw_fr_res';
 
 load(['pre_nn_' fname]);
-n_tr = 3;
-n_pdt = 3;
+n_tr = 2;
+n_pdt = 8;
 
 %% load predictors
 v = 1:length(PDT_txt);
@@ -17,9 +17,9 @@ P_ARR = nan(length(pdt_arr),n_tr);
 E_ARR = P_ARR;
 TR_ARR = cell(length(pdt_arr),1);
 Y_ARR = TR_ARR;
-T_ARR = TR_ARR;
+NET_ARR = TR_ARR;
 
-for ii = 1:length(pdt_arr)
+for ii = 1:size(pdt_arr,1)
     
     pp = pdt_arr(ii,:);        
     predictor = PDT(pp,:); [predictor,PS_pdt] = mapminmax(predictor); % normalization
@@ -43,6 +43,7 @@ for ii = 1:length(pdt_arr)
     p_arr = nan(1,n_tr);
     e_arr = p_arr;
     tr_arr = cell(1,n_tr);
+    net_arr = tr_arr;   
     y_arr = tr_arr;
     
     for nn = 1:n_tr
@@ -66,13 +67,12 @@ for ii = 1:length(pdt_arr)
         
         p_arr(nn) = p;
         tr_arr{nn} = tr;
+        net_arr{nn} = net;
         
         y = mapminmax('reverse',y,PS_rsp); % reverse normalization
         e = gsubtract(RSP(:,tr.testInd),y(:,tr.testInd)); % error
         e_arr(nn) = sum(rssq(e))/length(rssq(e)); % square root of sum of all errors (averaged per sample)
         y_arr{nn} = y;
-        
-        clear net
         
     end
     
@@ -80,7 +80,14 @@ for ii = 1:length(pdt_arr)
     E_ARR(ii,:) = e_arr;
     TR_ARR{ii} = tr_arr;
     Y_ARR{ii} = y_arr;
+    NET_ARR{ii} = net_arr;    
     
 end
 
-save(['nn_' fname],'*_ARR','pdt_arr','RSP','*_txt');
+[ind_a,ind_b] = find(P_ARR==min(min(P_ARR))); % find best predictors
+
+NET = NET_ARR{ind_a}{ind_b};
+TR = TR_ARR{ind_a}{ind_b};
+Y = Y_ARR{ind_a}{ind_b};
+
+save(['nn_' fname],'P_ARR','E_ARR','NET','TR','Y','pdt_arr','RSP','*_txt');

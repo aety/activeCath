@@ -5,7 +5,7 @@
 % fname = '20SDF_H_30_short';
 % fname = 'interp_btw_fr_res';
 
-load(['nn_' fname],'*_ARR','pdt_arr','RSP');
+load(['nn_' fname]);
 load(['pre_nn_' fname],'*_txt');
 
 %%
@@ -14,8 +14,8 @@ load(['pre_nn_' fname],'*_txt');
 
 [ind_a,ind_b] = find(P_ARR==min(min(P_ARR))); % find best predictors
 
-tr = TR_ARR{ind_a}{ind_b};
-y = Y_ARR{ind_a}{ind_b};
+tr = TR; % TR_ARR{ind_a}{ind_b};
+y = Y; % Y_ARR{ind_a}{ind_b};
 best_pdt = pdt_arr(ind_a,:);
 
 ind = tr.testInd;
