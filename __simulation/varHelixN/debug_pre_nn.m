@@ -1,5 +1,5 @@
 clear; clc; ca;
-n_helix_arr = 4:4:24;
+n_helix_arr = 4:2:24;
 
 for nnn = 1:length(n_helix_arr)
     
@@ -15,7 +15,7 @@ for nnn = 1:length(n_helix_arr)
     c_arr = colormap(parula(length(n_helix_arr)));
     load(['pre_nn_' fname]);
     
-    for ii = 4%1:size(PDT,1)
+    for ii = 1:size(PDT,1)
         
         figure(ii);
         hold on;
@@ -23,10 +23,7 @@ for nnn = 1:length(n_helix_arr)
         alpha(h,0.5);
         title(PDT_txt{ii});
         axis tight;
-                
-        if ii==size(PDT,1)
-            
-        end
+        pause;        
     end
     
     %%
