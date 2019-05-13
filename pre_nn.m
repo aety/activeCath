@@ -9,7 +9,6 @@ PDT_txt = {'Y_0','mean(d_i)','std(d_i)','mean(d_i)_1 - mean(d_i)_2','\alpha_e - 
     'mean[\Delta\alpha]','std[\Delta\alpha]','CV[d_i]','mean(d_i)_1 / mean(d_i)_2'};
 RSP_txt = {'\theta_{roll}','\theta_{bend}','\theta_{pitch}'};
 
-% n_pks = 15;
 n_fr = length(p_arr);
 PDT = nan(length(PDT_txt),n_fr);
 
@@ -21,15 +20,8 @@ TIPy = Y(1,:) - Y(end,:); % catheter tip Y-location % end-- base; 1--tip
 
 for nn = 1:n_fr
     %% load data
-    tgl = logical(TGL{nn});
-    PXY = PKS{nn};
-    
-    % subtract reference points AND MIRROR Y-coordinates to get relative positions
-    %     PXY = PXY - repmat(ref,1,length(PXY)); PXY(2,:) = -PXY(2,:);
-    
-    % remove NaN's
-    %     tgl(isnan(PXY(:,1))) = [];
-    %     PXY(isnan(PXY(:,1)),:) = [];
+    tgl = logical(PKS{nn}(3,:));
+    PXY = PKS{nn}(1:2,:);
     
     % separate
     pxy1 = PXY(:,tgl);
@@ -64,7 +56,6 @@ for nn = 1:n_fr
     PDT(7,nn) = nanstd(dalp);                           % predictor 7 -- std[del(alpha)]
     PDT(8,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 8 -- CV[di]
     PDT(9,nn) = nanmean(dlat1)/nanmean(dlat2);          % predictor 9 -- mean(di)_left / mean(di)_right
-%     PDT(9,nn) = nanstd(dalp)/nanmean(dalp);             % predictor 9 -- CV[del(alpha)]
     
 end
 

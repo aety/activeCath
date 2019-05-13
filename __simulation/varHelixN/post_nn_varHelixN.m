@@ -19,8 +19,8 @@ for nnn = 1:length(n_helix_arr)
     
     [ind_a,ind_b] = find(P_ARR==min(min(P_ARR))); % find best predictors
     
-    tr = TR_ARR{ind_a}{ind_b};
-    y = Y_ARR{ind_a}{ind_b};
+    tr = TR;
+    y = Y;
     best_pdt = pdt_arr(ind_a,:);
     
     ind = tr.testInd;
