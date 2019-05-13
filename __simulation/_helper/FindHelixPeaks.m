@@ -18,6 +18,9 @@ for ii = 1:length(x0)
     dn = (x0(ii)-xhfind).^2 + (y0(ii)-yhfind).^2; % calculate distance from an intersect to the helical wire
     [~,btemp] = sort(dn,'ascend');
     b = btemp(1);
+    if b==1
+        b = btemp(2);
+    end
     i0(ii) = b;
     if b > 1
         xhfind(b-1:b+1) = nan;
@@ -34,7 +37,7 @@ if sum(diff(i0)==0) > 0     % remove redundant points
     i0(diff(i0)==0) = [];   % remove redundant points
 end
 
-%% find peaks
+% find peaks
 n_pks = length(x0)-1;
 x_pks = nan(1,n_pks);
 y_pks = x_pks;
@@ -78,7 +81,7 @@ for ii = 1:n_pks
     
     dcath(isnan(dcath)) = 0;    % remove nan's in dacth (for sorting purposes)
     [~,id] = nanmax(dcath);
-        
+    
     % store peaks
     x_pks(ii) = xd(id); % store
     y_pks(ii) = yd(id); % store
