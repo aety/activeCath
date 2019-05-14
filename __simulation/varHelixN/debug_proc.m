@@ -3,17 +3,17 @@ clear;
 clc;
 ca;
 
-load proc_findApex_3DoF_varHelixN_22
+load proc_findApex_3DoF_varHelixN_4
 
 %%
 ind = 1:length(PKS); 
 
-for ii = 10892
+for ii = 272
     
     id = ind(ii);
     
-    temp = PKS{id};
-    tg = logical(TGL{id});
+    temp = PKS{id}(1:2,:);
+    tg = logical(PKS{id}(3,:));
     
     hold on;
     h0 = plot(X(:,id),Y(:,id),'k');
