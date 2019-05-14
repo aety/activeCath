@@ -41,11 +41,11 @@ for ppp = 1:length(pitch_range_arr)
         
     end
     
-    cd ..
-    
     post_nn_varHelixN;
     clearvars -except nn n_helix_arr n_helix d fname pitch_*
     
     plot_pre_nn;
+    
+    cd ..
     
 end

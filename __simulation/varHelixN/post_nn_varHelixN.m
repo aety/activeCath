@@ -51,20 +51,24 @@ for nnn = 1:length(n_helix_arr)
     
 end
 
-save post_nn_varHelixN BEST_* n_helix_arr RSP_txt
+save post_nn_varHelixN BEST_* n_helix_arr RSP_txt PDT_txt
 
 %% plot results
 load post_nn_varHelixN
 
-p_arr = {BEST_R_ARR,BEST_E_ARR};%,BEST_R_ARR./BEST_E_ARR};
-t_arr = {'R','E'};%,'R/E'};
+p_arr = {BEST_R_ARR,BEST_E_ARR};
+t_arr = {'R','E'};
 for pp = 1:length(p_arr)
     plot(n_helix_arr,p_arr{pp},'.--','markersize',10);
-    title(t_arr{pp},'fontweight','normal');
+    ylabel(t_arr{pp});
     xlabel('no. of helices');
     set(gca,'fontsize',8);
     box off;
     axis tight;
+% % %     if pp==2
+% % %         ylim([0,7.5]);
+% % %         title(['\theta_{pitch} = [' num2str(pitch_range(1)) ', ' num2str(pitch_range(2)) ']'],'fontweight','normal');
+% % %     end
     set(gcf,'paperposition',[0,0,3,2]);
     print('-dtiff','-r300',['post_nn_varHelixN_' num2str(pp)]);
     if pp==1
