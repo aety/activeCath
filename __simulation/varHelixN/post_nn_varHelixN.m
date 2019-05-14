@@ -1,6 +1,6 @@
-BEST_PDT = nan(length(n_helix_arr),3);
-BEST_R_ARR = BEST_PDT;
-BEST_E_ARR = BEST_PDT;
+BEST_PDT = nan(length(n_helix_arr),n_pdt);
+BEST_R_ARR = nan(length(n_helix_arr),3);
+BEST_E_ARR = BEST_R_ARR;
 
 for nnn = 1:length(n_helix_arr)
     
@@ -97,7 +97,7 @@ close;
 %% show best predictors
 load post_nn_varHelixN
 
-plot(repmat(n_helix_arr',1,3),BEST_PDT,'ok','markerfacecolor','k','markersize',2);
+plot(repmat(n_helix_arr',1,n_pdt),BEST_PDT,'ok','markerfacecolor','k','markersize',2);
 set(gca,'xtick',n_helix_arr);
 set(gca,'ytick',1:length(PDT_txt),'yticklabel',PDT_txt);
 axis([n_helix_arr(1),n_helix_arr(end),1,length(PDT_txt)]);

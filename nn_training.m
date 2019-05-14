@@ -6,7 +6,6 @@
 
 load(['pre_nn_' fname]);
 n_tr = 3;
-n_pdt = 3;
 
 %% load predictors
 v = 1:length(PDT_txt);
