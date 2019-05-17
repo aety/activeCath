@@ -5,7 +5,7 @@ n_pdt = 3;
 
 pitch_range_arr = [0,50];
 
-for ppp = 1:length(pitch_range_arr)
+for ppp = 1:size(pitch_range_arr,1)
     
     pitch_range = pitch_range_arr(ppp,:);
     dpname = ['pitch_' num2str(pitch_range(1)) '_' num2str(pitch_range(2))];
