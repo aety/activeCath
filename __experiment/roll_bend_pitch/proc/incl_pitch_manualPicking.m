@@ -9,7 +9,7 @@ c_arr = {'m','b'};
 t_txt = {'left','right'};
 
 PKS = cell(length(I_arr),1);
-TGL = PKS;
+% TGL = PKS;
 
 for ff = 1:length(I_arr)
     
@@ -51,10 +51,10 @@ for ff = 1:length(I_arr)
     
     tgl = [zeros(1,npt),ones(1,npt)];
     
-    PKS{ff} = [xx;yy];    
-    TGL{ff} = tgl;
+    PKS{ff} = [xx;yy;tgl];    
+%     TGL{ff} = tgl;
     close;
-    save incl_pitch_manualPicking_temp X Y TGL ff
+    save incl_pitch_manualPicking_temp X Y ff % TGL 
 end
 
-save proc_incl_pitch_manualPicking *_arr ref_pt X Y TGL ff
+save proc_incl_pitch_manualPicking *_arr ref_pt X Y ff % TGL
