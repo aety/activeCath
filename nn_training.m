@@ -5,7 +5,7 @@
 % fname = 'interp_btw_fr_res';
 
 load(['pre_nn_' fname]);
-n_tr = 3;
+n_tr = 5;
 
 %% load predictors
 v = 1:length(PDT_txt);
