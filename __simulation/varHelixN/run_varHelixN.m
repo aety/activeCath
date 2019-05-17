@@ -1,13 +1,9 @@
 clear; clc; ca;
-n_helix_arr = 4:2:24;
+n_helix_arr = 16;
 
 n_pdt = 3;
 
-pitch_range_arr = [%-25,0;
-%     0,25;
-%     25,50;
-%     -25,25;
-    0,50];
+pitch_range_arr = [0,50];
 
 for ppp = 1:length(pitch_range_arr)
     
