@@ -5,13 +5,20 @@ fname = 'proc_incl_pitch_manualPicking_new';
 load C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend_pitch\proc\proc_incl_pitch_manualPicking_new
 
 % modify for compatibility with simulation data
+X = -flipud(X); % flip x-y
+Y = -flipud(Y); % flip x-y
+
+% plot(X,Y); hold on; plot(X(1,:),Y(1,:),'o');
+
 ref_pt = -fliplr(ref_pt);                       % flip x-y and signs
 for ii = 1:length(PKS)
     temp = PKS{ii}(1,:);                        % flip x-y and signs
     PKS{ii}(1:2,:) = -flipud(PKS{ii}(1:2,:));   % flip x-y and signs
     PKS{ii}(2,:) = -temp;                       % flip x-y and signs
     PKS{ii}(3,:) = -PKS{ii}(3,:) + 1;           % flip toggles
+%     plot(PKS{ii}(1,:),PKS{ii}(2,:),'*');
 end
+
 pre_nn;
 
 %% load data
