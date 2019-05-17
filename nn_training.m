@@ -88,5 +88,6 @@ end
 NET = NET_ARR{ind_a}{ind_b};
 TR = TR_ARR{ind_a}{ind_b};
 Y = Y_ARR{ind_a}{ind_b};
+PDT_best = pdt_arr(ind_a,:);
 
-save(['nn_' fname],'P_ARR','E_ARR','NET','TR','Y','pdt_arr','RSP','*_txt');
+save(['nn_' fname],'P_ARR','E_ARR','NET','TR','Y','PDT_best','pdt_arr','RSP','*_txt');
