@@ -15,24 +15,26 @@ PDT = nan(length(PDT_txt),n_fr);
 %%
 ref = ref_pt';
 
-TIPx = X(1,:) - X(end,:); % catheter tip X-location % end-- base; 1--tip
-TIPy = Y(1,:) - Y(end,:); % catheter tip Y-location % end-- base; 1--tip
+TIPx = X(end,:) - X(1,:); % catheter tip X-location % end-- base; 1--tip
+TIPy = Y(end,:) - Y(1,:); % catheter tip Y-location % end-- base; 1--tip
 
 for nn = 1:n_fr
     %% load data
     tgl = logical(PKS{nn}(3,:));
     PXY = PKS{nn}(1:2,:);
+    PXY(1,:) = PXY(1,:) - ref(1);
+    PXY(2,:) = PXY(2,:) - ref(2);
     
-    % separate
+    % separate    
     pxy1 = PXY(:,tgl);
     pxy2 = PXY(:,~tgl);
     if size(pxy1,1)<=2
         pxy1 = pxy1';
         pxy2 = pxy2';
     end
-    plt1 = pxy1; %     plt1 = sortrows(pxy1,2);
-    plt2 = pxy2; %     plt2 = sortrows(pxy2,2);
-    
+    plt1 = pxy1; 
+    plt2 = pxy2; 
+        
     %% compile NN predictors (set 1 -- on the right) (set 2 -- on the left)
     slc = plt2(1,2) < plt1(1,2);    % pick a point at the lowest y-position
     temp = [plt1(1,2),plt2(1,2)];   % pick a point at the lowest y-position
@@ -41,8 +43,8 @@ for nn = 1:n_fr
     dlat2 = rssq(diff(plt2)')'; % local lateral distance (set 2)
     dlat = [dlat1;dlat2];       % all local distances (both sets)
     
-    alp1 = atan2(diff(plt1(:,1)),diff(plt1(:,2))); % local slope angle (set 1)  % x-over-y to avoid inf
-    alp2 = atan2(diff(plt2(:,1)),diff(plt2(:,2))); % local slope angle (set 2)  % x-over-y to avoid inf
+    alp1 = atan2(diff(plt1(:,2)),diff(plt1(:,1))); % local slope angle (set 1)  % x-over-y to avoid inf
+    alp2 = atan2(diff(plt2(:,2)),diff(plt2(:,1))); % local slope angle (set 2)  % x-over-y to avoid inf
     dalp1 = diff(alp1);
     dalp2 = diff(alp2);
     dalp = [dalp1;dalp2];
