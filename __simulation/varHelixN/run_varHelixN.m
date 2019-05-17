@@ -18,29 +18,22 @@ for ppp = 1:length(pitch_range_arr)
         
         d = ['varHelixN_' num2str(n_helix)];
         
-        proc_findApex_3DoF_varHelixN;
-        clearvars -except nn n_helix_arr n_helix d pitch_* n_pdt
+        proc_findApex_3DoF_varHelixN; clearvars -except nn n_helix_arr n_helix d pitch_* n_pdt
         
         fname = ['findApex_3DoF_varHelixN_' num2str(n_helix)];
         load(['proc_' fname]);
         
         mkdir(d);
         cd(d);
-        pre_nn;
-        clearvars -except nn n_helix_arr n_helix d fname pitch_* n_pdt
+        pre_nn; clearvars -except nn n_helix_arr n_helix d fname pitch_* n_pdt
         
-        nn_training;
-        clearvars -except nn n_helix_arr n_helix d fname pitch_* n_pdt
+        nn_training; clearvars -except nn n_helix_arr n_helix d fname pitch_* n_pdt
         
-        nn_plot;
-        clearvars -except nn n_helix_arr n_helix d fname pitch_* n_pdt
+        nn_plot; clearvars -except nn n_helix_arr n_helix d fname pitch_* n_pdt
         
         cd ..
         
     end
-    
-    post_nn_varHelixN;
-    clearvars -except nn n_helix_arr n_helix d fname pitch_* n_pdt
     
     plot_pre_nn;
     
