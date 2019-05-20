@@ -39,7 +39,7 @@ for bb = 1:length(pitch_arr)
         %% loop for bending the catheter
         for rr = 1:length(bend_arr)
             
-            disp([num2str(bb) '/' num2str(length(pitch_arr)) ', ' num2str(aa) '/' num2str(length(roll_arr)) ', ' num2str(rr) '/' num2str(length(bend_arr))]);
+%             disp([num2str(bb) '/' num2str(length(pitch_arr)) ', ' num2str(aa) '/' num2str(length(roll_arr)) ', ' num2str(rr) '/' num2str(length(bend_arr))]);
             
             th_end = bend_arr(rr)*pi/180;  % radius of curvature (to define bent shape)
             if th_end==0
