@@ -1,4 +1,4 @@
-function [x_pks,y_pks,X,Y,ref_pt] = proc_findApex_3DoF_varHelixN_Func(bend_arr,roll_arr,pitch_arr,n_helix)
+function [x_pks,y_pks,tgl,X,Y,ref_pt] = proc_findApex_3DoF_varHelixN_Func(bend_arr,roll_arr,pitch_arr,n_helix)
 
 %% define catheter
 L = 105;            % length of catheter (mm)

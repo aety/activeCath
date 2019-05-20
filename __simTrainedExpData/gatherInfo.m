@@ -30,7 +30,8 @@ for ii = 1:length(PKS)
     roll_arr = r_arr(ii);
     pitch_arr = p_arr(ii);
     
-    [x_pks,y_pks,~,~,ref_pt_sim] = proc_findApex_3DoF_varHelixN_Func(bend_arr,roll_arr,pitch_arr,n_helix);
+    disp([num2str(ii) '/' num2str(length(PKS))]);
+    [x_pks,y_pks,tgl,~,~,ref_pt_sim] = proc_findApex_3DoF_varHelixN_Func(bend_arr,roll_arr,pitch_arr,n_helix);
     
     temp3 = x_pks - ref_pt_sim(1); % simulated peaks X
     temp4 = y_pks - ref_pt_sim(2); % simulated peaks Y
@@ -38,7 +39,7 @@ for ii = 1:length(PKS)
     %% scale and plot
     fac1 = rssq([range(temp1),range(temp2)]);
     fac3 = rssq([range(temp3),range(temp4)]);
-    fac = fac3/fac1;
+    fac = 0.1833; % 0.9*fac3/fac1;
     temp1 = temp1*fac;
     temp2 = temp2*fac;
     
@@ -46,9 +47,11 @@ for ii = 1:length(PKS)
     PKS_scale{ii}(2,:) = temp2; %  + ref_pt(2);
     PKS_scale{ii}(3,:) = temp0;
     
-%     hold on;
-%     plot(PKS_scale{ii}(1,:),PKS_scale{ii}(2,:),'*');
-%     plot(temp3,temp4,'o');
+%     hold on;    
+%     plot(PKS_scale{ii}(1,:),PKS_scale{ii}(2,:),'*k');
+%     plot(PKS_scale{ii}(1,logical(temp0)),PKS_scale{ii}(2,logical(temp0)),'*r');    
+%     plot(temp3,temp4,'ok');
+%     plot(temp3(tgl),temp4(tgl),'or');
 %     legend('exp','sim','location','northwest');
 %     title([bend_arr,roll_arr,pitch_arr]);
 %     axis equal
@@ -81,5 +84,5 @@ y = mapminmax('reverse',y,PS_rsp); % reverse normalization
 e = gsubtract(RSP,y); % error
 sum_e = sum(rssq(e))/length(rssq(e)); % square root of sum of all errors (averaged per sample)
 
-plot(e'); % plot errors
-plot(RSP,y,'*'); % plot correlation
+plot(e','o'); % plot errors
+plot(RSP,y,'o'); % plot correlation
