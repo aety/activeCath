@@ -47,16 +47,16 @@ for ii = 1:length(PKS)
     PKS_scale{ii}(2,:) = temp2; %  + ref_pt(2);
     PKS_scale{ii}(3,:) = temp0;
     
-%     hold on;    
-%     plot(PKS_scale{ii}(1,:),PKS_scale{ii}(2,:),'*k');
-%     plot(PKS_scale{ii}(1,logical(temp0)),PKS_scale{ii}(2,logical(temp0)),'*r');    
-%     plot(temp3,temp4,'ok');
-%     plot(temp3(tgl),temp4(tgl),'or');
-%     legend('exp','sim','location','northwest');
-%     title([bend_arr,roll_arr,pitch_arr]);
-%     axis equal
-%     pause;
-%     clf;
+    %     hold on;
+    %     plot(PKS_scale{ii}(1,:),PKS_scale{ii}(2,:),'*k');
+    %     plot(PKS_scale{ii}(1,logical(temp0)),PKS_scale{ii}(2,logical(temp0)),'*r');
+    %     plot(temp3,temp4,'ok');
+    %     plot(temp3(tgl),temp4(tgl),'or');
+    %     legend('exp','sim','location','northwest');
+    %     title([bend_arr,roll_arr,pitch_arr]);
+    %     axis equal
+    %     pause;
+    %     clf;
     
     clear temp* fac*
     
@@ -66,12 +66,24 @@ PKS = PKS_scale;
 
 pre_nn;
 
+%%
+PDT_exp = PDT;
+
+%%
+% % load C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\pitch_0_50\varHelixN_16\pre_nn_findApex_3DoF_varHelixN_16 PDT
+% % 
+% % for ii = 4:6
+% %     plot(PDT(ii,:)); hold on;
+% %     plot(PDT_exp(ii,:),'*-','linewidth',2);
+% %     title(ii); pause; clf;
+% % end
+
 %% load trained network
-load C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\pitch_0_50\varHelixN_16\nn_findApex_3DoF_varHelixN_16 PDT_best Y TR NET
+load C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\pitch_-50_50\varHelixN_16\nn_findApex_3DoF_varHelixN_16 PDT_best Y TR NET
 net = NET;
 pp = PDT_best;
-predictor = PDT(pp,:); [predictor,PS_pdt] = mapminmax(predictor); % normalization
-response = RSP; [response,PS_rsp] = mapminmax(response);         % normalization
+predictor = PDT(pp,:); % [predictor,PS_pdt] = mapminmax(predictor); % normalization
+response = RSP; % [response,PS_rsp] = mapminmax(response);         % normalization
 
 x = predictor;
 t = response;
@@ -80,9 +92,14 @@ t = response;
 y = net(x);
 p = perform(net,t,y);
 
-y = mapminmax('reverse',y,PS_rsp); % reverse normalization
+% y = mapminmax('reverse',y,PS_rsp); % reverse normalization
 e = gsubtract(RSP,y); % error
 sum_e = sum(rssq(e))/length(rssq(e)); % square root of sum of all errors (averaged per sample)
 
 plot(e','o'); % plot errors
+legend(RSP_txt);
+xlabel('actual');
+ylabel('error');
+figure;
 plot(RSP,y,'o'); % plot correlation
+axis equal
