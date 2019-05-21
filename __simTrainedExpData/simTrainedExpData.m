@@ -1,8 +1,12 @@
 %% navigate directory and load data
 clear; clc; ca;
-fname = 'proc_incl_pitch_manualPicking_new';
+
+fname = 'interp_btw_fr_res';
 cd C:\Users\yang\ownCloud\MATLAB\__simTrainedExpData
-load(['C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend_pitch\proc\' fname]);
+load(['C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\_pre_nn_positive_interp\' fname]);
+load C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\pre_nn_20SDF_H_30_short TIPx TIPy n_* *_act_arr
+% PKS{1} = nan(max(n_cl_arr),2,n_fr,n_bd); % 16 (pks) x 2 (dim) x 188 (frame) x 5 (bend)
+% PKS{2} = PKS{1};
 
 %% modify exp data for compatibility with simulation data
 X = -flipud(X); % flip x-y

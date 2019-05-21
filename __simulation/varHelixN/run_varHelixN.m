@@ -3,7 +3,7 @@ n_helix_arr = 16;
 
 n_pdt = 3;
 
-pitch_range_arr = [-50,50];
+pitch_range_arr = [0];
 
 for ppp = 1:size(pitch_range_arr,1)
     
