@@ -5,7 +5,7 @@
 % fname = 'findApex_3DoF';
 % load(['proc_' fname]);
 
-PDT_txt = {'Y_0','mean(d_i)','std(d_i)','mean(d_i)_1 - mean(d_i)_2','\alpha_e - \alpha_0',...
+PDT_txt = {'Y_0','mean(d_i)','std(d_i)','mean(d_i)_1 - mean(d_i)_2','alpha_{max}',...%'\alpha_e - \alpha_0',...
     'mean[\Delta\alpha]','std[\Delta\alpha]','CV[d_i]','mean(d_i)_1 / mean(d_i)_2'};
 RSP_txt = {'\theta_{roll}','\theta_{bend}','\theta_{pitch}'};
 
@@ -53,7 +53,8 @@ for nn = 1:n_fr
     PDT(2,nn) = nanmean(dlat);                          % predictor 2 -- mean(di)
     PDT(3,nn) = nanstd(dlat);                           % predictor 3 -- std(di)
     PDT(4,nn) = nanmean(dlat1) - nanmean(dlat2);        % predictor 4 -- mean(di)_left - mean(di)_right
-    PDT(5,nn) = atan2(TIPy(nn),TIPx(nn));               % predictor 5 -- alpha_e - alpha_0 (global slope angle, assuming base slope is 0)
+%     PDT(5,nn) = atan2(TIPy(nn),TIPx(nn));               % predictor 5 -- alpha_e - alpha_0 (global slope angle, assuming base slope is 0)
+    PDT(5,nn) = nanmax(dlat);                           % predictor 5 -- maximum alpha
     PDT(6,nn) = nanmean(dalp);                          % predictor 6 -- mean[del(alpha)]
     PDT(7,nn) = nanstd(dalp);                           % predictor 7 -- std[del(alpha)]
     PDT(8,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 8 -- CV[di]
