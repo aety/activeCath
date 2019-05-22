@@ -1,7 +1,7 @@
 clear; clc; ca;
 n_helix_arr = 16;
 
-n_pdt = 3;
+n_pdt = 2;
 
 pitch_range_arr = [0,0];
 
