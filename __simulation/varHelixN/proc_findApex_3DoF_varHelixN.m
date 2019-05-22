@@ -1,5 +1,5 @@
 %% define catheter 3D rotation (about x-axis)
-bend_arr = [0.000001,2.5:2.5:67.5];% array of values for the varying parameter
+bend_arr = [0.000001,2.5:2.5:90];% array of values for the varying parameter
 roll_arr = 0:2.5:75; % array of the "roll" rotation (deg)
 pitch_arr = pitch_range(1):2.5:pitch_range(2);% array of the "pitch" rotation (deg)
 

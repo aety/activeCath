@@ -13,21 +13,21 @@ load C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\pre_nn
 % for dd = 1:size(temp,3)
 %     temp1 = temp(:,:,dd);
 %     temp1(isnan(temp1(:,1)),:) = [];
-%     temp1 = flipud(temp1');   
+%     temp1 = flipud(temp1');
 %     temp1(2,:) = -temp1(2,:);
 %     plot(temp1(1,:),temp1(2,:),'*');
 %     axis equal
 %     hold on
-%     
+%
 %     temp2 = diff(temp1(:,end-1:end)');
 %     th_bend(dd) = atan2(temp2(2),temp2(1))*180/pi;
-%     
+%
 % end
 %% extract only continuous (roll variation) data
-% roll_range = 13:154;
-% PKS1 = PKS1(:,:,roll_range,:);
-% PKS2 = PKS2(:,:,roll_range,:);
-% th_roll_act_arr = th_roll_act_arr(roll_range);
+roll_range = 13:154;
+PKS1 = PKS1(:,:,roll_range,:);
+PKS2 = PKS2(:,:,roll_range,:);
+th_roll_act_arr = th_roll_act_arr(roll_range);
 
 %% modify exp data for compatibility with simulation data
 % ref_pt = unique(REF); ref_pt = -fliplr(ref_pt);                       % flip x-y and signs
@@ -37,9 +37,9 @@ PKS_scale = cell(1,size(PKS1,3)*size(PKS1,4));
 b_arr = nan(size(PKS1,3)*size(PKS1,4),1); p_arr = b_arr; r_arr = b_arr;
 nn = 0;
 
-for dd = 5%:size(PKS1,4) % bend
+for dd = 1:size(PKS1,4) % bend
     
-    for ii = size(PKS1,3) % roll
+    for ii = 1:size(PKS1,3) % roll
         
         temp = [flipud(PKS1(:,:,ii,dd)'),flipud(PKS2(:,:,ii,dd)')]; % flip x and y
         temp0 = [ones(1,size(PKS1,1)),zeros(1,size(PKS1,1))]; % combined toggle
@@ -53,18 +53,17 @@ for dd = 5%:size(PKS1,4) % bend
         pitch_arr = 0;
         
         disp([num2str(ii) '/' num2str(size(PKS1,3)) ', ' num2str(dd) '/' num2str(size(PKS1,4))]);
-        [x_pks,y_pks,tgl,~,~,ref_pt_sim] = proc_findApex_3DoF_varHelixN_Func(bend_arr,roll_arr,pitch_arr,n_helix);
+        %         [x_pks,y_pks,tgl,~,~,ref_pt_sim] = proc_findApex_3DoF_varHelixN_Func(bend_arr,roll_arr,pitch_arr,n_helix);
         
-        temp3 = x_pks - ref_pt_sim(1); % simulated peaks X
-        temp4 = y_pks - ref_pt_sim(2); % simulated peaks Y
+        %         temp3 = x_pks - ref_pt_sim(1); % simulated peaks X
+        %         temp4 = y_pks - ref_pt_sim(2); % simulated peaks Y
         
         %% scale peaks (according to a factor determined by zero angles)
-        fac1 = rssq([range(temp1),range(temp2)]);
-        fac3 = rssq([range(temp3),range(temp4)]);
+        %         fac1 = rssq([range(temp1),range(temp2)]);
+        %         fac3 = rssq([range(temp3),range(temp4)]);
         fac = 0.1965; % fac3/fac1; (based on ii = end, dd = 1)
         temp1 = temp1*fac;
         temp2 = temp2*fac;
-        
         
         nn = nn + 1;
         PKS_scale{nn}(1,:) = temp1;
@@ -75,16 +74,16 @@ for dd = 5%:size(PKS1,4) % bend
         p_arr(nn) = 0;
         
         %% optional debug plot
-        hold on;
-        h1 = plot(PKS_scale{nn}(1,:),PKS_scale{nn}(2,:),'*k');
-        plot(PKS_scale{nn}(1,logical(temp0)),PKS_scale{nn}(2,logical(temp0)),'*r');
-        h2 = plot(temp3,temp4,'ok');
-        plot(temp3(tgl),temp4(tgl),'or');
-        legend([h1,h2],'exp','sim','location','northwest');
-        title([bend_arr,roll_arr,pitch_arr]);
-        axis equal
-        pause(0.01);
-        clf;
+        %         hold on;
+        %         h1 = plot(PKS_scale{nn}(1,:),PKS_scale{nn}(2,:),'*k');
+        %         plot(PKS_scale{nn}(1,logical(temp0)),PKS_scale{nn}(2,logical(temp0)),'*r');
+        %         h2 = plot(temp3,temp4,'ok');
+        %         plot(temp3(tgl),temp4(tgl),'or');
+        %         legend([h1,h2],'exp','sim','location','northwest');
+        %         title([bend_arr,roll_arr,pitch_arr]);
+        %         axis equal
+        %         pause(0.01);
+        %         clf;
         
         clear temp* fac*
         
@@ -93,23 +92,24 @@ end
 
 
 %% update peaks and reference point
-ref_pt = ref_pt_sim;
+ref_pt = [0,0]; % ref_pt_sim;
 PKS = PKS_scale;
 X = nan(100,nn);
 Y = nan(100,nn);
 
 %% compile for NN and rename
 pre_nn;
-% PDT_exp = PDT;
+PDT_exp = PDT;
 
 %% optional comparison between EXP and SIM predictors
-% % load C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\pitch_0_50\varHelixN_16\pre_nn_findApex_3DoF_varHelixN_16 PDT
-% %
-% % for ii = 4:6
-% %     plot(PDT(ii,:)); hold on;
-% %     plot(PDT_exp(ii,:),'*-','linewidth',2);
-% %     title(ii); pause; clf;
-% % end
+% load C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\pitch_0_0\varHelixN_16\pre_nn_findApex_3DoF_varHelixN_16 PDT
+% PDT_sim = PDT;
+% for ii = [1,6]
+%     plot(PDT_sim(ii,:)); hold on;
+%     plot(PDT_exp(ii,:),'*-','linewidth',2);
+%     title(ii); pause; clf;
+% end
+% PDT = PDT_exp;
 
 %% load trained network and evaluate
 load C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\pitch_0_0\varHelixN_16\nn_findApex_3DoF_varHelixN_16 PDT_best Y TR NET
@@ -126,7 +126,7 @@ p = perform(net,t,y);
 
 % y = mapminmax('reverse',y,PS_rsp); % reverse normalization
 e = gsubtract(RSP,y); % error
-% sum_e = sum(rssq(e))/length(rssq(e)); % square root of sum of all errors (averaged per sample)
+sum_e = sum(rssq(e))/length(rssq(e)); % square root of sum of all errors (averaged per sample)
 
 %% plot results
 % 4D error plot (error as functions of variables)
