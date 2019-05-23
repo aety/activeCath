@@ -18,7 +18,7 @@ tr = TR; % TR_ARR{ind_a}{ind_b};
 y = Y; % Y_ARR{ind_a}{ind_b};
 best_pdt = pdt_arr(ind_a,:);
 
-ind = tr.valInd;
+ind = tr.testInd;
 
 %% plot combined
 c_map = [27,158,119; 217,95,2; 117,112,179]/255;
