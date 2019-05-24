@@ -84,6 +84,7 @@ Y = nan(100,nn);
 
 %% compile for NN and rename
 pre_nn;
+RSP = RSP(1:2,:); RSP_txt = RSP_txt(1:2);
 n_pdt = 2; 
 nn_training;
 nn_plot;

@@ -6,7 +6,6 @@
 % fname = 'interp_btw_fr_res';
 
 load(['nn_' fname]);
-load(['pre_nn_' fname],'*_txt');
 
 %%
 % cmap = {flipud(parula),flipud(parula),jet}; % for "positive" (sequential, sequential)
