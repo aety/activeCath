@@ -3,7 +3,7 @@ clc;
 ca;
 
 load interp_btw_fr_res PKS1 PKS2
-load pre_nn_interp_btw_fr_res th_roll_act_arr th_bend_act_arr
+load pre_nn\pre_nn_interp_btw_fr_res th_roll_act_arr th_bend_act_arr
 arr_fr = 13:154;    % define number of frames (temporal), default: 1:size(PKS1,3)
 n_cl = 14;          % define number of nodes (spatial) (default: size(PKS1,1)
 n_bd = size(PKS1,4);% define number of bending angle, default: size(PKS1,4)
@@ -75,7 +75,7 @@ for cc = 1:2
     cb.Label.FontSize = 14;
     cb.Label.Position = [5,0.5,0];
     %     cb.Label.Rotation = 0;
-    th1 = arr_fr(end); the = arr_fr(1);
+    th1 = r_range(1); the = r_range(end);
     cb.Ticks = 0:0.2:1;
     temp = interp1([0,1],[th1,the],cb.Ticks);
     cb.TickLabels = round(temp);
