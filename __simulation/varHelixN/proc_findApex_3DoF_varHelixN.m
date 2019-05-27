@@ -116,18 +116,18 @@ for bb = 1:length(pitch_arr)
             
             %% plot (optional)
             dif = abs(length(tgl) - sum(tgl) - sum(tgl));
-            %             if dif > 1
-            hold on;
-            plot(x_pks,y_pks,'*');
-            plot(X,Y,'--');
-            plot(x_pks(tgl),y_pks(tgl),'o')
-            plot(xh,yh);
-            axis equal
-            axis([0,100,-10,50]);
-            title([bb,aa,rr]);
-            pause;
-            clf;
-            %             end
+            if dif > 1
+                hold on;
+                plot(x_pks,y_pks,'*');
+                plot(X,Y,'--');
+                plot(x_pks(tgl),y_pks(tgl),'o')
+                plot(xh,yh);
+                axis equal
+                axis([0,100,-10,50]);
+                title([bb,aa,rr]);
+                pause;
+                clf;
+            end
             
             %% save into big arrays
             nn = nn + 1;

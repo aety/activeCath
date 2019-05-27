@@ -1,7 +1,7 @@
 clear; clc; ca;
 n_helix_arr = 16;
 
-n_pdt = 3;
+n_pdt = 9;
 
 dnname = [num2str(n_pdt) '_pdt'];
 mkdir(dnname);
