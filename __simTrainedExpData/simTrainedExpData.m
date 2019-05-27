@@ -5,24 +5,7 @@ fname = 'simTrainedExpData';
 cd C:\Users\yang\ownCloud\MATLAB\__simTrainedExpData
 load('C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\_pre_nn_positive_interp\interp_btw_fr_res');
 load C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\pre_nn_20SDF_H_30_short TIPx TIPy n_* *_act_arr
-% load C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\pre_nn_20SDF_H_30_short TIPx TIPy RSP
-% load C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\proc\proc_auto_data_20SDR-H_30_0003 REF
 
-%% adjust ground truth of bending angle
-% temp = permute(PKS1(:,:,end,:),[1,2,4,3]);
-% for dd = 1:size(temp,3)
-%     temp1 = temp(:,:,dd);
-%     temp1(isnan(temp1(:,1)),:) = [];
-%     temp1 = flipud(temp1');
-%     temp1(2,:) = -temp1(2,:);
-%     plot(temp1(1,:),temp1(2,:),'*');
-%     axis equal
-%     hold on
-%
-%     temp2 = diff(temp1(:,end-1:end)');
-%     th_bend(dd) = atan2(temp2(2),temp2(1))*180/pi;
-%
-% end
 %% extract only continuous (roll variation) data
 roll_range = 13:154;
 PKS1 = PKS1(:,:,roll_range,:);
@@ -102,17 +85,17 @@ pre_nn;
 PDT_exp = PDT;
 
 %% optional comparison between EXP and SIM predictors
-% load C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\pitch_0_0\varHelixN_16\pre_nn_findApex_3DoF_varHelixN_16 PDT
-% PDT_sim = PDT;
-% for ii = [1,6]
-%     plot(PDT_sim(ii,:)); hold on;
-%     plot(PDT_exp(ii,:),'*-','linewidth',2);
-%     title(ii); pause; clf;
-% end
-% PDT = PDT_exp;
+load C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\2_pdt\pitch_0_0\varHelixN_16\pre_nn_findApex_3DoF_varHelixN_16 PDT
+PDT_sim = PDT;
+for ii = [1,4]
+    plot(PDT_sim(ii,:)); hold on;
+    plot(PDT_exp(ii,:),'*-','linewidth',2);
+    title(ii); pause; clf;
+end
+PDT = PDT_exp;
 
 %% load trained network and evaluate
-load C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\pitch_0_0\varHelixN_16\nn_findApex_3DoF_varHelixN_16 PDT_best Y TR NET
+load C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\2_pdt\pitch_0_0\varHelixN_16\nn_findApex_3DoF_varHelixN_16 PDT_best Y TR NET
 net = NET;
 pp = PDT_best;
 predictor = PDT(pp,:); % [predictor,PS_pdt] = mapminmax(predictor); % normalization
