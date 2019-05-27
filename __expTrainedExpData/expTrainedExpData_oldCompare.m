@@ -1,7 +1,9 @@
 %% this gives results that are as good as before
-% % load oldCompare\pre_nn_interp_btw_fr_res
-% % fname = 'oldCompare';
-% % n_pdt = 2;
+% load oldCompare\pre_nn_interp_btw_fr_res
+load oldCompare\interp_btw_fr_res
+fname = 'oldCompare';
+pre_nn;
+% n_pdt = 2;
 % % nn_training;
 % % nn_plot;
 

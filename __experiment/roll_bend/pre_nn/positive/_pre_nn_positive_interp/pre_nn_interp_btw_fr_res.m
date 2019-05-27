@@ -10,13 +10,13 @@
 
 %% load
 clear; clc; ca;
-load interp_btw_fr_res
+load oldCompare\interp_btw_fr_res
 
 PDT_txt = {'Y_0','mean(d_i)','std(d_i)','mean(d_i)_1 - mean(d_i)_2','\alpha_e - \alpha_0',...
     'mean[\Delta\alpha]','std[\Delta\alpha]','CV[d_i]','CV[\Delta\alpha]','mean(d_i)_1 / mean(d_i)_2'};
 RSP_txt = {'\theta_{roll}','\theta_{bend}'};
 
-load ..\pre_nn_20SDF_H_30_short TIPx TIPy n_* *_act_arr
+load oldCompare\pre_nn_20SDF_H_30_short TIPx TIPy n_* *_act_arr
 
 %%
 PDT = nan(length(PDT_txt),n_roll*n_bend);
@@ -72,7 +72,7 @@ RSP(:,tgl) = [];
 TIPx(tgl) = [];
 TIPy(tgl) = [];
 
-save pre_nn_interp_btw_fr_res PDT* RSP* TIPx TIPy n_roll n_bend *_act_arr *_range
+% save pre_nn_interp_btw_fr_res PDT* RSP* TIPx TIPy n_roll n_bend *_act_arr *_range
 
 %% plot predictors 
 % for dd = 1:size(PDT,1)

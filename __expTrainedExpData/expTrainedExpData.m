@@ -2,9 +2,8 @@
 clear; clc; ca;
 
 fname = 'expTrainedExpData';
-cd C:\Users\yang\ownCloud\MATLAB\__simTrainedExpData
-load('C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\_pre_nn_positive_interp\interp_btw_fr_res');
-load C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\pre_nn_20SDF_H_30_short TIPx TIPy *_act_arr
+load C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\_pre_nn_positive_interp\interp_btw_fr_res
+load C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\pre_nn_20SDF_H_30_short *_act_arr
 
 %% extract only continuous (roll variation) data
 roll_range = 13:154;
@@ -85,6 +84,6 @@ Y = nan(100,nn);
 %% compile for NN and rename
 pre_nn;
 RSP = RSP(1:2,:); RSP_txt = RSP_txt(1:2);
-n_pdt = 2; 
+n_pdt = 2;
 nn_training;
 nn_plot;
