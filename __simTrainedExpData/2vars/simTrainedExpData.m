@@ -2,7 +2,7 @@
 clear; clc; ca;
 
 fname = 'simTrainedExpData';
-cd C:\Users\yang\ownCloud\MATLAB\__simTrainedExpData
+cd C:\Users\yang\ownCloud\MATLAB\__simTrainedExpData\2vars
 load('C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\_pre_nn_positive_interp\interp_btw_fr_res');
 load C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\pre_nn_20SDF_H_30_short TIPx TIPy n_* *_act_arr
 
