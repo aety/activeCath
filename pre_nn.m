@@ -36,15 +36,15 @@ for nn = 1:n_fr
     plt2 = pxy2; 
         
     %% compile NN predictors (set 1 -- on the right) (set 2 -- on the left)
-    slc = plt2(1,2) < plt1(1,2);    % pick a point at the lowest y-position
-    temp = [plt1(1,2),plt2(1,2)];   % pick a point at the lowest y-position
+    slc = plt2(1,1) < plt1(1,1);    % pick a point at the lowest x-position
+    temp = [plt1(1,1),plt2(1,1)];   % pick a point at the lowest x-position
     
     dlat1 = rssq(diff(plt1)')'; % local lateral distance (set 1)
     dlat2 = rssq(diff(plt2)')'; % local lateral distance (set 2)
     dlat = [dlat1;dlat2];       % all local distances (both sets)
     
-    alp1 = atan2(diff(plt1(:,2)),diff(plt1(:,1))); % local slope angle (set 1)  % x-over-y to avoid inf
-    alp2 = atan2(diff(plt2(:,2)),diff(plt2(:,1))); % local slope angle (set 2)  % x-over-y to avoid inf
+    alp1 = atan2(diff(plt1(:,2)),diff(plt1(:,1))); % local slope angle (set 1)  
+    alp2 = atan2(diff(plt2(:,2)),diff(plt2(:,1))); % local slope angle (set 2)  
     dalp1 = diff(alp1);
     dalp2 = diff(alp2);
     dalp = [dalp1;dalp2];
