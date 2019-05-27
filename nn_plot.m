@@ -21,13 +21,13 @@ ind = tr.testInd;
 
 %% plot combined
 c_map = [27,158,119; 217,95,2; 117,112,179]/255;
-
+r_arr = nan(1,3);
 for rr = 1:size(y,1)
     
     a = RSP(rr,ind);
     b = y(rr,ind);
     [r,~,~] = regression(a,b);
-    disp(r);
+    r_arr(rr) = r;
     
     hold on;
     h = scatter(a,b,20,c_map(rr,:),'filled');
@@ -56,6 +56,7 @@ print('-dtiff','-r300',['nn_' fname '_cmb']);
 close;
 
 %% plot error
+e_arr = nan(1,3);
 for rr = 1:size(y,1)
     figure;
     hold on;
@@ -68,11 +69,8 @@ for rr = 1:size(y,1)
     alpha(h,0.5);
     
     merr = mean(c);
-    stderr = std(c);%/sqrt(length(plt));
-    %     h1 = plot([min(t(rr,ind)),max(t(rr,ind))],mplt*ones(1,2),'k');
-    %     h2 = plot([min(t(rr,ind)),max(t(rr,ind))],(mplt+seplt)*ones(1,2),'--k');
-    %     plot([min(t(rr,ind)),max(t(rr,ind))],(mplt-seplt)*ones(1,2),'--k');
-    %     legend([h1,h2],num2str(mplt,3),['\pm ' num2str(seplt,3) ' (SE)'],'location','northwest');
+    stderr = std(c);
+    e_arr(rr) = merr;
     title(['mean = ' num2str(merr,3) '\pm ' num2str(stderr,3) ' (SD)'],'fontweight','normal');
     
     xlabel(['actual ' RSP_txt{rr}]);

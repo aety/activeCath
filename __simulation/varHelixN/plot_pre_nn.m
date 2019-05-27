@@ -2,23 +2,23 @@ for nnn = 1:length(n_helix_arr)
     
     n_helix = n_helix_arr(nnn);           % number of sinusoids of the helix
     
-    d = ['varHelixN_' num2str(n_helix)];
+%     d = ['varHelixN_' num2str(n_helix)];
     
-    cd(d);
+%     cd(d);
     
-    fname = ['findApex_3DoF_varHelixN_' num2str(n_helix)];
+%     fname = ['findApex_3DoF_varHelixN_' num2str(n_helix)];
     
     %% view proc
     load(['pre_nn_' fname]);
     disp(nnn);
     PDT_MAT(:,:,nnn) = PDT;
     
-    cd ..
+%     cd ..
     
 end
 
 %% plot predictors
-c_arr = colormap(parula(length(n_helix_arr)));
+c_arr = colormap(jet(length(n_helix_arr)));
 PDT_MAT = permute(PDT_MAT,[2,3,1]);
 
 %%
