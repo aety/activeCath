@@ -1,7 +1,7 @@
 %% define catheter 3D rotation (about x-axis)
-bend_arr = [0.000001,2.5:2.5:90];% array of values for the varying parameter
-roll_arr = 0:2.5:75; % array of the "roll" rotation (deg)
-pitch_arr = pitch_range(1):2.5:pitch_range(2);% array of the "pitch" rotation (deg)
+bend_arr = [0.000001,5:5:90];% array of values for the varying parameter
+roll_arr = 0:5:75; % array of the "roll" rotation (deg)
+pitch_arr = pitch_range(1):5:pitch_range(2);% array of the "pitch" rotation (deg)
 
 %% define catheter
 L = 105;            % length of catheter (mm)
@@ -98,7 +98,7 @@ for bb = 1:length(pitch_arr)
             xh = xc + (Rk + a_helix*sin(n_effect_helix*th_helix_small)).*cos(th_helix);   % x location of helix
             yh = yc + (Rk + a_helix*sin(n_effect_helix*th_helix_small)).*sin(th_helix);   % y location of helix
             zh = a_helix*cos(n_effect_helix*th_helix_small);
-                        
+            
             M_helix = [xh;yh;zh];
             
             %% rotate both the catheter and the helix
@@ -116,18 +116,18 @@ for bb = 1:length(pitch_arr)
             
             %% plot (optional)
             dif = abs(length(tgl) - sum(tgl) - sum(tgl));
-            if dif > 1
-                hold on;
-                plot(x_pks,y_pks,'*');
-                plot(X,Y,'--');
-                plot(x_pks(tgl),y_pks(tgl),'o')
-                plot(xh,yh);
-                axis equal
-                axis([0,100,-10,50]);
-                title([bb,aa,rr]);
-                pause;
-                clf;
-            end
+            %             if dif > 1
+            hold on;
+            plot(x_pks,y_pks,'*');
+            plot(X,Y,'--');
+            plot(x_pks(tgl),y_pks(tgl),'o')
+            plot(xh,yh);
+            axis equal
+            axis([0,100,-10,50]);
+            title([bb,aa,rr]);
+            pause;
+            clf;
+            %             end
             
             %% save into big arrays
             nn = nn + 1;

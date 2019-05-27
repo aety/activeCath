@@ -1,9 +1,13 @@
 clear; clc; ca;
 n_helix_arr = 16;
 
-n_pdt = 2;
+n_pdt = 3;
 
-pitch_range_arr = [0,0];
+dnname = [num2str(n_pdt) '_pdt'];
+mkdir(dnname);
+cd(dnname);
+
+pitch_range_arr = [0,50];
 
 for ppp = 1:size(pitch_range_arr,1)
     
@@ -40,3 +44,5 @@ for ppp = 1:size(pitch_range_arr,1)
     cd ..
     
 end
+
+cd ..
