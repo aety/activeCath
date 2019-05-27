@@ -5,7 +5,7 @@ pitch_range_arr = [-25,0;
     0,25;
     25,50;
     -25,25]; % N by 2 array (ranges of pitch variations)
-n_helix_arr = 16; % N by 1 array (number of helices)
+n_helix_arr = 4:4:20; % N by 1 array (number of helices)
 
 for ppp = 1:size(pitch_range_arr,1) % pitch range
     
