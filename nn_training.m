@@ -12,9 +12,9 @@ v = 1:length(PDT_txt);
 
 pdt_arr = nchoosek(v,n_pdt);
 
-P_ARR = nan(length(pdt_arr),n_tr);
+P_ARR = nan(size(pdt_arr,1),n_tr);
 E_ARR = P_ARR;
-TR_ARR = cell(length(pdt_arr),1);
+TR_ARR = cell(size(pdt_arr,1),1);
 Y_ARR = TR_ARR;
 NET_ARR = TR_ARR;
 
@@ -69,8 +69,8 @@ for ii = 1:size(pdt_arr,1)
         net_arr{nn} = net;
         
         % y = mapminmax('reverse',y,PS_rsp); % reverse normalization
-        e = gsubtract(RSP(:,tr.valInd),y(:,tr.valInd)); % error
-        e_arr(nn) = sum(rssq(e))/length(rssq(e)); % square root of sum of all errors (averaged per sample)
+        e = gsubtract(RSP(:,tr.testInd),y(:,tr.testInd)); % error
+        e_arr(nn) = mean(mean(abs(e))); % average absolute error
         y_arr{nn} = y;
         
     end
