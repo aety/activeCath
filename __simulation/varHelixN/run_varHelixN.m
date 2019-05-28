@@ -18,12 +18,12 @@ for ppp = 1:size(pitch_range_arr,1) % pitch range
         mkdir(dname);
         cd(dname);
         
-%         proc_findApex_3DoF_varHelixN; clearvars -except nn n_helix_arr n_helix d pitch_* n_pdt ttt ppp hhh n_pdt_arr
+        proc_findApex_3DoF_varHelixN; clearvars -except nn n_helix_arr n_helix d pitch_* n_pdt ttt ppp hhh n_pdt_arr
         
         fname = 'findApex_3DoF_varHelixN';
         load(['proc_' fname '_' num2str(n_helix)]);
         
-%         pre_nn; clearvars -except nn n_helix_arr n_helix d fname pitch_* n_pdt ttt ppp hhh n_pdt_arr
+        pre_nn; clearvars -except nn n_helix_arr n_helix d fname pitch_* n_pdt ttt ppp hhh n_pdt_arr
         
         R_MAT = cell(length(n_pdt_arr),size(pitch_range_arr,1),length(n_helix_arr)); % master R (correlation coefficient) array
         E_MAT = R_MAT; % master E (mean) array
@@ -44,7 +44,7 @@ for ppp = 1:size(pitch_range_arr,1) % pitch range
             cd ..
             
         end
-                
+        
         cd ..
         
     end

@@ -1,6 +1,6 @@
 ca;
 
-fsz = 6;
+fsz = 16;
 lwd = 1;
 
 TGL_sav = 0;
@@ -119,7 +119,7 @@ ha = plot3(X(ii_arr(hh):end),Y(ii_arr(hh):end),Z(ii_arr(hh):end),'-','color',0.7
 hb = plot3(xh,yh,zh,'color','k','linewidth',lwd); % plot helix
 
 % plot camera
-hc = plotCamera('Location',cam_lc,'Orientation',getRY(camAngle),'Size',5,'Label','','Color',c_arr(1,:),'Opacity',0.2,'AxesVisible',0);
+hc = plotCamera('Location',cam_lc,'Orientation',getRY(camAngle),'Size',5,'Label','','Color','k','Opacity',0.2,'AxesVisible',0);
 
 % plot axes
 f = 20;
@@ -128,7 +128,7 @@ x = [0,0,0]; y = -2*[1,1,1]; z = [0,0,0];
 u = f*[1,0,0]; v = f*[0,1,0]; w = f*[0,0,1];
 hq = quiver3(x,y,z,u,v,w,'filled','color',c,'linewidth',1,'maxheadsize',1);
 hx = text(0.9*f,-0.5*f,0.1,'\theta_{roll}','color',c,'fontsize',fsz);
-hy = text(0,2*f,0,'\theta_{elev}','color',c,'fontsize',fsz);
+hy = text(0,2*f,0,'\theta_{pitch}','color',c,'fontsize',fsz);
 hz = text(0,0,1.1*f,'\theta_{yaw}','color',c,'fontsize',fsz);
 
 % format
@@ -137,7 +137,7 @@ axis tight;
 axis equal;
 box off;
 grid on;
-zlim([-1,20]);
+zlim([-5,20]);
 ax = gca;
 ax.TickLength = [0,0];
 ax.XTick = 0:20:100; ax.YTick =0:20:100; ax.ZTick = 0:20:100;
@@ -146,7 +146,7 @@ ax.XTickLabel = []; ax.YTickLabel = []; ax.ZTickLabel = [];
 ax.Position = [0,0,1,1];
 set(gcf,'position',[500,500,500,500]);
 set(gcf,'color','w');
-set(gcf,'paperposition',[0,0,2,1.2],'unit','inches');
+set(gcf,'paperposition',[0,0,4,2],'unit','inches');
 print('-dtiff','-r300','FigZA');
 
 %% FigZB
@@ -158,7 +158,7 @@ yt = Y(end); xt = yt/tand(th_b);
 plot([X(end)-xt,X(end)],[0,Y(end)],'--','color',c_arr(2,:));
 text(5+X(end)-xt,6+0,'\theta_{bend}','fontsize',fsz,'color',c_arr(2,:));
 
-legend([ha,hb],'catheter','helices','location','northwest');
+legend([ha,hb],'catheter','helices','location','northwest','fontsize',fsz);
 ax.Position = [0.05,0,0.9,1];
 print('-dtiff','-r300','FigZB');
 close

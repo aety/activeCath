@@ -84,6 +84,13 @@ Y = nan(100,nn);
 %% compile for NN and rename
 pre_nn;
 RSP = RSP(1:2,:); RSP_txt = RSP_txt(1:2);
-n_pdt = 2;
-nn_training;
-nn_plot;
+n_pdt_arr = 2;
+for ii = 1:length(n_pdt_arr)
+    n_pdt = ii;
+    dname = [num2str(ii) '_pdt'];
+    mkdir(dname);
+    cd(dname);
+    nn_training;
+    nn_plot;
+    cd ..
+end

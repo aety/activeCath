@@ -15,8 +15,8 @@ PDT = nan(length(PDT_txt),n_fr);
 %%
 ref = ref_pt';
 
-TIPx = X(end,:) - X(1,:); % catheter tip X-location % end-- base; 1--tip
-TIPy = Y(end,:) - Y(1,:); % catheter tip Y-location % end-- base; 1--tip
+TIPx = nan(1,n_fr); % X(end,:) - X(1,:); % catheter tip X-location % end-- base; 1--tip
+TIPy = TIPx; % Y(end,:) - Y(1,:); % catheter tip Y-location % end-- base; 1--tip
 
 for nn = 1:n_fr
     %% load data
@@ -61,6 +61,8 @@ for nn = 1:n_fr
     PDT(8,nn) = nanstd(dlat)/nanmean(dlat);             % predictor 8 -- CV[di]
     PDT(9,nn) = nanmean(dlat1)/nanmean(dlat2);          % predictor 9 -- mean(di)_left / mean(di)_right
     
+    TIPx(nn) = xy_avg_dist(1);
+    TIPy(nn) = xy_avg_dist(2);
 end
 
 RSP = [r_arr,b_arr,p_arr]';

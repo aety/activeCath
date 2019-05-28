@@ -43,13 +43,6 @@ p = plot([temp1,temp2],[temp1,temp2],'color',0.5*[1,1,1],'linewidth',0.5);
 title(['Predictors: ' PDT_txt{best_pdt}],'fontweight','normal');
 ax = xlabel('actual (deg)');
 ay = ylabel('predicted (deg)');
-% temp = round([temp1,temp2]);
-% axis tight;
-% axis equal;
-% axis([temp,temp]);
-% ay.Position(1) = ay.Position(1) + 3;
-% ax.Position(2) = ax.Position(2) + 5;
-% set(gca,'xtick',temp,'ytick',temp);
 set(gca,'fontsize',12);
 set(gcf,'paperposition',[0,0,4,4]);
 print('-dtiff','-r300',['nn_' fname '_cmb']);
@@ -82,37 +75,3 @@ for rr = 1:size(y,1)
     print('-dtiff','-r300',['nn_' fname '_err_' num2str(rr)]);
     close;
 end
-
-%% plot average error for all predictors
-
-% % % if size(y,1)==2
-% % %     E_avg = mean(E_ARR,2);
-% % %
-% % %     figure;
-% % %     hold on;
-% % %
-% % %     % --------- version 1: colormap -----------
-% % %     colormap(hot);
-% % %     scatter(pdt_arr(:,1),pdt_arr(:,2),50,E_avg/size(RSP,2),'filled');
-% % %     cb = colorbar;
-% % %     caxis([0.1,0.8]);
-% % %     ylabel(cb,['norm of all errors / no. of samples']);
-% % %
-% % %     % --------- version 2: markersize -----------
-% % %     % scatter(pdt_arr(:,1),pdt_arr(:,2),80*E_avg/size(RSP,2),'k','filled');
-% % %     % text(3,3,'marker sizes \propto error');
-% % %
-% % %     set(gca,'xtick',1:length(PDT_txt),'xticklabel',PDT_txt);
-% % %     set(gca,'ytick',1:length(PDT_txt),'yticklabel',PDT_txt);
-% % %     xlabel('predictor #1');
-% % %     ylabel('predictor #2');
-% % %     xtickangle(30);
-% % %     ytickangle(30);
-% % %
-% % %     axis equal;
-% % %     set(gca,'fontsize',8);
-% % %     set(gcf,'paperposition',[0,0,4,3]);
-% % %     print('-dtiff','-r300',['nn_' fname '_err_all']);
-% % %     close;
-% % %
-% % % end
