@@ -29,7 +29,7 @@ for dd = 1:size(PKS1,4) % bend
         temp0 = [ones(1,size(PKS1,1)),zeros(1,size(PKS1,1))]; % combined toggle
         
         temp1 = temp(1,:); % keep x signs
-        temp2 = - temp(2,:); % flip y signs
+        temp2 = -temp(2,:); % flip y signs
         
         %% generate data of same configuration from simulation
         bend_arr = th_bend_act_arr(dd);

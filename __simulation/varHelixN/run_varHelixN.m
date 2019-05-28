@@ -1,8 +1,8 @@
 clear; clc; ca;
 
-n_pdt_arr = 3; % N by 1 array (number of predictors)
+n_pdt_arr = 1:8; % N by 1 array (number of predictors)
 pitch_range_arr = [0,50]; % N by 2 array (ranges of pitch variations)
-n_helix_arr = [4:2:14,18:2:24]; % N by 1 array (number of helices)
+n_helix_arr = 16; % N by 1 array (number of helices)
 
 for ppp = 1:size(pitch_range_arr,1) % pitch range
     
@@ -18,12 +18,12 @@ for ppp = 1:size(pitch_range_arr,1) % pitch range
         mkdir(dname);
         cd(dname);
         
-        proc_findApex_3DoF_varHelixN; clearvars -except nn n_helix_arr n_helix d pitch_* n_pdt ttt ppp hhh n_pdt_arr
+%         proc_findApex_3DoF_varHelixN; clearvars -except nn n_helix_arr n_helix d pitch_* n_pdt ttt ppp hhh n_pdt_arr
         
         fname = 'findApex_3DoF_varHelixN';
         load(['proc_' fname '_' num2str(n_helix)]);
         
-        pre_nn; clearvars -except nn n_helix_arr n_helix d fname pitch_* n_pdt ttt ppp hhh n_pdt_arr
+%         pre_nn; clearvars -except nn n_helix_arr n_helix d fname pitch_* n_pdt ttt ppp hhh n_pdt_arr
         
         R_MAT = cell(length(n_pdt_arr),size(pitch_range_arr,1),length(n_helix_arr)); % master R (correlation coefficient) array
         E_MAT = R_MAT; % master E (mean) array
