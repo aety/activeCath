@@ -1,11 +1,8 @@
 clear; clc; ca;
 
 n_pdt_arr = 3; % N by 1 array (number of predictors)
-pitch_range_arr = [-25,0;
-    0,25;
-    25,50;
-    -25,25]; % N by 2 array (ranges of pitch variations)
-n_helix_arr = 4:4:20; % N by 1 array (number of helices)
+pitch_range_arr = [0,50]; % N by 2 array (ranges of pitch variations)
+n_helix_arr = [4:2:14,18:2:24]; % N by 1 array (number of helices)
 
 for ppp = 1:size(pitch_range_arr,1) % pitch range
     
