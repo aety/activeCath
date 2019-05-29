@@ -8,11 +8,11 @@ arr_fr = 13:154;    % define number of frames (temporal), default: 1:size(PKS1,3
 n_cl = 14;          % define number of nodes (spatial) (default: size(PKS1,1)
 n_bd = size(PKS1,4);% define number of bending angle, default: size(PKS1,4)
 
-r_range = th_roll_act_arr(arr_fr([end,1])); cmap1 = PuBu; cmap2 = YlOrBr; % for "positive"
+r_range = th_roll_act_arr(arr_fr([end,1])); cmap1 = RdBu; cmap2 = PRGn; % for "positive"
 y_lim = [0,400]; % figure y-limin (pixels)
 
 %% plot
-mks = 5;
+mks = 10;
 for dd = 1:n_bd
     figure;
     for cc = 1:n_cl
@@ -49,7 +49,7 @@ for dd = 1:n_bd
     w_ratio = diff(temp(1:2))/diff(temp(3:4));
     ht = 400;
     set(gcf,'position',[1000,100,ht*w_ratio,ht]);
-    ht = 3.5;
+    ht = 5;
     set(gcf,'paperposition',[1000,100,ht*w_ratio,ht],'unit','inches');
     set(gca,'position',[0.05,0.05,0.90,0.90]);
     

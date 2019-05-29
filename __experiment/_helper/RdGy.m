@@ -1,4 +1,4 @@
-function map = PRGn(m)
+function map = RdBu(m)
 %PARULA Blue-green-orange-yellow color map
 %   PARULA(M) returns an M-by-3 matrix containing a colormap. 
 %   The colors begin with dark purplish-blue and blue, range
@@ -30,18 +30,17 @@ if nargin < 1
    end
 end
 
-values = [
-    64,0,75
-118,42,131
-153,112,171
-194,165,207
-231,212,232
-%247,247,247
-217,240,211
-166,219,160
-90,174,97
-27,120,55
-0,68,27
+values = [103,0,31
+178,24,43
+214,96,77
+244,165,130
+253,219,199
+%255,255,255
+224,224,224
+186,186,186
+135,135,135
+77,77,77
+26,26,26
    ]/255;
 
 P = size(values,1);
