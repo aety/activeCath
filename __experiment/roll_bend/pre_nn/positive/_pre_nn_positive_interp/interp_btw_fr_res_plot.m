@@ -44,7 +44,7 @@ for dd = 1:n_bd
     yyaxis left; axis(temp); yyaxis right; axis (temp);
     axis off;
     
-    %     text(temp(1),temp(4),['\theta_{bend} = ' num2str(th_bend_act_arr(dd),3) '^\circ'],'fontsize',14);
+    text(temp(1),temp(4),[num2str(th_bend_act_arr(dd),3) '^\circ'],'fontsize',10); % '\theta_{bend} = ' 
     
     w_ratio = diff(temp(1:2))/diff(temp(3:4));
     ht = 400;

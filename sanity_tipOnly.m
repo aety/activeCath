@@ -1,11 +1,9 @@
-cd C:\Users\yang\ownCloud\MATLAB\__expTrainedExpData\2_pdt
+clear; ca; clc;
 
-clearvars
-ca;
-clc;
+% cd C:\Users\yang\ownCloud\MATLAB\__expTrainedExpData\2_pdt; fname = 'expTrainedExpData';
+cd C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\3_vars\pitch_0_50\varHelixN_16\3_pdt; fname = 'findApex_3DoF_varHelixN';
 
 %% load NN results
-fname = 'expTrainedExpData';
 load(['nn_' fname],'Y');
 rsp_nn = Y(1:2,:); % NN response
 
