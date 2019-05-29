@@ -2,13 +2,14 @@ clear;
 clc;
 ca;
 
-cd C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\3_vars\pitch_0_50
+% cd C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\3_vars\pitch_0_50
+cd C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\2_vars\pitch_0_0
 
 n_helix_arr = 4:2:24;
-n_pdt = 3;
+n_pdt = 2;
 
 BEST_PDT = nan(length(n_helix_arr),n_pdt);
-BEST_R_ARR = nan(length(n_helix_arr),3);
+BEST_R_ARR = nan(length(n_helix_arr),n_pdt);
 BEST_E_ARR = BEST_R_ARR;
 
 for nnn = 1:length(n_helix_arr)
@@ -37,10 +38,10 @@ for nnn = 1:length(n_helix_arr)
     ind = tr.testInd;
     
     %% plot combined
-    r_arr = nan(1,3);
+    r_arr = nan(1,n_pdt);
     e_arr = r_arr;
     
-    for rr = 1:size(y,1)
+    for rr = 1:n_pdt
         a = RSP(rr,ind);
         b = y(rr,ind);
         [r,~,~] = regression(a,b);
@@ -83,7 +84,7 @@ for pp = 1:length(p_arr)
     set(gcf,'paperposition',[0,0,4,3]);
     print('-dtiff','-r300',['post_nn_varHelixN_' num2str(pp)]);
     if pp==2
-        legend(RSP_txt,'location','northeastoutside','fontsize',12);
+        legend(RSP_txt(1:n_pdt),'location','northeastoutside','fontsize',12);
         print('-dtiff','-r300',['post_nn_varHelixN_lgd']);
     end
     close;

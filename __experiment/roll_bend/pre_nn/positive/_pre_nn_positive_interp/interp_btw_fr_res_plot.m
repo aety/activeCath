@@ -71,7 +71,7 @@ for cc = 1:2
     cb.Position = [0.5,0.1,0.1,0.8];
     
     cb.Box = 'off';
-    cb.Label.String = ['\theta_{roll} ' txt_arr{cc} ' (deg']; %
+    cb.Label.String = ['\theta_{roll} ' txt_arr{cc} ' (deg)']; %
     cb.Label.FontSize = 14;
     cb.Label.Position = [5,0.5,0];
     %     cb.Label.Rotation = 0;

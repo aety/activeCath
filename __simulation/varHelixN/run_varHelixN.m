@@ -1,13 +1,13 @@
 clear; clc; ca;
 
-n_pdt_arr = 1:8; % N by 1 array (number of predictors)
-pitch_range_arr = [0,50]; % N by 2 array (ranges of pitch variations)
-n_helix_arr = 16; % N by 1 array (number of helices)
+n_pdt_arr = 2; % N by 1 array (number of predictors)
+pitch_range_arr = 0; % N by 2 array (ranges of pitch variations)
+n_helix_arr = 4:2:24; % N by 1 array (number of helices)
 
 for ppp = 1:size(pitch_range_arr,1) % pitch range
     
     pitch_range = pitch_range_arr(ppp,:);
-    dpname = ['pitch_' num2str(pitch_range(1)) '_' num2str(pitch_range(2))];
+    dpname = ['pitch_' num2str(pitch_range(1)) '_' num2str(pitch_range(end))];
     mkdir(dpname);
     cd(dpname);
     
