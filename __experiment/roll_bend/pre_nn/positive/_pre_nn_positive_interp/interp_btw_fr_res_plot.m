@@ -8,7 +8,7 @@ arr_fr = 13:154;    % define number of frames (temporal), default: 1:size(PKS1,3
 n_cl = 14;          % define number of nodes (spatial) (default: size(PKS1,1)
 n_bd = size(PKS1,4);% define number of bending angle, default: size(PKS1,4)
 
-r_range = th_roll_act_arr(arr_fr([end,1])); cmap1 = RdBu; cmap2 = PRGn; % for "positive"
+r_range = th_roll_act_arr(arr_fr([end,1])); cmap1 = PuBu; cmap2 = YlOrBr;
 y_lim = [0,400]; % figure y-limin (pixels)
 
 %% plot
@@ -71,7 +71,7 @@ for cc = 1:2
     cb.Position = [0.5,0.1,0.1,0.8];
     
     cb.Box = 'off';
-    cb.Label.String = ['\theta_{roll} ' txt_arr{cc}]; %
+    cb.Label.String = ['\theta_{roll} ' txt_arr{cc} ' (deg']; %
     cb.Label.FontSize = 14;
     cb.Label.Position = [5,0.5,0];
     %     cb.Label.Rotation = 0;
