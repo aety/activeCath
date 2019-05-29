@@ -18,7 +18,7 @@ if size(pdt_arr,2)==2
     
     % --------- version 2: markersize -----------
     scatter(pdt_arr(:,1),pdt_arr(:,2),E_avg*100/max(E_avg),'k','filled');
-    text(3,3,'marker sizes \propto error');
+    text(3,3,'circle size \propto error');
     txt = 'dsize';
     
     set(gca,'xtick',1:length(PDT_txt),'xticklabel',PDT_txt);

@@ -1,10 +1,10 @@
 clear; ca; clc;
 
-cd C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\3_vars\pitch_0_50\varHelixN_16
-fname = 'nn_findApex_3DoF_varHelixN';
+% cd C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\3_vars\pitch_0_50\varHelixN_16
+% fname = 'nn_findApex_3DoF_varHelixN';
 
-% cd C:\Users\yang\ownCloud\MATLAB\__expTrainedExpData
-% fname = 'nn_expTrainedExpData';
+cd C:\Users\yang\ownCloud\MATLAB\__expTrainedExpData
+fname = 'nn_expTrainedExpData';
 
 n_pdt_arr = 1:9;
 n_pdt = length(n_pdt_arr);

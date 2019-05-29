@@ -22,7 +22,7 @@ ind = tr.testInd;
 %% plot combined
 c_map = [27,158,119; 217,95,2; 117,112,179]/255;
 r_arr = nan(1,3);
-for rr = 1:size(y,1)
+for rr = 1:2 % size(y,1)
     
     a = RSP(rr,ind);
     b = y(rr,ind);
@@ -32,7 +32,7 @@ for rr = 1:size(y,1)
     hold on;
     h = scatter(a,b,20,c_map(rr,:),'filled');
     alpha(h,0.5);
-    text(0,max(max(RSP))-10*rr,[RSP_txt{rr} ', R = ' num2str(r,3)],'color',c_map(rr,:),'fontsize',12);
+    text(10,max(max(RSP))-10*rr,[RSP_txt{rr} ', R = ' num2str(r,3)],'color',c_map(rr,:),'fontsize',12);
     
 end
 axis tight;

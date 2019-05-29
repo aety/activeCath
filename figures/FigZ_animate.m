@@ -1,12 +1,12 @@
 ca;clear;clc;
 
 %% define animate
-% th_r_arr = 0:4:90; th_p_arr = zeros(1,length(th_r_arr)); th_y_arr = th_p_arr; th_b_arr = th_p_arr; vname = 'roll'; ii = 1;
-% th_p_arr = 0:-1:-15; th_y_arr = zeros(1,length(th_p_arr)); th_b_arr = th_y_arr; th_r_arr = th_y_arr; vname = 'pitch'; ii = 2;
-% th_y_arr = 0:25; th_b_arr = zeros(1,length(th_y_arr)); th_r_arr = th_b_arr; th_p_arr = th_b_arr; vname = 'yaw'; ii = 3;
-th_b_arr = [0.0000001,2:2:60]; th_r_arr = zeros(1,length(th_b_arr)); th_p_arr = th_r_arr; th_y_arr = th_r_arr; vname = 'bend'; ii = 4;
+th_r_arr = 60; th_p_arr = zeros(1,length(th_r_arr)); th_y_arr = th_p_arr; th_b_arr = 45+th_p_arr; vname = 'roll'; ii = 1;
+% th_p_arr = 0:-1:-15; th_y_arr = zeros(1,length(th_p_arr)); th_b_arr = 45+th_y_arr; th_r_arr = th_y_arr; vname = 'pitch'; ii = 2; 
+% th_y_arr = 0:25; th_b_arr = 45+zeros(1,length(th_y_arr)); th_r_arr = zeros(1,length(th_y_arr)); th_p_arr = th_r_arr; vname = 'yaw'; ii = 3;
+%  th_b_arr = [0.0000001,2:2:60]; th_r_arr = zeros(1,length(th_b_arr)); th_p_arr = th_r_arr; th_y_arr = th_r_arr; vname = 'bend'; ii = 4;
 
-vidflag = 1; % save video
+vidflag = 0; % save video
 vidrate = 10; % video frame rate
 
 if vidflag
@@ -135,9 +135,9 @@ for rr = 1:length(th_r_arr)
     % plot 3D view
     hh = 1;
     hold on;
-    ha = plot3(X(ii_arr(hh):end),Y(ii_arr(hh):end),Z(ii_arr(hh):end),'-','color','k','linewidth',2*lwd); % plot catheter
+    ha = plot3(X(ii_arr(hh):end),Y(ii_arr(hh):end),Z(ii_arr(hh):end),'-','color',0.5*[1,1,1],'linewidth',4*lwd); % plot catheter
     hp = plot3(X(end),Y(end),Z(end),'.','color',0.5*[1,1,1],'markersize',10*lwd); % plot catheter
-    % hb = plot3(xh,yh,zh,'color','k','linewidth',lwd); % plot helix
+    hb = plot3(xh,yh,zh,'color','k','linewidth',lwd); % plot helix
     
     if rr==1
         % plot camera
@@ -152,7 +152,7 @@ for rr = 1:length(th_r_arr)
             hq = quiver3(x(ii),y(ii),z(ii),u(ii),v(ii),w(ii),'filled','color',c,'linewidth',2,'maxheadsize',1);
             switch ii
                 case 1
-                    hx = text(0.9*f,-0.5*f,0.1,'\theta_{roll}','color',c,'fontsize',fsz);
+                    hx = text(0.9*f,-0.5*f,0.1*f,'\theta_{roll}','color',c,'fontsize',fsz);
                 case 2
                     hy = text(0,1.5*f,0,'\theta_{pitch}','color',c,'fontsize',fsz);
                 case 3
@@ -178,16 +178,20 @@ for rr = 1:length(th_r_arr)
     set(gcf,'color','w');
     if ii==4
         view(2);
-        h1 = plot([0,L],[0,0],'--','color',c_arr(2,:),'linewidth',lwd);
+        ha(2) = plot([0,L],[0,0],'--','color',c_arr(2,:),'linewidth',lwd);
         yt = Y(end); xt = yt/tand(th_b);
-        h2 = plot([X(end)-xt,X(end)],[0,Y(end)],'--','color',c_arr(2,:),'linewidth',lwd);
-        h3 = text(X(end)-20,Y(end)+10,'\theta_{bend}','fontsize',fsz,'color',c_arr(2,:));
-    end
-    
+        ha(3) = plot([X(end)-xt,X(end)],[0,Y(end)],'--','color',c_arr(2,:),'linewidth',lwd);
+        ha(4) = text(X(end)-20,Y(end)+10,'\theta_{bend}','fontsize',fsz,'color',c_arr(2,:));
+    end    
     if vidflag
+        removeToolbarExplorationButtons;
         frame = getframe(gcf);
         writeVideo(anim,frame);
-        delete([ha,h1,h2,h3]);
+        delete([ha]);
+    else
+        set(gcf,'paperposition',[0,0,4,3],'unit','inches');
+        print('-dtiff','-r300',['FigZ_animate_' vname]);
+        close;
     end
     
 end
