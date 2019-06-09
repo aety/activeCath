@@ -11,11 +11,11 @@ load(['nn_' fname]);
 % cmap = {flipud(parula),flipud(parula),jet}; % for "positive" (sequential, sequential)
 % cmap = {flipud(parula),RdYlGn}; % for "both" (sequential, diverging)
 
-[ind_a,ind_b] = find(P_ARR==min(min(P_ARR))); % find best predictors
+% [ind_a,ind_b] = find(P_ARR==min(min(P_ARR))); % find best predictors
 
-tr = TR; % TR_ARR{ind_a}{ind_b};
-y = Y; % Y_ARR{ind_a}{ind_b};
-best_pdt = pdt_arr(ind_a,:);
+tr = TR; 
+y = Y; 
+best_pdt = PDT_best;
 
 ind = tr.testInd;
 
