@@ -80,4 +80,5 @@ X = M(1,:); Y = M(2,:); Z = M(3,:);
 M_helix = M_pitch*M_roll*M_helix;
 xh = M_helix(1,:); yh = M_helix(2,:); zh = M_helix(3,:);
 
-M_rot = M_pitch*M_roll;
+M_bend = getRZ(th_end);
+M_rot = M_pitch*M_roll*M_bend;
