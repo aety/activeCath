@@ -757,7 +757,7 @@ plotCamera('Location',cam_lc,'Orientation',getRY(camAngle),'Size',10,'Label','ca
 [xh,yh] = CameraProjection([xh;yh;zh],[0;camAngle;0],cam_lc,[0,0,-cam_lc(3)]);
 
 % find apexes in X-Y projection
-[x_pks,y_pks] = func_find_apex_rot(xh,yh,X,Y,0);
+[x_pks,y_pks,~] = FindHelixPeaks(xh,yh,X,Y); % [x_pks,y_pks] = func_find_apex_rot(xh,yh,X,Y,0);
 
 % plot camera views
 hh = 2;
