@@ -9,11 +9,11 @@ fname = 'nn_expTrainedExpData';
 n_pdt_arr = 1:9;
 n_pdt = length(n_pdt_arr);
 
-hold on;
-
+%% error
 merr = nan(1,n_pdt);
 sterr = merr; minerr = merr;
 
+hold on;
 for nn = 1:n_pdt
 
     cd([num2str(n_pdt_arr(nn)) '_pdt']);
@@ -31,7 +31,7 @@ for nn = 1:n_pdt
 end
 
 h1 = plot(n_pdt_arr,merr,'k');
-h2 = plot(n_pdt_arr,minerr,'color',0.75*[1,1,1]);
+h2 = plot(n_pdt_arr,minerr,'--','color','k');
 
 legend([h1,h2],'avg.','min.');
 xlabel('no. of predictors');
@@ -41,4 +41,35 @@ ylabel('mean error (deg)');
 set(gca,'fontsize',10);
 set(gcf,'paperposition',[0,0,5,2.5]);
 print('-dtiff','-r300','nn_plot_Npdt');
+close;
+
+%% R (adjusted) = 1 - (1 - R^2) * ( (n - 1) / (n - p - 1) ) % n: sample size / p: variables
+r2_adj = nan(2,n_pdt);
+for nn = 1:n_pdt
+
+    cd([num2str(n_pdt_arr(nn)) '_pdt']);
+    load(fname);
+    
+    a = RSP(1:2,TR.testInd);
+    b = Y(1:2,TR.testInd);
+    
+    [r,~,~] = regression(a,b);
+    
+    n = length(TR.testInd);
+    p = nn;
+    r2_adj(:,nn) = 1 - (1 - r.^2) * ( (n - 1) / (n - p - 1) );
+    
+    cd ..
+end
+
+h1 = plot(1:n_pdt,r2_adj,'.-','markersize',20);
+legend(RSP_txt{1:2});
+
+xlabel('no. of predictors');
+ylabel('adjusted R^2');
+    
+box off    
+set(gca,'fontsize',10);
+set(gcf,'paperposition',[0,0,5,2.5]);
+print('-dtiff','-r300','nn_plot_Npdt_adjR2');
 close;
