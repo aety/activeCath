@@ -27,7 +27,7 @@ for nn = 1:n_pdt
     h = scatter(nn*ones(1,size(E_ARR,1)),err,20,0.5*[1,1,1],'filled');    
     alpha(h,0.5);
     
-    cd ..
+    cd ..   
 end
 
 h1 = plot(n_pdt_arr,merr,'k');
@@ -35,7 +35,8 @@ h2 = plot(n_pdt_arr,minerr,'--','color','k');
 
 legend([h1,h2],'avg.','min.');
 xlabel('no. of predictors');
-ylabel('mean error (deg)');
+ylabel('(deg)');
+title('mean error','fontweight','normal');
     
     
 set(gca,'fontsize',10);
@@ -45,6 +46,7 @@ close;
 
 %% R (adjusted) = 1 - (1 - R^2) * ( (n - 1) / (n - p - 1) ) % n: sample size / p: variables
 r2_adj = nan(2,n_pdt);
+
 for nn = 1:n_pdt
 
     cd([num2str(n_pdt_arr(nn)) '_pdt']);
@@ -62,11 +64,15 @@ for nn = 1:n_pdt
     cd ..
 end
 
-h1 = plot(1:n_pdt,r2_adj,'.-','markersize',20);
+mkr = ['o','v'];
+hold on;
+for pp = 1:2
+    plot(1:n_pdt,r2_adj(pp,:),[mkr(pp) '-k'],'markersize',6);
+end
 legend(RSP_txt{1:2});
 
 xlabel('no. of predictors');
-ylabel('adjusted R^2');
+title('adjusted R^2','fontweight','normal');
     
 box off    
 set(gca,'fontsize',10);

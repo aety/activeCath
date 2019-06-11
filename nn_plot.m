@@ -60,7 +60,7 @@ for rr = 1:size(y,1)
     hold on;
     h = scatter(a,b,20,'k','filled');
     alpha(h,0.5);
-    title([RSP_txt{rr} ', R = ' num2str(r,3)],'fontsize',12);
+    title([RSP_txt{rr} ', R = ' num2str(r,3) ' (N = ' num2str(length(ind)) ')'],'fontsize',12,'fontweight','normal');
     axis tight;
     
     temp = [get(gca,'xlim');get(gca,'ylim')];
@@ -74,7 +74,6 @@ for rr = 1:size(y,1)
     print('-dtiff','-r300',['nn_' fname '_' num2str(rr)]);
     close;
 end
-
 
 %% plot error
 e_arr = nan(1,3);

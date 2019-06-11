@@ -10,16 +10,16 @@ x2 = TR.divideParam.valRatio;
 x3 = TR.divideParam.testRatio;
 
 X = [x1,x2,x3];
-labels = {'testing','validation','testing'};
+labels = {'training','validation','testing'};
 p = pie(X,labels);
-colormap(lines(3));
+colormap(white);
 
 
 for ii = 1:3
     t = p(ii*2);
-    t.FontSize = 12;
+    t.FontSize = 16;
 end
 
-set(gcf,'paperposition',[0,0,4,3]);
+set(gcf,'paperposition',[0,0,4,2]);
 print('-dtiff','-r300',['divide_Pie_' fname]);
 close;
