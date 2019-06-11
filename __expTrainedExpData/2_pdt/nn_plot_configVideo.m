@@ -155,5 +155,3 @@ if vidflag
     close(anim);
     close;
 end
-
-cd C:\Users\yang\ownCloud\MATLAB

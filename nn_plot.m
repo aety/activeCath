@@ -13,8 +13,8 @@ load(['nn_' fname]);
 
 % [ind_a,ind_b] = find(P_ARR==min(min(P_ARR))); % find best predictors
 
-tr = TR; 
-y = Y; 
+tr = TR;
+y = Y;
 best_pdt = PDT_best;
 
 ind = tr.testInd;
@@ -47,6 +47,34 @@ set(gca,'fontsize',12);
 set(gcf,'paperposition',[0,0,4,4]);
 print('-dtiff','-r300',['nn_' fname '_cmb']);
 close;
+
+%% plot separate
+r_arr = nan(1,3);
+for rr = 1:size(y,1)
+    
+    a = RSP(rr,ind);
+    b = y(rr,ind);
+    [r,~,~] = regression(a,b);
+    r_arr(rr) = r;
+    
+    hold on;
+    h = scatter(a,b,20,'k','filled');
+    alpha(h,0.5);
+    title([RSP_txt{rr} ', R = ' num2str(r,3)],'fontsize',12);
+    axis tight;
+    
+    temp = [get(gca,'xlim');get(gca,'ylim')];
+    temp2 = max(temp(:,2)); temp1 = min(temp(:,1));
+    p = plot([temp1,temp2],[temp1,temp2],'color',0.5*[1,1,1],'linewidth',0.5);
+    
+    ax = xlabel('ground truth (deg)');
+    ay = ylabel('NN output (deg)');
+    set(gca,'fontsize',12);
+    set(gcf,'paperposition',[0,0,3,3]);
+    print('-dtiff','-r300',['nn_' fname '_' num2str(rr)]);
+    close;
+end
+
 
 %% plot error
 e_arr = nan(1,3);
