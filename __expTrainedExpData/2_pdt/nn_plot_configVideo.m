@@ -14,10 +14,10 @@ load(['..\pre_nn_' fname],'PDT');
 %%
 pos_img1 = [0,0.5,0.25,0.45];
 pos_img2 = [0,0,0.25,0.45];
-pos_pdt = [0.275,0.6,0.1,0.2];
-pos_3d = [0.375,0.2,0.625,0.8];
-pos_rsp = [0.275,0.1,0.1,0.2];
-pos_err = [0.45,0.1,0.12,0.1];
+pos_pdt = [0.275,0.7,0.1,0.2];
+pos_3d = [0.4,0,0.6,1];
+pos_rsp = [0.275,0.35,0.1,0.2];
+pos_err = [0.275,0.1,0.1,0.1];
 fsz = 16;
 msz = 12;
 
@@ -39,11 +39,15 @@ if vidflag
 end
 
 %% plot combined
-cmap = [33,113,181;
-    217,72,1]/255;
-cmapl = [158,202,225;
-    253,174,107]/255; % light
-carr = colormap(lines);
+carr = [66,206,227
+    31,120,180
+    178,223,138
+    51,160,44
+    251,154,153
+    227,26,28
+    253,191,111
+    255,127,0]/255;
+cmap = carr([2,6,4,8],:);
 
 ind_list = randperm(length(ind));
 bar_ylim = max(max(abs(RSP(ind)-y(ind))));
@@ -66,11 +70,7 @@ for ii = ind_list
         %% get catheter
         [X,Y,Z,xh,yh,zh,M] = GetSingleCatheter(rsp_compare(:,mm));
         ht = plot3(X(end),Y(end),Z(end),'.','color',cmap(mm,:),'markersize',25);
-        %         ha = scatter3(X,Y,Z,10,cmapl(mm,:),'filled');
-        %         alpha(ha,0.75);
-        hc(mm) = plot3(X,Y,Z,'color',cmap(mm,:),'linewidth',8);
-        %         hb = scatter3(xh,yh,zh,5,cmapl(mm,:),'filled');
-        %         alpha(hb,0.75);
+        hc(mm) = plot3(X,Y,Z,'color',cmap(mm,:),'linewidth',4);
         plot3(xh,yh,zh,'color',cmap(mm,:));
         
         %% plot coordinate frame
@@ -84,17 +84,18 @@ for ii = ind_list
     axis tight;
     view([-37.5+90,30]);
     grid on;
-    axis([-2,110,-2,65,0,50]);
+    axis([-2,110,-2,65,-2,50]);
     set(gca,'xticklabel',[],'yticklabel',[],'zticklabel',[]);
     set(gca,'fontsize',fsz);
     
     %% error
     subplot('position',pos_err);
     err = abs(diff(rsp_compare'));
-    bar([1,2],err(1:2),0.4,'k');
+    bar([1,2],err(1:2),0.15,'k');
+    xlim([.5,2.5]);
     ylim([0,bar_ylim]);
     set(gca,'xtick',[1,2],'xticklabel',RSP_txt(1:2));
-    title('error','fontweight','normal');
+    title('error');
     set(gca,'fontsize',fsz);
     
     %% predictors
@@ -108,7 +109,12 @@ for ii = ind_list
     
     %% rsp
     subplot('position',pos_rsp);
-    bar([1,2],rsp_compare(1:2,:),0.4,'edgecolor','none');
+    colormap(cmap([1,2],:));
+    b = bar([1,2],rsp_compare(1:2,:),0.4,'edgecolor','none','facecolor','flat');
+    for k = 1:2
+        b(k).CData = k;
+    end    
+    xlim([.5,2.5]);
     ylim([0,max(max(RSP(:,ind)))]);
     set(gca,'xtick',[1,2],'xticklabel',RSP_txt(1:2));
     set(gca,'fontsize',fsz);
@@ -125,7 +131,7 @@ for ii = ind_list
     subplot('position',pos_img1);
     imshow(I);
     ylim([150,550]);
-    title('original','fontsize',fsz);
+%     title('original','fontsize',fsz);
     camroll(-90);
     subplot('position',pos_img2);
     imshow(I);
@@ -133,11 +139,11 @@ for ii = ind_list
     hold on;
     pk1 = PKS1(:,:,select_ro,select_bd);
     pk2 = PKS2(:,:,select_ro,select_bd);
-    h1 = plot(pk1(:,1)+ref(1),-pk1(:,2)+ref(2),'.','color',carr(3,:),'markersize',msz);
-    h2 = plot(pk2(:,1)+ref(1),-pk2(:,2)+ref(2),'.','color',carr(7,:),'markersize',msz);
+    h1 = plot(pk1(:,1)+ref(1),-pk1(:,2)+ref(2),'.','color',cmap(3,:),'markersize',msz);
+    h2 = plot(pk2(:,1)+ref(1),-pk2(:,2)+ref(2),'.','color',cmap(4,:),'markersize',msz);
     plot(ref(1),ref(2),'.','color','w','markersize',msz);
     camroll(-90);
-    title('processed','fontsize',fsz);
+%     title('processed','fontsize',fsz);
     legend([h1,h2],'concave','convex','fontsize',fsz,'location','north');
     
     %%
