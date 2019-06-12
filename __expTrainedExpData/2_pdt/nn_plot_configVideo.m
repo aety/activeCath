@@ -28,7 +28,7 @@ best_pdt = PDT_best;
 ind = tr.testInd;
 
 %% initialize video
-vidflag = 0; % save video
+vidflag = 1; % save video
 vidrate = 1; % video frame rate
 
 if vidflag

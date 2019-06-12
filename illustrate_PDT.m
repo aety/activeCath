@@ -31,6 +31,7 @@ inc = [0,max(max(I))];
 
 for ii = 1:2
     
+    figure;
     carr = colormap(lines);
     Ip = I + inc(ii);
     imshow(Ip); hold on;
@@ -48,7 +49,8 @@ for ii = 1:2
     wd = 900;
     set(gcf,'position',[500,300,wd,wd*range(xl)/range(yl)]);
     wd = 6;
-    set(gcf,'paperposition',[0,0,wd,wd*range(xl)/range(yl)]);
+    set(gcf,'paperposition',[0,0,wd,ii*wd*range(xl)/range(yl)]);    
+    daspect([1,ii,1]);
     cd C:\Users\yang\ownCloud\MATLAB
     print('-dtiff','-r300',['illustrate_PDT' num2str(ii)]);
     close;
