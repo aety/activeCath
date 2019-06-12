@@ -28,7 +28,7 @@ best_pdt = PDT_best;
 ind = tr.testInd;
 
 %% initialize video
-vidflag = 1; % save video
+vidflag = 0; % save video
 vidrate = 1; % video frame rate
 
 if vidflag
@@ -47,7 +47,7 @@ carr = [66,206,227
     227,26,28
     253,191,111
     255,127,0]/255;
-cmap = carr([2,6,4,8],:);
+cmap = carr([4,6,7,1],:);
 
 ind_list = randperm(length(ind));
 bar_ylim = max(max(abs(RSP(ind)-y(ind))));
