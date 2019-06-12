@@ -7,7 +7,7 @@ load(['nn_' fname]);
 load(['..\pre_nn_' fname],'PDT');
 
 fsz = 16;
-msz = 20;
+msz = 25;
 
 %% sort results
 tr = TR;
@@ -40,3 +40,5 @@ camroll(-90);
 
 set(gca,'position',[0,0,1,1]);
 set(gcf,'position',[500,300,900,450]);
+
+cd C:\Users\yang\ownCloud\MATLAB
