@@ -1,10 +1,15 @@
 ca;clear;clc;
 
 %% define animate
-th_r_arr = 60; th_p_arr = zeros(1,length(th_r_arr)); th_y_arr = th_p_arr; th_b_arr = 45+th_p_arr; vname = 'roll'; ii = 1;
+%%% videos
+% th_r_arr = 0:60; th_p_arr = zeros(1,length(th_r_arr)); th_y_arr = th_p_arr; th_b_arr = 45+th_p_arr; vname = 'roll'; ii = 1;
 % th_p_arr = 0:-1:-15; th_y_arr = zeros(1,length(th_p_arr)); th_b_arr = 45+th_y_arr; th_r_arr = th_y_arr; vname = 'pitch'; ii = 2; 
 % th_y_arr = 0:25; th_b_arr = 45+zeros(1,length(th_y_arr)); th_r_arr = zeros(1,length(th_y_arr)); th_p_arr = th_r_arr; vname = 'yaw'; ii = 3;
-%  th_b_arr = [0.0000001,2:2:60]; th_r_arr = zeros(1,length(th_b_arr)); th_p_arr = th_r_arr; th_y_arr = th_r_arr; vname = 'bend'; ii = 4;
+% th_b_arr = [0.0000001,2:2:60]; th_r_arr = zeros(1,length(th_b_arr)); th_p_arr = th_r_arr; th_y_arr = th_r_arr; vname = 'bend'; ii = 4;
+
+%%% figures
+% th_b_arr = 45; th_r_arr = zeros(1,length(th_b_arr)); th_p_arr = th_r_arr; th_y_arr = th_r_arr; vname = 'bend'; ii = 4;
+th_r_arr = 60; th_p_arr = zeros(1,length(th_r_arr)); th_y_arr = th_p_arr; th_b_arr = 45+th_p_arr; vname = 'roll'; ii = 1;
 
 vidflag = 0; % save video
 vidrate = 10; % video frame rate
@@ -17,7 +22,7 @@ if vidflag
 end
 
 %%
-fsz = 24;
+fsz = 36;
 lwd = 1;
 
 % define catheter
@@ -189,7 +194,7 @@ for rr = 1:length(th_r_arr)
         writeVideo(anim,frame);
         delete([ha]);
     else
-        set(gcf,'paperposition',[0,0,4,3],'unit','inches');
+        set(gcf,'paperposition',[0,0,6,4],'unit','inches');
         print('-dtiff','-r300',['FigZ_animate_' vname]);
         close;
     end

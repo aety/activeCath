@@ -63,7 +63,7 @@ for ii = 102%ind_list
 %         ht = plot3(X(end),Y(end),Z(end),'.','color',cmap(mm,:),'markersize',30);
         hc(mm) = scatter3(X,Y,Z,80,cmap(mm,:),'filled');
         alpha(hc(mm),0.5);
-        plot3(xh,yh,zh,'color',cmap(mm,:));
+        plot3(xh,yh,zh,'color',cmap(mm,:),'linewidth',2);
         
         %% plot coordinate frame
         f = 20; M = f*M;
