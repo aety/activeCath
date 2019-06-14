@@ -55,6 +55,7 @@ for rr = 1:size(y,1)
     a = RSP(rr,ind);
     b = y(rr,ind);
     [r,~,~] = regression(a,b);
+    r = r(2,1);
     r_arr(rr) = r;
     
     hold on;
@@ -65,7 +66,7 @@ for rr = 1:size(y,1)
     
     temp = [get(gca,'xlim');get(gca,'ylim')];
     temp2 = max(temp(:,2)); temp1 = min(temp(:,1));
-    p = plot([temp1,temp2],[temp1,temp2],'color',0.5*[1,1,1],'linewidth',0.5);
+    %     p = plot([temp1,temp2],[temp1,temp2],'color',0.5*[1,1,1],'linewidth',0.5);
     
     ax = xlabel(['actual ' RSP_txt{rr}  ' (deg)']);
     ay = ylabel('NN output');
