@@ -58,19 +58,19 @@ for rr = 1:size(y,1)
     r_arr(rr) = r;
     
     hold on;
-    h = scatter(a,b,20,'k','filled');
-    alpha(h,0.5);
-    title([RSP_txt{rr} ', R = ' num2str(r,3) ' (N = ' num2str(length(ind)) ')'],'fontsize',12,'fontweight','normal');
+    h = scatter(a,b,40,'k','filled');
+    alpha(h,0.25);
+    title(['R = ' num2str(r,3) ' (n = ' num2str(length(ind)) ')'],'fontsize',12,'fontweight','normal');
     axis tight;
     
     temp = [get(gca,'xlim');get(gca,'ylim')];
     temp2 = max(temp(:,2)); temp1 = min(temp(:,1));
     p = plot([temp1,temp2],[temp1,temp2],'color',0.5*[1,1,1],'linewidth',0.5);
     
-    ax = xlabel('ground truth (deg)');
-    ay = ylabel('NN output (deg)');
-    set(gca,'fontsize',12);
-    set(gcf,'paperposition',[0,0,3,3]);
+    ax = xlabel(['actual ' RSP_txt{rr}  ' (deg)']);
+    ay = ylabel('NN output');
+    set(gca,'fontsize',20);
+    set(gcf,'paperposition',[0,0,4,4.5]);
     print('-dtiff','-r300',['nn_' fname '_' num2str(rr)]);
     close;
 end
@@ -85,20 +85,20 @@ for rr = 1:size(y,1)
     b = y(rr,ind);
     
     c = abs(b - a);
-    h = scatter(a,c,10,'k','filled');
-    alpha(h,0.5);
+    h = scatter(a,c,40,'k','filled');
+    alpha(h,0.25);
     
     merr = mean(c);
     stderr = std(c);
     e_arr(rr) = merr;
-    title(['mean = ' num2str(merr,3) '\pm ' num2str(stderr,3) ' (SD)'],'fontweight','normal');
+    title([num2str(merr,3) '\pm ' num2str(stderr,3) ' (SD)'],'fontweight','normal');
     
     xlabel(['actual ' RSP_txt{rr}]);
     ylabel(['|' RSP_txt{rr} ' error|']);
     axis tight;
     
-    set(gca,'fontsize',8);
-    set(gcf,'paperposition',[0,0,3,1.5]);
+    set(gca,'fontsize',20);
+    set(gcf,'paperposition',[0,0,4,4.5]);
     print('-dtiff','-r300',['nn_' fname '_err_' num2str(rr)]);
     close;
 end
