@@ -10,12 +10,15 @@ cd C:\Users\yang\ownCloud\MATLAB\__expTrainedExpData\2_pdt
 fname = 'expTrainedExpData';
 load(['nn_' fname]);
 load(['..\pre_nn_' fname],'PDT');
+PDT_txt{2} = 'd_{i,mean}';
+PDT_txt{5} = '\alpha_{dist}';
+uni = {'px','deg'};
 
 %%
 pos_img1 = [0,0.5,0.25,0.45];
 pos_img2 = [0,0,0.25,0.45];
-pos_pdt = [0.275,0.7,0.1,0.2];
-pos_3d = [0.4,0,0.6,1];
+pos_pdt = [0.275,0.75,0.1,0.2];
+pos_3d = [0.45,0,0.5,1];
 pos_rsp = [0.275,0.35,0.1,0.2];
 pos_err = [0.275,0.1,0.1,0.1];
 fsz = 16;
@@ -70,7 +73,9 @@ for ii = ind_list
         %% get catheter
         [X,Y,Z,xh,yh,zh,M] = GetSingleCatheter(rsp_compare(:,mm));
         ht = plot3(X(end),Y(end),Z(end),'.','color',cmap(mm,:),'markersize',25);
-        hc(mm) = plot3(X,Y,Z,'color',cmap(mm,:),'linewidth',4);
+        %         hc(mm) = plot3(X,Y,Z,'color',cmap(mm,:),'linewidth',4);
+        hc(mm) = scatter3(X,Y,Z,80,cmap(mm,:),'filled');
+        alpha(hc(mm),0.5);
         plot3(xh,yh,zh,'color',cmap(mm,:));
         
         %% plot coordinate frame
@@ -82,11 +87,12 @@ for ii = ind_list
     legend(hc,'ground truth','NN output','location','northeast','orientation','horizontal','fontsize',fsz);
     axis equal;
     axis tight;
-    view([-37.5+90,30]);
-    grid on;
+    view([-37.5+90,15]);
+    xlabel('x (mm)'); ylabel('y (mm)'); zlabel('z (mm)');
     axis([-2,110,-2,65,-2,50]);
-    set(gca,'xticklabel',[],'yticklabel',[],'zticklabel',[]);
+%     set(gca,'xticklabel',[],'yticklabel',[],'zticklabel',[]);
     set(gca,'fontsize',fsz);
+    grid on;
     
     %% error
     subplot('position',pos_err);
@@ -103,8 +109,9 @@ for ii = ind_list
     plot(PDT(1,ind(ii)),PDT(2,ind(ii)),'ok','markerfacecolor','k');
     xlim([min(PDT(1,:)),max(PDT(1,:))]);
     ylim([min(PDT(2,:)),max(PDT(2,:))]);
-    xlabel(PDT_txt(best_pdt(1)),'fontsize',fsz);
-    ylabel(PDT_txt(best_pdt(2)),'fontsize',fsz);
+    xlabel([PDT_txt{best_pdt(1)} ' (' uni{1} ')'],'fontsize',fsz);
+    ylabel([PDT_txt{best_pdt(2)} ' (' uni{2} ')'],'fontsize',fsz);
+    set(gca,'fontsize',fsz);
     title('input','fontsize',fsz);
     
     %% rsp
@@ -113,7 +120,8 @@ for ii = ind_list
     b = bar([1,2],rsp_compare(1:2,:),0.4,'edgecolor','none','facecolor','flat');
     for k = 1:2
         b(k).CData = k;
-    end    
+        b(k).FaceAlpha = 0.5;
+    end
     xlim([.5,2.5]);
     ylim([0,max(max(RSP(:,ind)))]);
     set(gca,'xtick',[1,2],'xticklabel',RSP_txt(1:2));
@@ -131,7 +139,7 @@ for ii = ind_list
     subplot('position',pos_img1);
     imshow(I);
     ylim([150,550]);
-%     title('original','fontsize',fsz);
+    %     title('original','fontsize',fsz);
     camroll(-90);
     subplot('position',pos_img2);
     imshow(I);
@@ -143,7 +151,7 @@ for ii = ind_list
     h2 = plot(pk2(:,1)+ref(1),-pk2(:,2)+ref(2),'.','color',cmap(4,:),'markersize',msz);
     plot(ref(1),ref(2),'.','color','w','markersize',msz);
     camroll(-90);
-%     title('processed','fontsize',fsz);
+    %     title('processed','fontsize',fsz);
     legend([h1,h2],'concave','convex','fontsize',fsz,'location','north');
     
     %%
