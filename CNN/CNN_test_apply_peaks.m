@@ -162,8 +162,12 @@ squares = predictionError.^2;
 rmse = sqrt(mean(squares));
 
 figure;
-% plot(predictionError,'*-');
-plot(YValidation,YPredicted,'*');
+hold on;
+h = scatter(YValidation(:,1),YPredicted(:,1),10,'filled');
+alpha(h,0.5);
+h = scatter(YValidation(:,2),YPredicted(:,2),10,'filled');
+alpha(h,0.5);
+axis equal
 legend('\theta_{bend}','\theta_{roll}','location','northwest');
 xlabel('ground truth (norm.)');
 ylabel('predicted');
