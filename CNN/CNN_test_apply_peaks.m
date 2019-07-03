@@ -1,89 +1,30 @@
 clear; ca; clc;
 
-%% Load data from expTrainedExpData
-fname = 'expTrainedExpData';
-load C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\_pre_nn_positive_interp\interp_btw_fr_res
-load C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\pre_nn_20SDF_H_30_short *_act_arr
-
-%% extract only continuous (roll variation) data
-roll_range = 13:154;
-PKS1 = PKS1(:,:,roll_range,:);
-PKS2 = PKS2(:,:,roll_range,:);
-th_roll_act_arr = th_roll_act_arr(roll_range);
-
-pks_range = 1:14;
-PKS1 = PKS1(pks_range,:,:,:);
-PKS2 = PKS2(pks_range,:,:,:);
-
-%% modify exp data for compatibility with simulation data
-% n_helix = 16; % for simulation (comparison)
-PKS_scale = cell(1,size(PKS1,3)*size(PKS1,4));
-b_arr = nan(size(PKS1,3)*size(PKS1,4),1); p_arr = b_arr; r_arr = b_arr;
-nn = 0;
-
-axis_lim = [0,400,-25,200];
-wd = axis_lim(2)-axis_lim(1);
-ht = axis_lim(4)-axis_lim(3);
-imsize = [wd,ht];
-I = nan(wd,ht,1,size(PKS1,3)*size(PKS1,4));
-
-for dd = 1:size(PKS1,4) % bend
-    
-    for ii = 1:size(PKS1,3) % roll
-        
-        temp = [flipud(PKS1(:,:,ii,dd)'),flipud(PKS2(:,:,ii,dd)')]; % flip x and y
-        temp0 = [ones(1,size(PKS1,1)),zeros(1,size(PKS1,1))]; % combined toggle
-        
-        temp1 = temp(1,:); % keep x signs
-        temp2 = -temp(2,:); % flip y signs
-        
-        %% generate data of same configuration from simulation
-        bend_arr = th_bend_act_arr(dd);
-        roll_arr = th_roll_act_arr(ii);
-        pitch_arr = 0;
-        
-        disp([num2str(ii) '/' num2str(size(PKS1,3)) ', ' num2str(dd) '/' num2str(size(PKS1,4))]);
-        
-        nn = nn + 1;
-        PKS_scale{nn}(1,:) = temp1;
-        PKS_scale{nn}(2,:) = temp2;
-        PKS_scale{nn}(3,:) = temp0;
-        r_arr(nn) = th_roll_act_arr(ii);
-        b_arr(nn) = th_bend_act_arr(dd);
-        p_arr(nn) = 0;
-        
-        scatter(temp1,temp2,20,'k','filled');
-        axis equal;
-        axis off;
-        axis(axis_lim);           
-        
-        set(gca,'position',[0,0,1,1]);
-        set(gcf,'position',[0,0,wd,ht+1]);
-        
-        temp = getframe;        
-        I(:,:,1,nn) = imcomplement(mat2gray(temp.cdata(:,:,1)))';
-                
-        clear temp* fac*
-        
-    end
-end
-
-close;
-save CNN_test_apply_peaks_data I b_arr r_arr imsize
-
 %% Load images
 load CNN_test_apply_peaks_data
 
+tr_pct = 0.7;
+va_pct = 0.15;
+te_pct = 0.15;
+
 X = I;
 Y = normalize([b_arr,r_arr]);
-tr_pct = 0.7;
+
 n_fr = size(I,4);
-Train_ind = randperm(n_fr,round(tr_pct*n_fr));
-Validation_ind = 1:n_fr; Validation_ind(Train_ind) = [];
+n_fr_te = round(n_fr*te_pct);
+n_fr_tr = round(n_fr*tr_pct);
+n_fr_va = n_fr - n_fr_te - n_fr_tr;
+rand_ind = randperm(n_fr);
+Train_ind = rand_ind(1:n_fr_tr);
+Validation_ind = rand_ind(n_fr_tr+(1:n_fr_va));
+Test_ind = rand_ind((n_fr_tr+n_fr_va+1):end);
+
 XTrain = X(:,:,:,Train_ind);
 YTrain = Y(Train_ind,:);
 XValidation = X(:,:,:,Validation_ind);
 YValidation = Y(Validation_ind,:);
+XTest = X(:,:,:,Test_ind);
+YTest = Y(Test_ind,:);
 
 %% Check Data Normalization
 figure
@@ -95,10 +36,10 @@ ylabel('Counts')
 xlabel('Bend Angle')
 
 %% Create Network Layers
-FilterSize = 3;
-NumFilters = 8;
-OutputSize = 2;
-poolsize = 2;
+FilterSize = 3;  % a small odd number 
+NumFilters = 20; % related to the variety of patterns to capture
+OutputSize = 2;  % number of output variables
+PoolSize = 2;    % size of pooling (grouping of convolved maps)
 
 layers = [
     imageInputLayer([imsize, 1])
@@ -107,14 +48,38 @@ layers = [
     batchNormalizationLayer
     reluLayer
     
-    averagePooling2dLayer(poolsize,'Stride',2)
+    averagePooling2dLayer(PoolSize,'Stride',2) % 1
     
     convolution2dLayer(FilterSize,NumFilters,'Padding','same')
     batchNormalizationLayer
     reluLayer
     
-    averagePooling2dLayer(poolsize,'Stride',2)
+    averagePooling2dLayer(PoolSize,'Stride',2) % 2
     
+    convolution2dLayer(FilterSize,NumFilters,'Padding','same')
+    batchNormalizationLayer
+    reluLayer
+    
+    averagePooling2dLayer(PoolSize,'Stride',2) % 3 
+    
+    convolution2dLayer(FilterSize,NumFilters,'Padding','same')
+    batchNormalizationLayer
+    reluLayer
+    
+    averagePooling2dLayer(PoolSize,'Stride',2) % 4
+    
+    convolution2dLayer(FilterSize,NumFilters,'Padding','same')
+    batchNormalizationLayer
+    reluLayer
+    
+    averagePooling2dLayer(PoolSize,'Stride',2) % 5
+    
+    convolution2dLayer(FilterSize,NumFilters,'Padding','same')
+    batchNormalizationLayer
+    reluLayer
+    
+    averagePooling2dLayer(PoolSize,'Stride',2) % 6
+          
     convolution2dLayer(FilterSize,NumFilters,'Padding','same')
     batchNormalizationLayer
     reluLayer
@@ -128,7 +93,7 @@ layers = [
     regressionLayer];
 
 %% Train Network
-miniBatchSize  = 16; % ~710/40
+miniBatchSize  = 12; % ~497/40
 validationFrequency = floor(numel(YTrain)/miniBatchSize);
 options = trainingOptions('sgdm', ...
     'MiniBatchSize',miniBatchSize, ...
@@ -147,34 +112,41 @@ net = trainNetwork(XTrain,YTrain,layers,options);
 
 net.Layers;
 
+% save CNN_test_apply_peaks net XValidation XTrain YValidation YTrain XTest YTest miniBatchSize PoolSize OutputSize NumFilters FilterSize
+
 %% Test Network
-YPredicted = predict(net,XValidation);
+load CNN_test_apply_peaks
 
-predictionError = YValidation - YPredicted;
+YPredicted = predict(net,XTest);
 
-thr = 10;
-numCorrect = sum(abs(predictionError) < thr);
-numValidationImages = numel(YValidation);
+a = YTest;
+b = YPredicted;
 
-accuracy = numCorrect/numValidationImages;
+predictionError = a - b;
 
+r = regression(a', b');
 squares = predictionError.^2;
 rmse = sqrt(mean(squares));
 
-figure;
-hold on;
-h = scatter(YValidation(:,1),YPredicted(:,1),10,'filled');
-alpha(h,0.5);
-h = scatter(YValidation(:,2),YPredicted(:,2),10,'filled');
-alpha(h,0.5);
-axis equal
-legend('\theta_{bend}','\theta_{roll}','location','northwest');
-xlabel('ground truth (norm.)');
-ylabel('predicted');
-box off
-set(gca,'fontsize',10);
-set(gcf,'paperposition',[0,0,3,3],'unit','inches');
-print('-dtiff','-r300','CNN_test_apply_peaks_corr');
-close;
+%% plot results
+RSP_txt = {'\theta_{bend}','\theta_{roll}'};
 
-save CNN_test_apply_peaks net YPredicted predictionError accuracy squares rmse
+for rr = 1:numel(r)
+        
+    figure;
+    hold on;
+    h = scatter(a(:,rr),b(:,rr),40,'k','filled');
+    alpha(h,0.25);
+    title(['R = ' num2str(r(rr),3) ' (n = ' num2str(length(a)) ')'],'fontsize',12,'fontweight','normal');
+    axis tight;
+    
+    temp = [get(gca,'xlim');get(gca,'ylim')];
+    temp2 = max(temp(:,2)); temp1 = min(temp(:,1));
+    
+    ax = xlabel(['actual ' RSP_txt{rr}  ' (deg)']);
+    ay = ylabel('NN output');
+    set(gca,'fontsize',20);
+    set(gcf,'paperposition',[0,0,4,4.5]);
+    print('-dtiff','-r300',['CNN_test_apply_peaks_' num2str(rr)]);
+    close;
+end
