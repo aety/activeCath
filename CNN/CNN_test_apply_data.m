@@ -44,4 +44,4 @@ XValidation = X(:,:,1,validIdx);
 YTrain = Y(trainIdx,:); 
 YValidation = Y(validIdx,:);
 
-save CNN_test_apply_data XValidation YValidation XTrain YTrain imsize
+save C:\Users\yang\ownCloud\MATLAB_largefiles\CNN_test_apply_data XValidation YValidation XTrain YTrain imsize

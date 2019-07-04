@@ -1,7 +1,7 @@
 clear; ca; clc;
 
 %% Load images
-load CNN_test_apply_peaks_data
+load C:\Users\yang\ownCloud\MATLAB_largefiles\CNN_test_apply_peaks_data
 
 tr_pct = 0.7;
 va_pct = 0.15;
