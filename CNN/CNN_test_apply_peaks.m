@@ -27,13 +27,13 @@ XTest = X(:,:,:,Test_ind);
 YTest = Y(Test_ind,:);
 
 %% Check Data Normalization
-figure
-histogram(YTrain(:,1))
-figure;
-histogram(YTrain(:,2))
-axis tight
-ylabel('Counts')
-xlabel('Bend Angle')
+for ii = 1:size(YTrain,2)
+    figure;
+    histogram(YTrain(:,ii))
+    axis tight
+    ylabel('Counts')
+    xlabel(['Predictor' num2str(ii)]);
+end
 
 %% Create Network Layers
 FilterSize = 3;  % a small odd number 
