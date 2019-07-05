@@ -1,7 +1,10 @@
 clear; ca; clc;
 
 %% Load images
-load C:\Users\yang\ownCloud\MATLAB_largefiles\CNN_test_apply_peaks_3var_data
+p_range = [0,50];
+
+load(['C:\Users\yang\ownCloud\MATLAB_largefiles\CNN_test_apply_peaks_3var_data_'...
+    num2str(p_range(1)) '_' num2str(p_range(2))]);
 
 tr_pct = 0.7;
 va_pct = 0.15;
@@ -112,10 +115,11 @@ net = trainNetwork(XTrain,YTrain,layers,options);
 
 net.Layers;
 
-save CNN_test_apply_peaks_3var net XValidation XTrain YValidation YTrain XTest YTest miniBatchSize PoolSize OutputSize NumFilters FilterSize
+save(['CNN_test_apply_peaks_3var_data_' num2str(p_range(1)) '_' num2str(p_range(2))],...
+    'net','XValidation','XTrain','YValidation','YTrain','XTest','YTest','miniBatchSize','PoolSize','OutputSize','NumFilters','FilterSize');
 
 %% Test Network
-load CNN_test_apply_peaks_3var
+load(['CNN_test_apply_peaks_3var_' num2str(p_range(1)) '_' num2str(p_range(2))]);
 
 YPredicted = predict(net,XTest);
 
@@ -147,6 +151,6 @@ for rr = 1:numel(r)
     ay = ylabel('NN output');
     set(gca,'fontsize',20);
     set(gcf,'paperposition',[0,0,4,4.5]);
-    print('-dtiff','-r300',['CNN_test_apply_peaks_3var_' num2str(rr)]);
+    print('-dtiff','-r300',['CNN_test_apply_peaks_3var_' num2str(p_range(1)) '_' num2str(p_range(2)) '_' num2str(rr)]);
     close;
 end
