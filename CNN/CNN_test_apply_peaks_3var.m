@@ -1,7 +1,7 @@
 clear; ca; clc;
 
 %% Load images
-p_range = [0,50];
+p_range = [-25,25];
 
 load(['C:\Users\yang\ownCloud\MATLAB_largefiles\CNN_test_apply_peaks_3var_data_'...
     num2str(p_range(1)) '_' num2str(p_range(2))]);
@@ -115,7 +115,7 @@ net = trainNetwork(XTrain,YTrain,layers,options);
 
 net.Layers;
 
-save(['CNN_test_apply_peaks_3var_data_' num2str(p_range(1)) '_' num2str(p_range(2))],...
+save(['CNN_test_apply_peaks_3var_' num2str(p_range(1)) '_' num2str(p_range(2))],...
     'net','XValidation','XTrain','YValidation','YTrain','XTest','YTest','miniBatchSize','PoolSize','OutputSize','NumFilters','FilterSize');
 
 %% Test Network

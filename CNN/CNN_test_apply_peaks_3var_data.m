@@ -25,7 +25,7 @@ for dd = 1:size(PKS,2)
     axis(axis_lim);
     
     set(gca,'position',[0,0,1,1]);
-    set(gcf,'position',[500,500,wd,ht+1]);
+    set(gcf,'position',[500,1000,wd,ht+1]);
     
     temp = getframe;
     I(:,:,1,dd) = imcomplement(mat2gray(temp.cdata(:,:,1)))';
