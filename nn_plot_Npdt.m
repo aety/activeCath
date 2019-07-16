@@ -1,6 +1,6 @@
 clear; ca; clc;
 
-cd C:\Users\yang\ownCloud\MATLAB\__simulation\varHelixN\3_vars\pitch_0_50\varHelixN_16
+cd __simulation\varHelixN\3_vars\pitch_0_50\varHelixN_16
 fname = 'nn_findApex_3DoF_varHelixN';
 
 % cd C:\Users\yang\ownCloud\MATLAB\__expTrainedExpData
