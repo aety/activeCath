@@ -2,8 +2,8 @@ clear; ca; clc;
 
 %% Load data from expTrainedExpData
 fname = 'expTrainedExpData';
-load C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\_pre_nn_positive_interp\interp_btw_fr_res
-load C:\Users\yang\ownCloud\MATLAB\__experiment\roll_bend\pre_nn\positive\pre_nn_20SDF_H_30_short *_act_arr
+load ..\__experiment\roll_bend\pre_nn\positive\_pre_nn_positive_interp\interp_btw_fr_res
+load ..\__experiment\roll_bend\pre_nn\positive\pre_nn_20SDF_H_30_short *_act_arr
 
 %% extract only continuous (roll variation) data
 roll_range = 13:154;
@@ -69,4 +69,4 @@ for dd = 1:size(PKS1,4) % bend
 end
 
 close;
-save C:\Users\yang\ownCloud\MATLAB_largefiles\CNN_test_apply_peaks_data I b_arr r_arr imsize
+save ..\..\MATLAB_largefiles\CNN_test_apply_peaks_data I b_arr r_arr imsize

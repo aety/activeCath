@@ -1,7 +1,7 @@
 clear; ca; clc;
 
 %% Check Data Normalization
-load C:\Users\yang\ownCloud\MATLAB_largefiles\CNN_test_apply_data
+load ..\..\MATLAB_largefiles\CNN_test_apply_data
 
 YTrain = normalize(YTrain);
 YValidation = normalize(YValidation);

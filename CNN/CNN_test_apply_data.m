@@ -22,7 +22,7 @@ Y = [];
 bend_arr = 0:20:80;
 
 for aa = 1:n_bend
-    load(['C:\Users\yang\ownCloud\MATLAB_largefiles\__experiment\roll_bend\proc\proc_auto_data_20SDR-H_30_00' filearr{aa} '_wImage.mat'],'I_disp_arr','th1_arr','ind_arr');
+    load(['..\..\MATLAB_largefiles\__experiment\roll_bend\proc\proc_auto_data_20SDR-H_30_00' filearr{aa} '_wImage.mat'],'I_disp_arr','th1_arr','ind_arr');
     
     for ff = 1:n_roll
         disp([aa,ff]);
@@ -44,4 +44,4 @@ XValidation = X(:,:,1,validIdx);
 YTrain = Y(trainIdx,:); 
 YValidation = Y(validIdx,:);
 
-save C:\Users\yang\ownCloud\MATLAB_largefiles\CNN_test_apply_data XValidation YValidation XTrain YTrain imsize
+save ..\..\MATLAB_largefiles\CNN_test_apply_data XValidation YValidation XTrain YTrain imsize
