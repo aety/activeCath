@@ -21,7 +21,7 @@ PKS_scale = cell(1,size(PKS1,3)*size(PKS1,4));
 b_arr = nan(size(PKS1,3)*size(PKS1,4),1); p_arr = b_arr; r_arr = b_arr;
 nn = 0;
 
-axis_lim = [0,400,-25,200];
+axis_lim = [0,590,-25,350];
 wd = axis_lim(2)-axis_lim(1);
 ht = axis_lim(4)-axis_lim(3);
 imsize = [wd,ht];
