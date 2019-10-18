@@ -1,14 +1,19 @@
 clear; ca; clc;
 
 %% Load images
-load ..\..\MATLAB_largefiles\CNN_test_apply_peaks_data
+load CNN_test_apply_peaks_data
 
 tr_pct = 0.7;
 va_pct = 0.15;
 te_pct = 0.15;
 
+Y_org = [b_arr,r_arr];
+Y_mean = mean(Y_org);
+Y_sd = std(Y_org);
+
 X = I;
 Y = normalize([b_arr,r_arr]);
+
 
 % define training/testing sets
 n_fr = size(I,4);
@@ -29,12 +34,12 @@ XTest = X(:,:,:,Test_ind);
 YTest = Y(Test_ind,:);
 
 %% display example frames
-disp_arr = randperm(size(I,4));
-for ii = 1:30
-    imshow(I(:,:,:,disp_arr(ii)));
-    title(['frame no. ' num2str(disp_arr(ii))]);
-    pause(0.1);
-end
+% disp_arr = randperm(size(I,4));
+% for ii = 1:30
+%     imshow(I(:,:,:,disp_arr(ii)));
+%     title(['frame no. ' num2str(disp_arr(ii))]);
+%     pause(0.1);
+% end
 
 %% Check Data Normalization
 for ii = 1:size(YTrain,2)
@@ -132,6 +137,9 @@ YPredicted = predict(net,XTest);
 a = YTest;
 b = YPredicted;
 
+a = a.*Y_sd+repmat(Y_mean,length(a),1);
+b = b.*Y_sd+repmat(Y_mean,length(b),1);
+
 predictionError = a - b;
 
 r = regression(a', b');
@@ -153,10 +161,11 @@ for rr = 1:numel(r)
     temp = [get(gca,'xlim');get(gca,'ylim')];
     temp2 = max(temp(:,2)); temp1 = min(temp(:,1));
     
-    ax = xlabel(['actual ' RSP_txt{rr}  ' (norm.)']);
+    ax = xlabel(['actual ' RSP_txt{rr} ' (deg)']);
     ay = ylabel('NN output');
     set(gca,'fontsize',20);
     set(gcf,'paperposition',[0,0,4,4.5]);
+    box off
     print('-dtiff','-r300',['CNN_test_apply_peaks_' num2str(rr)]);
     close;
 end
@@ -171,16 +180,17 @@ for rr = 1:numel(r)
     err = abs(b(:,rr) - a(:,rr));
     h = scatter(a(:,rr),err,40,'k','filled');
     alpha(h,0.25);
-    title([num2str(mean(err),3) ' \pm ' num2str(std(err),3)],'fontsize',12,'fontweight','normal');
+    title([num2str(mean(err),3) ' \pm ' num2str(std(err),3) ' (SD)'],'fontsize',12,'fontweight','normal');
     axis tight;
     
     temp = [get(gca,'xlim');get(gca,'ylim')];
     temp2 = max(temp(:,2)); temp1 = min(temp(:,1));
     
-    ax = xlabel(['actual ' RSP_txt{rr}  ' (deg)']);
-    ay = ylabel('absolute error');
+    ax = xlabel(['actual ' RSP_txt{rr}]);
+    ay = ylabel(['|' RSP_txt{rr} ' error|']);
     set(gca,'fontsize',20);
     set(gcf,'paperposition',[0,0,4,4.5]);
+    box off
     print('-dtiff','-r300',['CNN_test_apply_peaks_' num2str(rr) '_error']);
     close;
 end
